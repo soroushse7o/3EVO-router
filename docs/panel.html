@@ -7,8 +7,9 @@ aside{width:220px;border-right:1px solid #ffffff10;padding:16px}
 aside .logo{color:var(--accent);font-weight:700;margin-bottom:16px}
 aside nav div{padding:6px 8px;border-radius:8px;margin:2px 0;font-size:14px}
 aside nav div.active{background:#10E58A22;color:var(--accent)}
-main{flex:1;padding:24px}
+main{flex:1;padding:24px;overflow:auto}
 h1{font-size:22px;margin-bottom:16px}
+h2{font-size:16px;margin:16px 0 8px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
 .card{background:var(--card);border:1px solid #ffffff14;border-radius:16px;padding:14px}
 .card .name{font-weight:600;margin-bottom:4px}
@@ -17,19 +18,27 @@ h1{font-size:22px;margin-bottom:16px}
 .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
 .badge{font-size:11px;padding:2px 8px;border-radius:999px;background:#10E58A22;color:var(--accent)}
 @media(max-width:640px){aside{display:none}}
-</style></head><body><div style="position:fixed;top:16px;right:16px;z-index:10"><button id="langBtn" onclick="toggleLang()" style="background:var(--card);color:var(--text);border:1px solid #ffffff20;border-radius:8px;padding:6px 12px;cursor:pointer">FA</button></div>
+</style></head><body>
+<div style="position:fixed;top:16px;right:16px;z-index:10"><button id="langBtn" onclick="toggleLang()" style="background:var(--card);color:var(--text);border:1px solid #ffffff20;border-radius:8px;padding:6px 12px;cursor:pointer">FA</button></div>
 <script>let lang='en';function toggleLang(){lang=lang==='en'?'fa':'en';document.documentElement.lang=lang;document.documentElement.dir=lang==='fa'?'rtl':'ltr';document.getElementById('langBtn').textContent=lang==='en'?'FA':'EN';}</script>
 <aside><div class="logo">Endpoint Proxy <span style="font-size:10px;color:var(--muted)">v0.3.40</span></div>
-<nav><div class="active">Providers</div><div>Endpoint</div><div>Combos</div><div>Usage</div><div>Quota</div><div>Settings</div></nav></aside>
+<nav><div class="active">Providers</div><div>Endpoint</div><div>Proxy Pools</div><div>Combos</div><div>Usage</div><div>Quota Tracker</div><div>MITM</div><div>CLI Tools</div><div>Console Log</div><div>Settings</div></nav></aside>
 <main>
 <div class="top"><h1>Providers</h1><span class="badge">Service running</span></div>
-<h2 style="font-size:16px;margin:12px 0 8px">OAuth Providers</h2>
+<h2>OAuth Providers (2)</h2>
 <div class="grid">
   <div class="card"><div class="name">Claude Code</div><div class="conn on">1 Connected</div></div>
   <div class="card"><div class="name">OpenAI Codex</div><div class="conn on">1 Connected</div></div>
   <div class="card"><div class="name">GitHub Copilot</div><div class="conn">No connections</div></div>
+  <div class="card"><div class="name">Cursor IDE</div><div class="conn">No connections</div></div>
 </div>
-<h2 style="font-size:16px;margin:16px 0 8px">API Key Providers</h2>
+<h2>Free Providers (2)</h2>
+<div class="grid">
+  <div class="card"><div class="name">iFlow AI</div><div class="conn on">1 Connected</div></div>
+  <div class="card"><div class="name">Qwen Code</div><div class="conn on">1 Connected</div></div>
+  <div class="card"><div class="name">Gemini CLI</div><div class="conn">No connections</div></div>
+</div>
+<h2>API Key Providers (3)</h2>
 <div class="grid">
   <div class="card"><div class="name">OpenRouter</div><div class="conn">No connections</div></div>
   <div class="card"><div class="name">Anthropic</div><div class="conn">No connections</div></div>
@@ -40,13 +49,3 @@ h1{font-size:22px;margin-bottom:16px}
 </div>
 <p style="margin-top:24px;color:var(--muted);font-size:12px">Static showcase — not a live instance.</p>
 </main></body></html>
-EOF
-# add link in index.html
-python - <<'PY'
-p='/c/Users/Administrator/3evo-router/docs/index.html'
-s=open(p).read()
-s=s.replace('<a class="btn ghost" href="https://github.com/soroushse7o/3EVO-router#readme">Docs</a>',
-            '<a class="btn ghost" href="https://github.com/soroushse7o/3EVO-router#readme">Docs</a>\n  <a class="btn ghost" href="panel.html">Live Panel Demo</a>')
-open(p,'w').write(s)
-PY
-echo done
