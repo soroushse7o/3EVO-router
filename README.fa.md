@@ -112,14 +112,19 @@ locales/          # en.json, fa.json
 - [x] Scaffold (Next.js, TS, Tailwind)
 - [x] Providers page (interactive)
 - [x] Gateway proxy to local model
+- [x] Auth (real)
+- [x] Anthropic /v1/messages + OpenAI /v1/responses
 - [x] RTK lib
 - [x] Combo schema (Zod)
-- [ ] Auth (real)
+- [x] Combos page (3 templates)
+- [x] MITM opt-in consent (stub)
+- [x] Usage page
+- [x] Quota tracker page
 - [ ] OAuth flows
 - [ ] Translator + streaming
 - [ ] Routing/failover + circuit breaker
 - [ ] Usage + Quota (DB)
-- [ ] Proxy pools, CLI tools, console log, MITM, settings
+- [ ] Proxy pools, CLI tools, console log, settings
 - [ ] Hardening + tests + docs
 
 ## مجوز
