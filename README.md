@@ -118,17 +118,25 @@ locales/          # en.json, fa.json
 - [x] Gateway proxy to local model
 - [x] Auth (real)
 - [x] Anthropic /v1/messages + OpenAI /v1/responses
+- [x] Streaming passthrough
 - [x] RTK lib
 - [x] Combo schema (Zod)
 - [x] Combos page (3 templates)
 - [x] MITM opt-in consent (stub)
 - [x] Usage page
 - [x] Quota tracker page
+- [x] Console log (SSE)
+- [x] Proxy pools page
+- [x] CLI tools page
+- [x] Circuit breaker
+- [x] SQLite usage DB
+- [x] Translator (stub)
+- [x] Router failover helper
 - [ ] OAuth flows
-- [ ] Translator + streaming
-- [ ] Routing/failover + circuit breaker
-- [ ] Usage + Quota (DB)
-- [ ] Proxy pools, CLI tools, console log, settings
+- [ ] Translator (full) + streaming
+- [ ] Routing/failover (integrated)
+- [ ] Usage + Quota (DB-backed UI)
+- [ ] Settings (full)
 - [ ] Hardening + tests + docs
 
 ## License
