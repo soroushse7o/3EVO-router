@@ -28,29 +28,7 @@ const T={
    s4:"RTK compression",d4:"Measured token savings on tool_result.",
    s5:"Multi-account",d5:"Round-robin / priority rotation.",
    s6:"Security",d6:"AES-256-GCM vault, SECRET_PATH, CORS.",
-   arch:"Architecture",archd:"Client (OpenAI/Anthropic SDK)
-  │
-  ▼
-┌─────────────┐
-│  Gateway    │  /v1/*  (Next.js API routes)
-│  Translator │  (canonical format)
-└──────┬──────┘
-       │
-   ┌───┴───┐
-   │ Router │  combos, tiers, rotation, circuit breaker
-   └───┬───┘
-       │
-   ┌───┴─────────────────────┐
-   │ Providers / Accounts     │  OAuth, API-key, compatible
-   └───┬─────────────────────┘
-       │
-   ┌───┴───┐
-   │  RTK  │  tool_result compression
-   └───┬───┘
-       │
-   ┌───┴───┐
-   │ Vault │  AES-256-GCM secrets (SQLite ~/.3evo)
-   └───────┘",
+   arch:"Architecture",archd:"",
    qs:"Quick start",footer:"MIT License · Built by soroush · GitHub"},
  fa:{tag:"گیت‌وی هوش مصنوعی لوکال + داشبورد وب («Endpoint Proxy»). یک endpoint سازگار با OpenAI/Anthropic، چرخش چندحسابی، fallback سه‌سطحی، فشرده‌سازی RTK.",
    gh:"گیت‌هاب",docs:"مستندات",panel:"نمایش پنل",
@@ -60,29 +38,7 @@ const T={
    s4:"فشرده‌سازی RTK",d4:"صرفه‌جویی واقعی توکن در tool_result.",
    s5:"چندحسابی",d5:"چرخش round-robin / priority.",
    s6:"امنیت",d6:"Vault AES-256-GCM، SECRET_PATH، CORS.",
-   arch:"معماری",archd:"Client (OpenAI/Anthropic SDK)\
-  │\
-  ▼\
-┌─────────────┐\
-│  Gateway    │  /v1/*  (Next.js API routes)\
-│  Translator │  (canonical format)\
-└──────┬──────┘\
-       │\
-   ┌───┴───┐\
-   │ Router │  combos, tiers, rotation, circuit breaker\
-   └───┬───┘\
-       │\
-   ┌───┴─────────────────────┐\
-   │ Providers / Accounts     │  OAuth, API-key, compatible\
-   └───┬─────────────────────┘\
-       │\
-   ┌───┴───┐\
-   │  RTK  │  tool_result compression\
-   └───┬───┘\
-       │\
-   ┌───┴───┐\
-   │ Vault │  AES-256-GCM secrets (SQLite ~/.3evo)\
-   └───────┘",
+   arch:"معماری",archd:"",
    qs:"شروع سریع",footer:"مجوز MIT · ساخته soroush · گیت‌هاب"}
 };
 let lang='en';
@@ -93,8 +49,7 @@ document.querySelectorAll('a.btn.ghost')[0].textContent=t.docs;
 document.querySelectorAll('a.btn.ghost')[1].textContent=t.panel;
 const cards=document.querySelectorAll('.card');const keys=[['s1','d1'],['s2','d2'],['s3','d3'],['s4','d4'],['s5','d5'],['s6','d6']];
 cards.forEach((c,i)=>{c.querySelector('h3').textContent=t[keys[i][0]];c.querySelector('p').textContent=t[keys[i][1]]});
-document.querySelectorAll('h2')[0].textContent=t.arch;document.querySelectorAll('pre')[0].textContent=t.archd;
-document.querySelectorAll('h2')[1].textContent=t.qs;
+document.querySelectorAll('h2')[0].textContent=t.arch;document.querySelectorAll('h2')[1].textContent=t.qs;
 document.querySelector('footer').textContent=t.footer;
 document.getElementById('langBtn').textContent=lang==='en'?'FA':'EN';
 }
