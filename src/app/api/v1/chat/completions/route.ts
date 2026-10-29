@@ -4,5 +4,11 @@ export async function GET() {
 }
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  return Response.json({ id: "chatcmpl-1", object: "chat.completion", choices: [{ index: 0, message: { role: "assistant", content: "Hello from 3EVO Router" }, finish_reason: "stop" }], usage: { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 } });
+  const upstream = await fetch("http://127.0.0.1:18435/v1/chat/completions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const data = await upstream.json();
+  return Response.json(data, { status: upstream.status });
 }
