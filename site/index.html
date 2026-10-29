@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>3EVO Router — Endpoint Proxy</title>
+<style>
+:root{--bg:#0a0e1a;--card:#121826;--accent:#10E58A;--text:#e6eaf2;--muted:#8a93a6}
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.hero{padding:80px 24px;text-align:center;background:radial-gradient(circle at 50% 0%,#10E58A22,transparent 60%)}
+h1{font-size:48px;letter-spacing:-1px}h1 span{color:var(--accent)}
+.tag{color:var(--muted);max-width:720px;margin:16px auto 32px}
+.btn{display:inline-block;padding:12px 24px;border-radius:12px;background:var(--accent);color:#0a0e1a;font-weight:600;text-decoration:none;margin:4px}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;max-width:1100px;margin:40px auto;padding:0 24px}
+.card{background:var(--card);border:1px solid #ffffff14;border-radius:16px;padding:20px}
+.card h3{color:var(--accent);margin-bottom:8px}
+section{max-width:1100px;margin:60px auto;padding:0 24px}
+h2{font-size:28px;margin-bottom:16px}
+footer{text-align:center;color:var(--muted);padding:40px 24px;border-top:1px solid #ffffff10;margin-top:60px}
+@media(max-width:640px){h1{font-size:32px}.hero{padding:48px 16px}}
+</style></head><body>
+<div class="hero">
+  <h1>3EVO <span>Router</span></h1>
+  <p class="tag">Local-first AI gateway + web dashboard ("Endpoint Proxy"). One OpenAI/Anthropic-compatible endpoint, multi-account rotation, 3-tier fallback combos, RTK token compression.</p>
+  <a class="btn" href="https://github.com/soroushse7o/3EVO-router">GitHub</a>
+  <a class="btn ghost" href="https://github.com/soroushse7o/3EVO-router#readme">Docs</a>
+</div>
+<div class="grid">
+  <div class="card"><h3>Single endpoint</h3><p>OpenAI, Anthropic, Responses, /models.</p></div>
+  <div class="card"><h3>Format translator</h3><p>OpenAI ↔ Anthropic ↔ Gemini.</p></div>
+  <div class="card"><h3>3-tier fallback</h3><p>primary → low-cost → free/credit.</p></div>
+  <div class="card"><h3>RTK compression</h3><p>Measured token savings on tool_result.</p></div>
+  <div class="card"><h3>Multi-account</h3><p>Round-robin / priority rotation.</p></div>
+  <div class="card"><h3>Security</h3><p>AES-256-GCM vault, SECRET_PATH, CORS.</p></div>
+</div>
+<section>
+  <h2>Architecture</h2>
+  <pre style="background:var(--card);padding:20px;border-radius:16px;overflow:auto;color:var(--muted)">Client (SDK) -> Gateway /v1/* -> Translator -> Router (combos/tiers) -> Providers/Accounts -> RTK -> Vault (SQLite)</pre>
+</section>
+<section>
+  <h2>Quick start</h2>
+  <pre style="background:var(--card);padding:20px;border-radius:16px;overflow:auto">npm install
+cp .env.example .env
+npm run dev
+# open http://localhost:20128</pre>
+</section>
+<footer>MIT License · Built by soroush · <a href="https://github.com/soroushse7o" style="color:var(--accent)">GitHub</a></footer>
+</body></html>
