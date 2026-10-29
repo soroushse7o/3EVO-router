@@ -28,7 +28,29 @@ const T={
    s4:"RTK compression",d4:"Measured token savings on tool_result.",
    s5:"Multi-account",d5:"Round-robin / priority rotation.",
    s6:"Security",d6:"AES-256-GCM vault, SECRET_PATH, CORS.",
-   arch:"Architecture",archd:"Client (SDK) -> Gateway /v1/* -> Translator -> Router (combos/tiers) -> Providers/Accounts -> RTK -> Vault (SQLite)",
+   arch:"Architecture",archd:"Client (OpenAI/Anthropic SDK)
+  │
+  ▼
+┌─────────────┐
+│  Gateway    │  /v1/*  (Next.js API routes)
+│  Translator │  (canonical format)
+└──────┬──────┘
+       │
+   ┌───┴───┐
+   │ Router │  combos, tiers, rotation, circuit breaker
+   └───┬───┘
+       │
+   ┌───┴─────────────────────┐
+   │ Providers / Accounts     │  OAuth, API-key, compatible
+   └───┬─────────────────────┘
+       │
+   ┌───┴───┐
+   │  RTK  │  tool_result compression
+   └───┬───┘
+       │
+   ┌───┴───┐
+   │ Vault │  AES-256-GCM secrets (SQLite ~/.3evo)
+   └───────┘",
    qs:"Quick start",footer:"MIT License · Built by soroush · GitHub"},
  fa:{tag:"گیت‌وی هوش مصنوعی لوکال + داشبورد وب («Endpoint Proxy»). یک endpoint سازگار با OpenAI/Anthropic، چرخش چندحسابی، fallback سه‌سطحی، فشرده‌سازی RTK.",
    gh:"گیت‌هاب",docs:"مستندات",panel:"نمایش پنل",
@@ -38,7 +60,29 @@ const T={
    s4:"فشرده‌سازی RTK",d4:"صرفه‌جویی واقعی توکن در tool_result.",
    s5:"چندحسابی",d5:"چرخش round-robin / priority.",
    s6:"امنیت",d6:"Vault AES-256-GCM، SECRET_PATH، CORS.",
-   arch:"معماری",archd:"کلاینت (SDK) -> Gateway /v1/* -> Translator -> Router (combos/tiers) -> Providers/Accounts -> RTK -> Vault (SQLite)",
+   arch:"معماری",archd:"Client (OpenAI/Anthropic SDK)\
+  │\
+  ▼\
+┌─────────────┐\
+│  Gateway    │  /v1/*  (Next.js API routes)\
+│  Translator │  (canonical format)\
+└──────┬──────┘\
+       │\
+   ┌───┴───┐\
+   │ Router │  combos, tiers, rotation, circuit breaker\
+   └───┬───┘\
+       │\
+   ┌───┴─────────────────────┐\
+   │ Providers / Accounts     │  OAuth, API-key, compatible\
+   └───┬─────────────────────┘\
+       │\
+   ┌───┴───┐\
+   │  RTK  │  tool_result compression\
+   └───┬───┘\
+       │\
+   ┌───┴───┐\
+   │ Vault │  AES-256-GCM secrets (SQLite ~/.3evo)\
+   └───────┘",
    qs:"شروع سریع",footer:"مجوز MIT · ساخته soroush · گیت‌هاب"}
 };
 let lang='en';
@@ -72,7 +116,29 @@ document.getElementById('langBtn').textContent=lang==='en'?'FA':'EN';
 </div>
 <section>
   <h2>Architecture</h2>
-  <pre style="background:var(--card);padding:20px;border-radius:16px;overflow:auto;color:var(--muted)">Client (SDK) -> Gateway /v1/* -> Translator -> Router (combos/tiers) -> Providers/Accounts -> RTK -> Vault (SQLite)</pre>
+  <pre style="background:var(--card);padding:20px;border-radius:16px;overflow:auto;color:var(--muted);font-family:monospace">Client (OpenAI/Anthropic SDK)
+  │
+  ▼
+┌─────────────┐
+│  Gateway    │  /v1/*  (Next.js API routes)
+│  Translator │  (canonical format)
+└──────┬──────┘
+       │
+   ┌───┴───┐
+   │ Router │  combos, tiers, rotation, circuit breaker
+   └───┬───┘
+       │
+   ┌───┴─────────────────────┐
+   │ Providers / Accounts     │  OAuth, API-key, compatible
+   └───┬─────────────────────┘
+       │
+   ┌───┴───┐
+   │  RTK  │  tool_result compression
+   └───┬───┘
+       │
+   ┌───┴───┐
+   │ Vault │  AES-256-GCM secrets (SQLite ~/.3evo)
+   └───────┘</pre>
 </section>
 <section>
   <h2>Quick start</h2>
