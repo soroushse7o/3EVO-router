@@ -1,6 +1,76 @@
 # 3EVO Router (Endpoint Proxy)
 
-گیت‌وی هوش مصنوعی لوکال + داشبورد وب. یک endpoint سازگار با OpenAI/Anthropic ارائه می‌دهد و درخواست‌ها را بین چند provider با چرخش چندحسابی، fallback سه‌سطحی و فشرده‌سازی توکن (RTK) مسیریابی می‌کند.
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+**گیت‌وی هوش مصنوعی لوکال + داشبورد وب.** یک endpoint سازگار با OpenAI/Anthropic ارائه می‌دهد و درخواست‌ها را بین چند provider با چرخش چندحسابی، fallback سه‌سطحی و فشرده‌سازی توکن (RTK) مسیریابی می‌کند.
+
+> متن‌باز (MIT). برای توسعه‌دهندگانی که downtime صفر، هزینه توکن کمتر و بدون نشت اسرار می‌خواهند.
+
+## فهرست
+- [ویژگی‌ها](#ویژگیها)
+- [معماری](#معماری)
+- [امنیت](#امنیت)
+- [شروع سریع](#شروع-سریع)
+- [پیکربندی](#پیکربندی)
+- [اتصال کلاینت‌ها](#اتصال-کلاینتها)
+- [ساختار پروژه](#ساختار-پروژه)
+- [نقشه راه](#نقشه-راه)
+- [مجوز](#مجوز)
+
+## ویژگی‌ها
+- **یک endpoint** — OpenAI (`/v1/chat/completions`, `/v1/responses`)، Anthropic (`/v1/messages`)، `/v1/models`.
+- **مترجم فرمت جهانی** — OpenAI ↔ Anthropic ↔ Gemini ↔ OpenAI Responses از یک فرمت کانونی.
+- **چرخش چندحسابی** — round-robin / priority به ازای هر provider.
+- **fallback سه‌سطحی** — اصلی → ارزان → رایگان/اعتبار، با triggerهای per-tier (429/5xx/timeout/401).
+- **Circuit breaker** + cooldown + رعایت Retry-After.
+- **RTK** — فشرده‌سازی tool_result تکراری؛ اندازه‌گیری واقعی صرفه‌جویی.
+- **ردیاب سهمیه** — پنجره ۵ ساعته، محدودیت روزانه/ماهانه، شمارش معکوس reset.
+- **استخرهای پروکسی** — HTTP/SOCKS خروجی با health check.
+- **ادغام CLI tools** — Claude Code، Cursor، Cline، Codex، OpenClaw (backup + diff + undo).
+- **MITM (opt-in)** — فقط لوکال، رضایت صریح، نصب root cert توسط کاربر.
+- **i18n** — انگلیسی + فارسی (RTL، Vazirmatn).
+- **تم تیره/روشن**، کارت‌های glass، accent emerald.
+
+## معماری
+```
+Client (OpenAI/Anthropic SDK)
+        │
+        ▼
+  ┌─────────────┐
+  │  Gateway    │  /v1/*  (Next.js API routes)
+  │  Translator │  (canonical format)
+  └──────┬──────┘
+         │
+   ┌─────┴─────┐
+   │  Router   │  combos, tiers, rotation, circuit breaker
+   └─────┬─────┘
+         │
+   ┌─────┴─────────────────────┐
+   │ Providers / Accounts      │  OAuth, API-key, compatible
+   └─────┬─────────────────────┘
+         │
+   ┌─────┴─────┐
+   │  RTK      │  tool_result compression
+   └─────┬─────┘
+         │
+   ┌─────┴─────┐
+   │  Vault    │  AES-256-GCM secrets (SQLite ~/.3evo)
+   └───────────┘
+```
+
+- ذخیره‌سازی: SQLite (`better-sqlite3`) در `~/.3evo/`.
+- اسرار: AES-256-GCM، کلید از OS keychain، fallback scrypt-derived master file (0600).
+- CLI: `3evo-router --port 20128 [--daemon] [--no-rtk]`.
+
+## امنیت
+- پیش‌فرض bind `127.0.0.1`. اتصال ریموت نیازمند auth.
+- `SECRET_PATH` (۱۶-۳۲ کاراکتر) پنل را پشت یک مسیر مخفی قرار می‌دهد.
+- Auth داشبورد: argon2/scrypt، کوکی HttpOnly + SameSite=Strict، CSRF، rate limiting.
+- اسرار هرگز بعد از ذخیره برگردانده نمی‌شوند (mask شده `sk-…abcd`)، هرگز در logs/errors/usage؛ log scrubber با تست.
+- CORS allowlist سخت‌گیرانه؛ SSRF protection روی custom provider URLs.
+- دسترسی ریموت فقط از طریق Cloudflare Tunnel / TLS؛ HTTP ساده برای non-localhost رد می‌شود.
+- بدون telemetry بالادستی؛ update check اختیاری.
+- اعلان یک‌باره ToS درباره استفاده از subscription OAuth.
 
 ## شروع سریع
 ```bash
@@ -8,13 +78,13 @@ npm install
 cp .env.example .env   # اختیاری
 npm run dev
 ```
-پنل: `http://localhost:20128/` (یا `http://localhost:20128/<SECRET_PATH>` اگر تنظیم شده)
+پنل: `http://localhost:20128/` (یا `http://localhost:20128/<SECRET_PATH>`)
 
-## متغیرهای محیطی
+## پیکربندی
 ```
 PORT=20128
 BASE_URL=http://localhost:20128
-SECRET_PATH=                # مسیر مخفی ۱۶-۳۲ کاراکتری برای پنل
+SECRET_PATH=                # مسیر مخفی ۱۶-۳۲ کاراکتری
 DATA_DIR=~/.3evo
 CLOUD_URL=                 # endpoint اختیاری sync
 SYNC_TIMEOUT_MS=1500
@@ -28,11 +98,29 @@ export ANTHROPIC_BASE_URL="http://localhost:20128"
 export ANTHROPIC_AUTH_TOKEN="<router-key-from-dashboard>"
 ```
 
-## نکات امنیتی
-- پیش‌فرض bind روی 127.0.0.1. اتصال ریموت نیازمند auth است.
-- با `SECRET_PATH` پنل را پشت یک مسیر مخفی قرار بده.
-- اسرار رمزنگاری‌شده در حالت rest (AES-256-GCM) و هرگز بعد از ذخیره برگردانده نمی‌شوند.
-- Cloud sync هرگز UI را بلوکه نمی‌کند.
+## ساختار پروژه
+```
+src/
+  app/            # Next.js App Router (dashboard + api)
+  lib/            # vault, rtk, combo schema, providers
+  cli/            # CLI entry
+data/             # providers.json
+locales/          # en.json, fa.json
+```
+
+## نقشه راه
+- [x] Scaffold (Next.js, TS, Tailwind)
+- [x] Providers page (interactive)
+- [x] Gateway proxy to local model
+- [x] RTK lib
+- [x] Combo schema (Zod)
+- [ ] Auth (real)
+- [ ] OAuth flows
+- [ ] Translator + streaming
+- [ ] Routing/failover + circuit breaker
+- [ ] Usage + Quota (DB)
+- [ ] Proxy pools, CLI tools, console log, MITM, settings
+- [ ] Hardening + tests + docs
 
 ## مجوز
-MIT
+MIT — see [LICENSE](LICENSE).
