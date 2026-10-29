@@ -1,5 +1,7 @@
 # 3EVO Router (Endpoint Proxy)
 
+![3EVO Router Logo](docs/logo.png)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 **گیت‌وی هوش مصنوعی لوکال + داشبورد وب.** یک endpoint سازگار با OpenAI/Anthropic ارائه می‌دهد و درخواست‌ها را بین چند provider با چرخش چندحسابی، fallback سه‌سطحی و فشرده‌سازی توکن (RTK) مسیریابی می‌کند.

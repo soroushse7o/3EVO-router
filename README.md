@@ -1,5 +1,7 @@
 # 3EVO Router (Endpoint Proxy)
 
+![3EVO Router Logo](docs/logo.png)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/Node-%3E%3D20-339933)](package.json)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org)
