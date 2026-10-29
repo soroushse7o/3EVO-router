@@ -1,0 +1,6 @@
+{
+  "oauth": ["Claude Code","Antigravity","OpenAI Codex","GitHub Copilot","Cursor IDE","Kilo Code","Cline"],
+  "free": ["iFlow AI","Qwen Code","Gemini CLI","Kiro AI","OpenCode Free"],
+  "apiKey": ["OpenRouter","GLM Coding","GLM (China)","Kimi","Minimax Coding","Minimax (China)","Alibaba","Alibaba Intl","OpenAI","Anthropic","Gemini","DeepSeek","Groq","xAI (Grok)","Mistral","Perplexity","Together AI","Fireworks AI","Cerebras","Cohere","NVIDIA NIM","Nebius AI","SiliconFlow","Hyperbolic","Deepgram","AssemblyAI","NanoBanana","Chutes AI"],
+  "compatible": []
+}

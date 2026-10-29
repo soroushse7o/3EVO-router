@@ -1,0 +1,15 @@
+{
+  "nav": {
+    "endpoint": "端点",
+    "providers": "ارائه‌دهندگان",
+    "proxyPools": "استخرهای پروکسی",
+    "combos": "ترکیب‌ها",
+    "usage": "مصرف",
+    "quota": "ردیاب سهمیه",
+    "mitm": "MITM",
+    "cliTools": "ابزارهای CLI",
+    "consoleLog": "لاگ کنسول",
+    "settings": "تنظیمات"
+  },
+  "common": { "shutdown": "خاموش کردن", "language": "زبان", "theme": "پوسته", "logout": "خروج" }
+}

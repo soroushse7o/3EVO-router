@@ -1,0 +1,15 @@
+{
+  "nav": {
+    "endpoint": "Endpoint",
+    "providers": "Providers",
+    "proxyPools": "Proxy Pools",
+    "combos": "Combos",
+    "usage": "Usage",
+    "quota": "Quota Tracker",
+    "mitm": "MITM",
+    "cliTools": "CLI Tools",
+    "consoleLog": "Console Log",
+    "settings": "Settings"
+  },
+  "common": { "shutdown": "Shutdown", "language": "Language", "theme": "Theme", "logout": "Logout" }
+}

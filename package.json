@@ -1,0 +1,33 @@
+{
+  "name": "3evo-router",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "3evo-router": "src/cli/index.ts"
+  },
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "next dev -p 20128",
+    "build": "next build",
+    "start": "next start -p 20128",
+    "test": "vitest run"
+  },
+  "keywords": [],
+  "type": "module",
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "better-sqlite3": "^13.0.3",
+    "next": "^16.4.3",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "zod": "^4.6.7"
+  }
+}
