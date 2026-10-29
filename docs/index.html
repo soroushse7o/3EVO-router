@@ -16,7 +16,14 @@ section{max-width:1100px;margin:60px auto;padding:0 24px}
 h2{font-size:28px;margin-bottom:16px}
 footer{text-align:center;color:var(--muted);padding:40px 24px;border-top:1px solid #ffffff10;margin-top:60px}
 @media(max-width:640px){h1{font-size:32px}.hero{padding:48px 16px}}
-</style></head><body>
+</style><div style="position:fixed;top:16px;right:16px;z-index:10"><button id="langBtn" onclick="toggleLang()" style="background:var(--card);color:var(--text);border:1px solid #ffffff20;border-radius:8px;padding:6px 12px;cursor:pointer">FA</button></div>
+<script>
+const en={title:"3EVO Router",tag:"Local-first AI gateway + web dashboard (\"Endpoint Proxy\"). One OpenAI/Anthropic-compatible endpoint, multi-account rotation, 3-tier fallback combos, RTK token compression.",gh:"GitHub",docs:"Docs",panel:"Live Panel Demo"};
+const fa={title:"3EVO Router",tag:"گیت‌وی هوش مصنوعی لوکال + داشبورد وب («Endpoint Proxy»). یک endpoint سازگار با OpenAI/Anthropic، چرخش چندحسابی، fallback سه‌سطحی، فشرده‌سازی RTK.",gh:"گیت‌هاب",docs:"مستندات",panel:"نمایش پنل"};
+let lang='en';
+function toggleLang(){lang=lang==='en'?'fa':'en';document.documentElement.lang=lang;document.documentElement.dir=lang==='fa'?'rtl':'ltr';document.querySelector('h1').innerHTML='3EVO <span>Router</span>';document.querySelector('.tag').textContent=(lang==='fa'?fa:en).tag;document.getElementById('langBtn').textContent=lang==='en'?'FA':'EN';}
+</script>
+<body>
 <div class="hero">
   <h1>3EVO <span>Router</span></h1>
   <p class="tag">Local-first AI gateway + web dashboard ("Endpoint Proxy"). One OpenAI/Anthropic-compatible endpoint, multi-account rotation, 3-tier fallback combos, RTK token compression.</p>
