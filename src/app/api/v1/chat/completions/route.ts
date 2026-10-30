@@ -64,6 +64,7 @@ export async function POST(req: NextRequest) {
     return Response.json(result);
   } catch (e) {
     console.error("ROUTE_ERROR", e);
-    return Response.json({ error: e?.message || String(e), stack: e?.stack }, { status: 500 });
+    const err = e as any;
+    return Response.json({ error: err?.message || String(e), stack: err?.stack }, { status: 500 });
   }
 }
