@@ -2,10 +2,11 @@
 <title>Endpoint Proxy — Panel</title>
 <style>
 :root{--bg:#0a0e1a;--card:#121826;--accent:#10E58A;--text:#e6eaf2;--muted:#8a93a6}
-*{box-sizing:border-box;margin:0;padding:0}body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
 aside{width:220px;border-right:1px solid #ffffff10;padding:16px}
 aside .logo{color:var(--accent);font-weight:700;margin-bottom:16px}
-aside nav div{padding:6px 8px;border-radius:8px;margin:2px 0;font-size:14px}
+aside nav div{padding:6px 8px;border-radius:8px;margin:2px 0;font-size:14px;cursor:pointer}
 aside nav div.active{background:#10E58A22;color:var(--accent)}
 main{flex:1;padding:24px;overflow:auto}
 h1{font-size:22px;margin-bottom:16px}
@@ -17,11 +18,30 @@ h2{font-size:16px;margin:16px 0 8px}
 .conn.on{color:var(--accent)}
 .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
 .badge{font-size:11px;padding:2px 8px;border-radius:999px;background:#10E58A22;color:var(--accent)}
-@media(max-width:640px){aside{display:none}}
+@media(max-width:640px){aside{display:none}.grid{grid-template-columns:1fr}}
+.toggle{position:fixed;top:16px;right:16px;z-index:10}
+pre.tree{background:var(--card);padding:20px;border-radius:16px;overflow:auto;color:var(--muted);font-family:monospace;white-space:pre;direction:ltr}
 </style></head><body>
 <div style="position:fixed;top:16px;right:16px;z-index:10"><button id="langBtn" onclick="toggleLang()" style="background:var(--card);color:var(--text);border:1px solid #ffffff20;border-radius:8px;padding:6px 12px;cursor:pointer">FA</button></div>
-<script>let lang='en';function toggleLang(){lang=lang==='en'?'fa':'en';document.documentElement.lang=lang;document.documentElement.dir=lang==='fa'?'rtl':'ltr';document.getElementById('langBtn').textContent=lang==='en'?'FA':'EN';}</script>
-<aside><div class="logo">Endpoint Proxy <span style="font-size:10px;color:var(--muted)">v0.3.40</span></div>
+<script>
+let lang='en';
+const T={
+en:{panelTitle:"Providers",serviceRunning:"Service running",oauth:"OAuth Providers",free:"Free Providers",apiKey:"API Key Providers",connected:"Connected",noConn:"No connections",staticNote:"Static showcase — not a live instance."},
+fa:{panelTitle:"ارائه‌دهندگان",serviceRunning:"سرویس در حال اجرا",oauth:"ارائه‌دهندگان OAuth",free:"ارائه‌دهندگان رایگان",apiKey:"ارائه‌دهندگان با کلید API",connected:"متصل",noConn:"بدون اتصال",staticNote:"نمایش استاتیک — نمونه زنده نیست."}
+};
+function toggleLang(){lang=lang==='en'?'fa':'en';const t=T[lang];document.documentElement.lang=lang;document.documentElement.dir=lang==='fa'?'rtl':'ltr';
+document.getElementById('langBtn').textContent=lang==='en'?'FA':'EN';
+document.querySelectorAll('h1')[0].textContent=t.panelTitle;
+document.querySelector('.badge').textContent=t.serviceRunning;
+document.querySelectorAll('h2')[0].textContent=t.oauth;
+document.querySelectorAll('h2')[1].textContent=t.free;
+document.querySelectorAll('h2')[2].textContent=t.apiKey;
+document.querySelectorAll('.conn.on').forEach(el=>el.textContent=t.connected);
+document.querySelectorAll('.conn:not(.on)').forEach(el=>el.textContent=t.noConn);
+document.querySelector('.static').textContent=t.staticNote;
+}
+</script>
+<aside><div class="logo">Endpoint Proxy <span style="font-size:10px;color:var(--muted)">v1.0.0</span></div>
 <nav><div class="active">Providers</div><div>Endpoint</div><div>Proxy Pools</div><div>Combos</div><div>Usage</div><div>Quota Tracker</div><div>MITM</div><div>CLI Tools</div><div>Console Log</div><div>Settings</div></nav></aside>
 <main>
 <div class="top"><h1>Providers</h1><span class="badge">Service running</span></div>
@@ -47,5 +67,5 @@ h2{font-size:16px;margin:16px 0 8px}
   <div class="card"><div class="name">Groq</div><div class="conn">No connections</div></div>
   <div class="card"><div class="name">Mistral</div><div class="conn">No connections</div></div>
 </div>
-<p style="margin-top:24px;color:var(--muted);font-size:12px">Static showcase — not a live instance.</p>
+<p class="static" style="margin-top:24px;color:var(--muted);font-size:12px">Static showcase — not a live instance.</p>
 </main></body></html>
