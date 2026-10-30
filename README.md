@@ -71,10 +71,11 @@ Client (OpenAI/Anthropic SDK)
 ## Security (current state: alpha)
 - Default bind `127.0.0.1` in scripts.
 - `SECRET_PATH` (16-32 chars) hides panel behind a secret URL segment.
-- Dashboard auth: cookie-based session (currently simple token; password hashing upgrade planned).
-- Secrets stored in AES-256-GCM vault under `~/.3evo/`; plaintext fallback only for unsupported platforms.
+- Dashboard auth: cookie-based session with scrypt password hashing.
+- Session validation in route handlers; middleware does lightweight presence checks only.
 - Log scrubber masks common secret patterns; tests enforce masking.
-- Planned: scrypt password hashing, CSRF, rate limiting, OS keychain integration, SSRF protection, strict CORS allowlist, Cloudflare Tunnel/TLS, update check opt-in, ToS notice.
+- Secrets stored in AES-256-GCM vault under `~/.3evo/`; account tokens encrypted at rest.
+- Planned: argon2/scrypt upgrade (currently scrypt), CSRF tokens, rate limiting, OS keychain integration, SSRF protection, strict CORS allowlist, Cloudflare Tunnel/TLS, update check opt-in, ToS notice.
 
 ## Quick start
 ```bash
