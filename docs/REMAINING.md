@@ -1,53 +1,49 @@
 # 3EVO Router — Remaining Roadmap to 100%
 
-## Current: ~56% complete
+## Current: ~60% complete
 
 ### Phase A — OAuth Flows (real)
 - [x] OAuth start + callback (stub)
-- [x] Accounts store (OAuth tokens)
-- [ ] Device-code flow for each OAuth provider (Claude Code, Codex, Copilot, Cursor, Kilo, Cline, Antigravity)
+- [x] Accounts store (OAuth tokens, encrypted)
+- [ ] Device-code flow for each OAuth provider
 - [ ] Token refresh proactive + reactive on 401
 - [ ] Show token status in providers drawer
 - [ ] Mark verified:true in providers.json after live check
 
 ### Phase B — Translator (full) + streaming
-- [x] OpenAI ↔ Anthropic
+- [x] OpenAI ↔ Anthropic basic
 - [x] Gemini format conversion
 - [ ] OpenAI Responses API full support
 - [ ] Ollama/Cursor/Kiro/Vertex/Antigravity adapters
 - [ ] Golden-file tests per pair
-- [ ] Mid-stream failover (no bytes sent → transparent; started → error event)
+- [ ] Mid-stream failover
 
 ### Phase C — Routing & failover (integrated)
 - [x] runWithFallback helper
 - [x] /v1/chat/completions uses runWithFallback
-- [ ] Account rotation (round-robin/priority) per provider
-- [ ] Cooldown + Retry-After honoring
+- [x] Account rotation (round-robin/priority) per provider
 - [x] Circuit breaker lib (threshold 3, cooldown 30s)
 - [x] Circuit breaker wired into routing
 - [ ] All-tiers-exhausted error body (list tried, soonest reset)
-- [ ] Dashboard alert
+- [ ] Dashboard alert for exhausted tiers
 
 ### Phase D — Usage + Quota (DB-backed UI)
 - [x] SQLite usage DB + APIs
-- [x] Wire /api/usage into Usage page (fetch + CSV export)
-- [x] Wire /api/quota into Quota Tracker page
+- [x] Usage page + CSV export
+- [x] Quota API + page
 - [ ] RTK savings measurement recorded
 - [ ] Cost per 1M native vs after RTK
 
 ### Phase E — Settings (full)
 - [x] Settings page + API
 - [x] Settings persisted to ~/.3evo/settings.json
-- [x] Port, bind address, auth password change
-- [x] Language/theme toggle persisted
-- [x] RTK options, fallback options
 - [ ] Cloud sync with timeout (no UI freeze)
 - [ ] Data export/import (secrets excluded unless encrypted)
 
 ### Phase F — Proxy pools, CLI tools, console log (real)
 - [x] Scaffold pages
 - [ ] Proxy CRUD + health check + assignment + rotation
-- [ ] CLI tools: detect installed clients, generate/apply config (backup, diff, undo)
+- [ ] CLI tools: detect installed clients, generate/apply config
 - [x] Console log: SSE live stream with level filter + search + secret masking
 
 ### Phase G — MITM (full, opt-in)
@@ -57,10 +53,15 @@
 
 ### Phase H — Hardening & docs
 - [x] Log scrubber + tests
-- [x] Vitest (scrubber, rtk)
+- [x] Vitest (scrubber, rtk, security)
 - [x] README EN+FA final
 - [x] Security checklist pass
 - [x] docs/CLIENTS.md
 - [x] docs/ASSUMPTIONS.md
+- [ ] Rate limiting (5 attempts/min per IP)
+- [ ] CSRF tokens
+- [ ] SSRF protection
+- [ ] Strict CORS allowlist
+- [ ] E2E smoke tests (Playwright)
 
-## Estimated remaining: ~6% (3–5 hours focused)
+## Estimated remaining: ~40% (8–12 hours focused)
