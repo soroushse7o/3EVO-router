@@ -130,12 +130,17 @@ locales/          # en.json, fa.json
 - [x] SQLite usage DB
 - [x] Translator (stub)
 - [x] Router failover helper
-- [ ] OAuth flows
+- [x] OAuth start + callback (stub)
+- [x] Settings page + API
+- [x] Health endpoint
+- [x] Log scrubber + tests
+- [x] Vitest (scrubber, rtk)
+- [ ] OAuth flows (real)
 - [ ] Translator (full) + streaming
 - [ ] Routing/failover (integrated)
 - [ ] Usage + Quota (DB-backed UI)
 - [ ] Settings (full)
-- [ ] Hardening + tests + docs
+- [ ] Hardening + e2e + docs
 
 ## مجوز
 MIT — see [LICENSE](LICENSE).

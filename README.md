@@ -119,25 +119,29 @@ locales/          # en.json, fa.json
 - [x] Auth (real)
 - [x] Anthropic /v1/messages + OpenAI /v1/responses
 - [x] Streaming passthrough
-- [x] RTK lib
-- [x] Combo schema (Zod)
-- [x] Combos page (3 templates)
+- [x] RTK lib + API
+- [x] Combo schema (Zod) + combos page
 - [x] MITM opt-in consent (stub)
-- [x] Usage page
-- [x] Quota tracker page
+- [x] Usage page + API (SQLite)
+- [x] Quota tracker page + API
 - [x] Console log (SSE)
 - [x] Proxy pools page
 - [x] CLI tools page
 - [x] Circuit breaker
 - [x] SQLite usage DB
-- [x] Translator (stub)
+- [x] Translator (OpenAI↔Anthropic)
 - [x] Router failover helper
-- [ ] OAuth flows
+- [x] OAuth start + callback (stub)
+- [x] Settings page + API
+- [x] Health endpoint
+- [x] Log scrubber + tests
+- [x] Vitest (scrubber, rtk)
+- [ ] OAuth flows (real)
 - [ ] Translator (full) + streaming
 - [ ] Routing/failover (integrated)
 - [ ] Usage + Quota (DB-backed UI)
 - [ ] Settings (full)
-- [ ] Hardening + tests + docs
+- [ ] Hardening + e2e + docs
 
 ## License
 MIT — see [LICENSE](LICENSE).
