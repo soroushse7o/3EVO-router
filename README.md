@@ -68,15 +68,13 @@ Client (OpenAI/Anthropic SDK)
 - Secrets: AES-256-GCM, key from OS keychain, fallback scrypt-derived master file (0600).
 - CLI: `3evo-router --port 20128 [--daemon] [--no-rtk]`.
 
-## Security
-- Default bind `127.0.0.1`. Remote binding requires auth.
+## Security (current state: alpha)
+- Default bind `127.0.0.1` in scripts.
 - `SECRET_PATH` (16-32 chars) hides panel behind a secret URL segment.
-- Dashboard auth: argon2/scrypt, HttpOnly + SameSite=Strict cookies, CSRF, rate limiting.
-- Secrets never returned after save (masked `sk-…abcd`), never in logs/errors/usage; log scrubber with tests.
-- Strict CORS allowlist; SSRF protection on custom provider URLs.
-- Remote access via Cloudflare Tunnel / TLS only; plain HTTP rejected for non-localhost.
-- No upstream telemetry; update check opt-in.
-- One-time ToS notice about subscription OAuth usage.
+- Dashboard auth: cookie-based session (currently simple token; password hashing upgrade planned).
+- Secrets stored in AES-256-GCM vault under `~/.3evo/`; plaintext fallback only for unsupported platforms.
+- Log scrubber masks common secret patterns; tests enforce masking.
+- Planned: scrypt password hashing, CSRF, rate limiting, OS keychain integration, SSRF protection, strict CORS allowlist, Cloudflare Tunnel/TLS, update check opt-in, ToS notice.
 
 ## Quick start
 ```bash

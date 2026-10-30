@@ -10,9 +10,9 @@
     "doc": "docs"
   },
   "scripts": {
-    "dev": "next dev -p 20128",
+    "dev": "next dev -H 127.0.0.1 -p 20128",
     "build": "next build",
-    "start": "next start -p 20128",
+    "start": "next start -H 127.0.0.1 -p 20128",
     "test": "vitest run"
   },
   "keywords": [],
