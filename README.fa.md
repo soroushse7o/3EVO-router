@@ -124,7 +124,7 @@ locales/          # en.json, fa.json
 - [x] Combos page (3 templates)
 - [x] MITM opt-in consent (stub)
 - [x] Usage page
-- [x] Quota tracker page
+- [x] Quota API + page
 - [x] Console log (SSE)
 - [x] Proxy pools page
 - [x] CLI tools page

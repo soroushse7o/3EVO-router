@@ -125,7 +125,7 @@ locales/          # en.json, fa.json
 - [x] Combo schema (Zod) + combos page
 - [x] MITM opt-in consent (stub)
 - [x] Usage page + API (SQLite)
-- [x] Quota tracker page + API
+- [x] Quota API + page
 - [x] Console log (SSE)
 - [x] Proxy pools page
 - [x] CLI tools page
@@ -136,11 +136,13 @@ locales/          # en.json, fa.json
 - [x] OAuth start + callback (stub)
 - [x] Accounts store (OAuth tokens)
 - [x] Settings page + API
+- [x] Settings persisted to ~/.3evo/settings.json
 - [x] Health endpoint
 - [x] Log scrubber + tests
 - [x] Vitest (scrubber, rtk)
 - [x] Route test endpoint (runWithFallback)
 - [x] /v1/chat/completions integrated with runWithFallback
+- [x] Gemini format translator
 - [ ] OAuth flows (real)
 - [ ] Translator (full) + streaming
 - [ ] Routing/failover (integrated)
