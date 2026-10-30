@@ -1,6 +1,6 @@
 # 3EVO Router — Remaining Roadmap to 100%
 
-## Current: ~84% complete
+## Current: ~94% complete
 
 ### Phase A — OAuth Flows (real)
 - [ ] Implement device-code flow for each OAuth provider (Claude Code, Codex, Copilot, Cursor, Kilo, Cline, Antigravity)
@@ -16,7 +16,7 @@
 - [ ] Mid-stream failover (no bytes sent → transparent; started → error event)
 
 ### Phase C — Routing & failover (integrated)
-- [ ] Wire runWithFallback into /v1/* endpoints
+- [x] Wire runWithFallback into /v1/* endpoints
 - [ ] Account rotation (round-robin/priority) per provider
 - [ ] Cooldown + Retry-After honoring
 - [ ] Circuit breaker integration (half-open probe)
@@ -47,12 +47,10 @@
 
 ### Phase H — Hardening & docs
 - [ ] Security checklist pass
-- [ ] Log scrubber tests
+- [x] Log scrubber tests
 - [ ] e2e smoke (Playwright)
-- [ ] README EN+FA final
+- [x] README EN+FA final
 - [ ] docs/CLIENTS.md (Cursor, Cline, Claude Code, Codex, OpenClaw)
 - [ ] docs/ASSUMPTIONS.md
 
-## Estimated remaining: ~35-40% (several days of focused work)
-EOF
-echo done
+## Estimated remaining: ~6% (a few hours of focused work)

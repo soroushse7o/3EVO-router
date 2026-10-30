@@ -134,10 +134,13 @@ locales/          # en.json, fa.json
 - [x] Translator (OpenAI↔Anthropic)
 - [x] Router failover helper
 - [x] OAuth start + callback (stub)
+- [x] Accounts store (OAuth tokens)
 - [x] Settings page + API
 - [x] Health endpoint
 - [x] Log scrubber + tests
 - [x] Vitest (scrubber, rtk)
+- [x] Route test endpoint (runWithFallback)
+- [x] /v1/chat/completions integrated with runWithFallback
 - [ ] OAuth flows (real)
 - [ ] Translator (full) + streaming
 - [ ] Routing/failover (integrated)
