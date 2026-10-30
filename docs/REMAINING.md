@@ -1,6 +1,6 @@
 # 3EVO Router — Remaining Roadmap to 100%
 
-## Current: ~94% complete
+## Current: ~56% complete
 
 ### Phase A — OAuth Flows (real)
 - [x] OAuth start + callback (stub)
@@ -24,23 +24,23 @@
 - [ ] Account rotation (round-robin/priority) per provider
 - [ ] Cooldown + Retry-After honoring
 - [x] Circuit breaker lib (threshold 3, cooldown 30s)
-- [ ] Circuit breaker wired into routing
+- [x] Circuit breaker wired into routing
 - [ ] All-tiers-exhausted error body (list tried, soonest reset)
 - [ ] Dashboard alert
 
 ### Phase D — Usage + Quota (DB-backed UI)
 - [x] SQLite usage DB + APIs
-- [ ] Wire /api/usage into Usage page (fetch + CSV export)
-- [ ] Wire /api/quota into Quota Tracker page
+- [x] Wire /api/usage into Usage page (fetch + CSV export)
+- [x] Wire /api/quota into Quota Tracker page
 - [ ] RTK savings measurement recorded
 - [ ] Cost per 1M native vs after RTK
 
 ### Phase E — Settings (full)
 - [x] Settings page + API
 - [x] Settings persisted to ~/.3evo/settings.json
-- [ ] Port, bind address, auth password change
-- [ ] Language/theme toggle persisted
-- [ ] RTK options, fallback options
+- [x] Port, bind address, auth password change
+- [x] Language/theme toggle persisted
+- [x] RTK options, fallback options
 - [ ] Cloud sync with timeout (no UI freeze)
 - [ ] Data export/import (secrets excluded unless encrypted)
 
@@ -48,7 +48,7 @@
 - [x] Scaffold pages
 - [ ] Proxy CRUD + health check + assignment + rotation
 - [ ] CLI tools: detect installed clients, generate/apply config (backup, diff, undo)
-- [ ] Console log: SSE live stream with level filter + search + secret masking
+- [x] Console log: SSE live stream with level filter + search + secret masking
 
 ### Phase G — MITM (full, opt-in)
 - [x] Opt-in consent stub
