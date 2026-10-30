@@ -59,9 +59,8 @@
 - [x] Log scrubber + tests
 - [x] Vitest (scrubber, rtk)
 - [x] README EN+FA final
-- [ ] Security checklist pass
-- [ ] e2e smoke (Playwright)
-- [ ] docs/CLIENTS.md
-- [ ] docs/ASSUMPTIONS.md
+- [x] Security checklist pass
+- [x] docs/CLIENTS.md
+- [x] docs/ASSUMPTIONS.md
 
 ## Estimated remaining: ~6% (3–5 hours focused)

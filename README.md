@@ -148,7 +148,7 @@ locales/          # en.json, fa.json
 - [ ] Routing/failover (integrated)
 - [ ] Usage + Quota (DB-backed UI)
 - [ ] Settings (full)
-- [ ] Hardening + e2e + docs
+- [x] Hardening + e2e + docs
 
 ## License
 MIT — see [LICENSE](LICENSE).
