@@ -1,4 +1,4 @@
-3EVO Router — AI Smart Gateway (Local + Web Dashboard)
+3-EVO Router — AI Smart Gateway (Local + Web Dashboard)
 
 It provides a single OpenAI/Anthropic-compatible endpoint and intelligently routes requests automatically across multiple providers using multi-account rotation, three-tier fallback, and token compression (RTK).
 ![3EVO Router Logo](docs/logo.png)
