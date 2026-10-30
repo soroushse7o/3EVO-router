@@ -1,5 +1,7 @@
 import { NextRequest } from "next/server";
+import { requireApiKey } from "@/lib/api-key";
 export async function POST(req: NextRequest) {
+  requireApiKey(req);
   const body = await req.json();
   const input = typeof body.input === "string" ? body.input : (body.input?.map((i: any) => i.content).join("") || "");
   const upstream = await fetch("http://127.0.0.1:18435/v1/chat/completions", {

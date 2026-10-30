@@ -1,7 +1,10 @@
 import { NextRequest } from "next/server";
 import { upsertAccount } from "@/lib/accounts";
 import { validateState } from "../start/route";
+import { validateSession } from "@/lib/auth";
 export async function GET(req: NextRequest) {
+  const session = req.cookies.get("session")?.value;
+  if (!validateSession(session)) return Response.json({ error: "unauthorized" }, { status: 401 });
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
   const state = searchParams.get("state");

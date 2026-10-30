@@ -1,10 +1,13 @@
 import { NextRequest } from "next/server";
 import { runWithFallback } from "@/lib/router";
 import { recordUsage } from "@/lib/db";
-export async function GET() {
+import { requireApiKey } from "@/lib/api-key";
+export async function GET(req: NextRequest) {
+  requireApiKey(req);
   return Response.json({ data: [{ id: "qwen2.5-14b", object: "model", owned_by: "local" }] });
 }
 export async function POST(req: NextRequest) {
+  requireApiKey(req);
   const body = await req.json();
   const upstreamUrl = "http://127.0.0.1:18435/v1/chat/completions";
   if (body.stream) {

@@ -1,6 +1,8 @@
 import { NextRequest } from "next/server";
 import { recordUsage } from "@/lib/db";
+import { requireApiKey } from "@/lib/api-key";
 export async function POST(req: NextRequest) {
+  requireApiKey(req);
   const body = await req.json();
   const messages = (body.messages || []).map((m: any) => ({ role: m.role, content: typeof m.content === "string" ? m.content : (m.content?.map((c: any) => c.text || c).join("") || "") }));
   const upstream = await fetch("http://127.0.0.1:18435/v1/chat/completions", {
@@ -14,4 +16,7 @@ export async function POST(req: NextRequest) {
   recordUsage(body.model || "unknown", "messages", usage.input_tokens, usage.output_tokens, 0);
   return Response.json({ id: "msg_1", type: "message", role: "assistant", content: [{ type: "text", text }], model: body.model, stop_reason: "end_turn", usage });
 }
-export async function GET() { return Response.json({ ok: true }); }
+export async function GET(req: NextRequest) {
+  requireApiKey(req);
+  return Response.json({ ok: true });
+}
