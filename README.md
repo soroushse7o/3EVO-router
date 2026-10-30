@@ -1,7 +1,6 @@
-# 3EVO Router — گیت‌وی هوشمند هوش مصنوعی (لوکال + داشبورد تحت وب)
+3-EVO Router — AI Smart Gateway (Local + Web Dashboard)
 
-گیت‌وی هوشمند(هوش مصنوعی)( لوکال + داشبورد تحت وب. )یک endpoint واحد و سازگار با OpenAI/Anthropic ارائه می‌دهد و درخواست‌ها را بین چند provider با چرخش چندحسابی، fallback سه‌سطحی و فشرده‌سازی توکن (RTK) به وصورت خودکار و هوشمند مسیریابی می‌کند.
-
+It provides a single OpenAI/Anthropic-compatible endpoint and intelligently routes requests automatically across multiple providers using multi-account rotation, three-tier fallback, and token compression (RTK).
 ![3EVO Router Logo](docs/logo.png)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
