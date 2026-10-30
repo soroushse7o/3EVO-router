@@ -17,3 +17,8 @@ export function isOpen(key: string): boolean {
   if (s.state === "open" && Date.now() - s.openedAt > COOLDOWN) { s.state = "half-open"; states.set(key, s); return false; }
   return s.state === "open";
 }
+export function getRetryAfter(key: string): number {
+  const s = states.get(key);
+  if (!s || s.state !== "open") return 0;
+  return Math.max(0, COOLDOWN - (Date.now() - s.openedAt));
+}
