@@ -1,4 +1,10 @@
 import { recordFailure, recordSuccess, isOpen, getRetryAfter } from "@/lib/circuit";
+function rotateAccounts(accounts: string[], strategy: "round-robin" | "priority" = "round-robin", lastIndex: { current: number } = { current: -1 }): string[] {
+  if (strategy === "priority") return accounts.slice().sort((a, b) => a.localeCompare(b));
+  lastIndex.current = (lastIndex.current + 1) % accounts.length;
+  return [accounts[lastIndex.current], ...accounts.slice(0, lastIndex.current), ...accounts.slice(lastIndex.current + 1)];
+}
+export { rotateAccounts };
 export async function runWithFallback<T>(tiers: Array<() => Promise<T>>, keyPrefix = "default"): Promise<T> {
   let lastErr: any;
   for (let i = 0; i < tiers.length; i++) {
