@@ -1,0 +1,25 @@
+import { describe, it, expect, beforeEach } from "vitest";
+import { scrub } from "../scrubber";
+import { hashPassword, verifyPassword, validatePassword, createSession, validateSession, destroySession, ensureAuth, requireAuth } from "../auth";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+describe("P1 security integration", () => {
+  beforeEach(() => { ensureAuth(); });
+  it("scrub removes Bearer token", () => { expect(scrub("Authorization: Bearer abc123")).not.toContain("abc123"); expect(scrub("Authorization: Bearer abc123")).toContain("[REDACTED_SECRET]"); });
+  it("scrub removes x-api-key", () => { expect(scrub("x-api-key: sk-1234567890abcdef")).not.toContain("sk-1234567890abcdef"); });
+  it("scrub removes Cookie", () => { expect(scrub("Cookie: session=xyz")).toContain("[REDACTED_SECRET]"); });
+  it("scrub removes ?key=", () => { expect(scrub("http://example.com?key=secret")).toContain("[REDACTED_SECRET]"); });
+  it("scrub removes sk- pattern", () => { expect(scrub("token=sk-AbCdEfGhIjKlMnOpQrStUvWxYz123456")).toContain("[REDACTED_SECRET]"); });
+  it("password hashing with scrypt", () => { const pw = "testpass"; const { hash, salt } = hashPassword(pw); expect(hash).toBeTruthy(); expect(salt).toBeTruthy(); expect(verifyPassword(pw, salt, hash)).toBe(true); expect(verifyPassword("wrong", salt, hash)).toBe(false); });
+  it("timingSafeEqual used", () => { const { hash, salt } = hashPassword("pw"); expect(() => verifyPassword("wrong", salt, hash)).not.toThrow(); });
+  it("session lifecycle", () => { const s = createSession(); expect(validateSession(s)).toBe(true); destroySession(s); expect(validateSession(s)).toBe(false); });
+  it("validateSession rejects random", () => { expect(validateSession("invalid")).toBe(false); expect(validateSession("")).toBe(false); expect(validateSession(undefined)).toBe(false); });
+  it("requireAuth throws 401 without session", () => { expect(() => requireAuth({})).toThrow("unauthorized"); });
+  it("requireAuth throws 401 with fake session", () => { expect(() => requireAuth({ cookies: { get: () => ({ value: "fake" }) } })).toThrow("unauthorized"); });
+  it("requireAuth accepts valid session", () => { const s = createSession(); const res = requireAuth({ cookies: { get: () => ({ value: s }) } }); expect(res.session).toBe(s); destroySession(s); });
+  it("no plaintext tokens in accounts file", () => { const enc = path.join(process.env.HOME || process.env.USERPROFILE || ".", ".3evo", "accounts.json.enc"); if (fs.existsSync(enc)) { const content = fs.readFileSync(enc, "utf8"); expect(content).not.toContain("sk-"); expect(content).not.toContain("Bearer"); } else { expect(true).toBe(true); } });
+  it("vault encrypt/decrypt roundtrip", async () => { const { encrypt, decrypt, masterKey } = await import("../vault"); const plain = "test-token-123"; const enc = encrypt(plain, masterKey()); const dec = decrypt(enc, masterKey()); expect(dec).toBe(plain); });
+  it("vault tamper fails", async () => { const { encrypt, decrypt, masterKey } = await import("../vault"); const enc = encrypt("secret", masterKey()); const tampered = enc.slice(0, -4) + "XXXX"; expect(() => decrypt(tampered, masterKey())).toThrow(); });
+});

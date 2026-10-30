@@ -9,3 +9,12 @@ export function validatePassword(password: string) { const path = require("path"
 export function createSession() { const fs = require("fs"); const path = require("path"); const crypto = getCrypto(); const SESSIONS_FILE = path.join(getDataDir(), "sessions.json"); const session = crypto.randomBytes(32).toString("hex"); const sessions = readJson(SESSIONS_FILE, {}); sessions[session] = { created: Date.now() }; writeJson(SESSIONS_FILE, sessions); return session; }
 export function validateSession(session: string | undefined) { const path = require("path"); if (!session) return false; const sessions = readJson(path.join(getDataDir(), "sessions.json"), {}); return !!sessions[session]; }
 export function destroySession(session: string | undefined) { if (!session) return; const fs = require("fs"); const path = require("path"); const SESSIONS_FILE = path.join(getDataDir(), "sessions.json"); const sessions = readJson(SESSIONS_FILE, {}); delete sessions[session]; writeJson(SESSIONS_FILE, sessions); }
+export function requireAuth(req: any) {
+  const session = req?.cookies?.get?.("session")?.value;
+  if (!session || !validateSession(session)) {
+    const err = new Error("unauthorized") as any;
+    err.status = 401;
+    throw err;
+  }
+  return { session };
+}
