@@ -8,9 +8,9 @@ export async function POST(req: NextRequest) {
   }
   const body = await req.json();
   const messages = (body.messages || []).map((m: any) => ({ role: m.role, content: typeof m.content === "string" ? m.content : (m.content?.map((c: any) => c.text || c).join("") || "") }));
-  const upstream = await fetch("http://127.0.0.1:18435/v1/chat/completions", {
+  const upstream = await fetch(process.env.UPSTREAM_URL || "http://127.0.0.1:18434/v1/chat/completions", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + (process.env.LOCAL_MODEL_API_KEY || "_fZvyqDksRI74Ug0BmDsWbYNxuFpRZmR") },
     body: JSON.stringify({ model: body.model || "Qwen2.5-14B-Instruct-Q4_K_M", messages, max_tokens: body.max_tokens || 256 }),
   });
   const data = await upstream.json();

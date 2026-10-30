@@ -7,12 +7,12 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const tiers = [
     async () => {
-      const r = await fetch("http://127.0.0.1:18435/v1/chat/completions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      const r = await fetch("http://127.0.0.1:18434/v1/chat/completions", { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + (process.env.LOCAL_MODEL_API_KEY || "_fZvyqDksRI74Ug0BmDsWbYNxuFpRZmR") }, body: JSON.stringify(body) });
       if (!r.ok) throw new Error("tier1 failed");
       return { tier: 1, data: await r.json() };
     },
     async () => {
-      const r = await fetch("http://127.0.0.1:18435/v1/chat/completions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      const r = await fetch("http://127.0.0.1:18434/v1/chat/completions", { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + (process.env.LOCAL_MODEL_API_KEY || "_fZvyqDksRI74Ug0BmDsWbYNxuFpRZmR") }, body: JSON.stringify(body) });
       if (!r.ok) throw new Error("tier2 failed");
       return { tier: 2, data: await r.json() };
     },

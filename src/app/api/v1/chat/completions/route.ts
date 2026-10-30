@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   if (!key || !validateApiKey(key)) {
     return Response.json({ error: "invalid api key" }, { status: 401 });
   }
-  return Response.json({ data: [{ id: "qwen2.5-14b", object: "model", owned_by: "local" }] });
+  return Response.json({ data: [{ id: "qwen2.5-coder-7b-instruct-q8_0", object: "model", owned_by: "local" }] });
 }
 export async function POST(req: NextRequest) {
   const key = req.headers?.get?.("authorization")?.replace("Bearer ", "") || req.headers?.get?.("x-api-key");
@@ -15,9 +15,9 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: "invalid api key" }, { status: 401 });
   }
   const body = await req.json();
-  const upstreamUrl = "http://127.0.0.1:18435/v1/chat/completions";
+  const upstreamUrl = process.env.UPSTREAM_URL || "http://127.0.0.1:18434/v1/chat/completions";
   if (body.stream) {
-    const upstream = await fetch(upstreamUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...body, stream: true }) });
+    const upstream = await fetch(upstreamUrl, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + (process.env.LOCAL_MODEL_API_KEY || "_fZvyqDksRI74Ug0BmDsWbYNxuFpRZmR") }, body: JSON.stringify({ ...body, stream: true }) });
     if (!upstream.ok) {
       const err = await upstream.text();
       return Response.json({ error: err }, { status: upstream.status });
@@ -53,12 +53,17 @@ export async function POST(req: NextRequest) {
     });
     return new Response(readable, { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache" } });
   }
-  const result = await runWithFallback([async () => {
-    const r = await fetch(upstreamUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-    const data = await r.json();
-    if (!r.ok) throw { status: r.status, message: data.error?.message || data.error || "upstream error" };
-    recordUsage(body.model || "unknown", "chat", data.usage?.prompt_tokens || 0, data.usage?.completion_tokens || 0, 0);
-    return data;
-  }], `chat:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`);
-  return Response.json(result);
+  try {
+    const result = await runWithFallback([async () => {
+      const r = await fetch(upstreamUrl, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + (process.env.LOCAL_MODEL_API_KEY || "_fZvyqDksRI74Ug0BmDsWbYNxuFpRZmR") }, body: JSON.stringify(body) });
+      const data = await r.json();
+      if (!r.ok) throw { status: r.status, message: data.error?.message || data.error || "upstream error" };
+      recordUsage(body.model || "unknown", "chat", data.usage?.prompt_tokens || 0, data.usage?.completion_tokens || 0, 0);
+      return data;
+    }], `chat:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`);
+    return Response.json(result);
+  } catch (e) {
+    console.error("ROUTE_ERROR", e);
+    return Response.json({ error: e?.message || String(e), stack: e?.stack }, { status: 500 });
+  }
 }
