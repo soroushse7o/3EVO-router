@@ -50,6 +50,6 @@ export async function POST(req: NextRequest) {
     if (!r.ok) throw { status: r.status, message: data.error?.message || data.error || "upstream error" };
     recordUsage(body.model || "unknown", "chat", data.usage?.prompt_tokens || 0, data.usage?.completion_tokens || 0, 0);
     return data;
-  }], `chat:${req.ip || "unknown"}`);
+  }], `chat:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`);
   return Response.json(result);
 }
