@@ -1,0 +1,12 @@
+{
+  "percent": 56,
+  "commits": [
+    "c78cddb fix: replace req.ip with x-forwarded-for header in v1 chat completions",
+    "7d2e219 feat: proxy v1 routes to local fallback, streaming, usage recording, requireAuth helper",
+    "958527d P1 security: scrypt auth, session validation, middleware protect, scrubber Bearer, zod settings/usage, vault accounts, OAuth state",
+    "7acd3a6 docs: sync roadmap checkboxes with completed work (circuit breaker, usage/quota wiring, settings, console log)",
+    "a539cec feat: improve auth (session validation, password hashing, localhost bind)"
+  ],
+  "uncommitted": "?? scripts/",
+  "ts": 1793372914268
+}
