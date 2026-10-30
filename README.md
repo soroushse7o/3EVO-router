@@ -128,6 +128,7 @@ locales/          # en.json, fa.json
 - [x] Quota API + page
 - [x] Console log (SSE)
 - [x] Proxy pools page
+- [x] Static showcase docs (index + panel bilingual)
 - [x] CLI tools page
 - [x] Circuit breaker
 - [x] SQLite usage DB
