@@ -2,7 +2,13 @@
 
 یک endpoint واحد و سازگار با OpenAI/Anthropic ارائه می‌دهد و درخواست‌ها را بین چند provider با چرخش چندحسابی، fallback سه‌سطحی و فشرده‌سازی توکن (RTK) به صورت خودکار و هوشمند مسیریابی می‌کند.
 
-> وضعیت: **Alpha** — امنیت پایه پیاده‌سازی شده، OAuth واقعی و چند قابلیت دیگر planned هستند.
+> **وضعیت: Alpha** — امنیت پایه پیاده‌سازی شده، OAuth واقعی و چند قابلیت دیگر planned هستند.
+> 
+> **پیشرفت کل: ~60%** — P0 کامل، P1 در حال انجام (29/30 تست پاس)، P2–P7 باز.
+
+---
+
+برای مستندات انگلیسی، به [README.md](README.md) مراجعه کنید.
 
 ## قابلیت‌ها
 
@@ -56,7 +62,7 @@ Client (OpenAI/Anthropic SDK)
 - رمز اولیه تصادفی تولید می‌شود و فقط یک‌بار در ترمینال نمایش داده می‌شود.
 - Dashboard auth: cookie-based session با scrypt password hashing.
 - Session validation در route handlerها؛ proxy Node.js runtime است.
-- Log scrubber: رگuestهای حساس پاک می‌شوند.
+- Log scrubber: درخواست‌های حساس پاک می‌شوند.
 - Secrets در vault رمزنگاری‌شده ذخیره می‌شوند.
 - **Planned**: argon2، CSRF tokens، rate limiting، OS keychain، SSRF protection، strict CORS allowlist.
 

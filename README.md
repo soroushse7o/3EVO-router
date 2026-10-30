@@ -1,25 +1,27 @@
-# 3EVO Router — گیت‌وی هوشمند هوش مصنوعی (لوکال + داشبورد تحت وب)
+# 3EVO Router — Smart AI Gateway (Local + Web Dashboard)
 
-یک endpoint واحد و سازگار با OpenAI/Anthropic ارائه می‌دهد و درخواست‌ها را بین چند provider با چرخش چندحسابی، fallback سه‌سطحی و فشرده‌سازی توکن (RTK) به صورت خودکار و هوشمند مسیریابی می‌کند.
+One compatible endpoint for OpenAI/Anthropic. Automatically and intelligently routes requests across multiple providers with multi-account rotation, 3-tier fallback, and token compression (RTK).
 
-> وضعیت: **Alpha** — امنیت پایه پیاده‌سازی شده، OAuth واقعی و چند قابلیت دیگر planned هستند.
+> **Status: Alpha** — Core security and routing implemented. OAuth flows, full translator, and several features are planned.
+>
+> **Overall progress: ~60%** — P0 complete, P1 in progress (29/30 tests passing), P2–P7 open.
 
-## قابلیت‌ها
+## Features
 
 - **Single endpoint** — OpenAI (`/v1/chat/completions`, `/v1/responses`), Anthropic (`/v1/messages`), `/v1/models`.
-- **احراز هویت واقعی** — رمز با scrypt هش می‌شود، session سمت سرور ذخیره و اعتبارسنجی می‌شود.
-- **API Key** — تولید key تصادفی، ذخیره فقط hash آن با scrypt + salt، اعتبارسنجی در route handlerها.
-- **چرخش حساب‌های OAuth** — round-robin و priority.
-- **3-tier fallback** — قابلیت fallback بین tiers.
-- **Circuit breaker** — آستانه 3 شکست، cooldown 30 ثانیه، حالت half-open.
-- **RTK (Result Token Keeper)** — فشرده‌سازی خروجی‌های تکراری، حداکثر 4000 کاراکتر.
+- **Real authentication** — Password hashed with scrypt, server-side session storage and validation.
+- **API Key** — Random key generation, only hash stored with scrypt + salt, validation in route handlers.
+- **OAuth account rotation** — Round-robin and priority strategies.
+- **3-tier fallback** — Fallback between tiers.
+- **Circuit breaker** — 3 failures threshold, 30s cooldown, half-open state.
+- **RTK (Result Token Keeper)** — Compresses duplicate output tokens, max 4000 chars.
 - **Quota tracker** — 5-hour rolling window.
-- **Usage DB** — ثبت استفاده در SQLite.
-- **Log scrubber** — پاکسازی توکن‌ها از لاگ‌ها.
-- **Dashboard** — پنل وب برای مدیریت providers، accounts، usage، quota، settings.
-- **i18n** — انگلیسی + فارسی (RTL، Vazirmatn).
+- **Usage DB** — Usage logging in SQLite.
+- **Log scrubber** — Scrubs tokens from logs.
+- **Dashboard** — Web panel for managing providers, accounts, usage, quota, settings.
+- **i18n** — English + Persian (RTL, Vazirmatn).
 
-## معماری
+## Architecture
 
 ```
 Client (OpenAI/Anthropic SDK)
@@ -47,19 +49,19 @@ Client (OpenAI/Anthropic SDK)
    └───────────┘
 ```
 
-- **Storage**: SQLite (`better-sqlite3`) در `~/.3evo/`.
-- **Secrets**: AES-256-GCM، کلید از فایل محلی `~/.3evo/master.key`.
+- **Storage**: SQLite (`better-sqlite3`) at `~/.3evo/`.
+- **Secrets**: AES-256-GCM, key from local file `~/.3evo/master.key`.
 - **CLI**: `3evo-router --port 20128 [--daemon] [--no-rtk]`.
 
-## امنیت (وضعیت فعلی: Alpha)
+## Security (Current: Alpha)
 
-- bind پیش‌فرض روی `127.0.0.1` در اسکریپت‌ها.
-- رمز اولیه تصادفی تولید می‌شود و فقط یک‌بار در ترمینال نمایش داده می‌شود.
-- Dashboard auth: cookie-based session با scrypt password hashing.
-- Session validation در route handlerها؛ proxy Node.js runtime است.
-- Log scrubber: رگuestهای حساس پاک می‌شوند.
-- Secrets در vault رمزنگاری‌شده ذخیره می‌شوند.
-- **Planned**: argon2، CSRF tokens، rate limiting، OS keychain، SSRF protection، strict CORS allowlist.
+- Default bind to `127.0.0.1` in scripts.
+- Initial password randomly generated and shown once in terminal.
+- Dashboard auth: cookie-based session with scrypt password hashing.
+- Session validation in route handlers; proxy runs in Node.js runtime.
+- Log scrubber: sensitive requests are scrubbed.
+- Secrets stored encrypted in vault.
+- **Planned**: argon2, CSRF tokens, rate limiting, OS keychain, SSRF protection, strict CORS allowlist.
 
 ## Quick start
 
@@ -70,13 +72,15 @@ npm install
 npm run dev
 ```
 
-## ساختار پروژه
+Dashboard: `http://localhost:20128/`
+
+## Project structure
 
 ```
 src/
 ├ app/
 │   ├ (auth)/login/page.tsx
-│   ├ (dashboard)/...        # صفحات داشبورد
+│   ├ (dashboard)/...        # Dashboard pages
 │   ├ api/
 │   │   ├ auth/route.ts      # login/logout
 │   │   ├ v1/
@@ -97,7 +101,7 @@ src/
 │   └ layout.tsx
 ├ cli/index.ts
 ├ lib/
-│   ├ accounts.ts            # OAuth tokens (رمزنگاری‌شده)
+│   ├ accounts.ts            # OAuth tokens (encrypted)
 │   ├ api-key.ts             # API key generation/validation
 │   ├ auth.ts                # scrypt auth, session management
 │   ├ circuit.ts             # circuit breaker
@@ -120,17 +124,19 @@ src/
 
 ## Roadmap
 
-| فاز | وضعیت | توضیحات |
-|-----|-------|---------|
-| P0 | ✅ | امنیت پایه: scrypt، session، proxy، API key |
-| P1 | 🔄 | تست‌های خودکار: 29/30 پاس |
-| P2 | 🔄 | مسیر کامل `/v1/*` با proxy واقعی |
-| P3 | 🔄 | Routing و fallback |
-| P4 | 🔄 | Translator کامل |
-| P5 | 🔄 | RTK، quota، usage |
-| P6 | 🔄 | UI و i18n |
-| P7 | 🔄 | جدا کردن gateway از داشبورد |
+| Phase | Status | Description |
+|-------|--------|-------------|
+| P0 | ✅ | Base security: scrypt, session, proxy, API key |
+| P1 | 🔄 | Automated tests: 29/30 passing |
+| P2 | 🔄 | Full `/v1/*` route with real proxy |
+| P3 | 🔄 | Routing and fallback |
+| P4 | 🔄 | Full translator |
+| P5 | 🔄 | RTK, quota, usage |
+| P6 | 🔄 | UI and i18n |
+| P7 | 🔄 | Separate gateway from dashboard |
 
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+For Persian documentation, see [README.fa.md](README.fa.md).
