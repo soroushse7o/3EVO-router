@@ -130,7 +130,7 @@ describe("P1 security — requirement 5: scrubber", () => {
   });
   it("regex patterns as text do not expose secrets", () => {
     const src = fs.readFileSync(path.join(__dirname, "..", "scrubber.ts"), "utf8");
-    expect(src).toMatch(/Authorization:.*Bearer/);
+    expect(src).toMatch(/Authorization:\\s\*Bearer/);
     expect(src).toMatch(/X-Api-Key/);
     expect(src).toMatch(/Cookie/);
     expect(src).toMatch(/key=/);
@@ -167,11 +167,10 @@ describe("P1 security — requirement 7: Edge runtime docs", () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "..", "package.json"), "utf8"));
     expect(pkg.dependencies.next).toMatch(/\^16\./);
   });
-  it("middleware does not import Node.js modules at top level", () => {
-    const src = fs.readFileSync(path.join(__dirname, "..", "..", "middleware.ts"), "utf8");
-    expect(src).not.toMatch(/^import .* from ["']fs["']/m);
-    expect(src).not.toMatch(/^import .* from ["']path["']/m);
-    expect(src).not.toMatch(/^import .* from ["']crypto["']/m);
+  it("proxy (Node.js runtime) CAN import Node.js modules", () => {
+    const src = fs.readFileSync(path.join(__dirname, "..", "..", "proxy.ts"), "utf8");
+    const has = src.match(/^import .* from ["']fs["']/m) || src.match(/^import .* from ["']path["']/m) || src.match(/^import .* from ["']crypto["']/m);
+    expect(has).toBeTruthy();
   });
 });
 describe("P1 security — requirement 8: test list", () => {
@@ -199,7 +198,7 @@ describe("P1 security — requirement 8: test list", () => {
       "P1 security — requirement 6: accounts encryption > vault tamper fails",
       "P1 security — requirement 6: accounts encryption > accounts file is encrypted (no plaintext sk- or Bearer)",
       "P1 security — requirement 7: Edge runtime docs > Next.js version documented",
-      "P1 security — requirement 7: Edge runtime docs > middleware does not import Node.js modules at top level",
+      "P1 security — requirement 7: Edge runtime docs > proxy (Node.js runtime) CAN import Node.js modules",
     ];
     expect(names.length).toBeGreaterThanOrEqual(1);
   });

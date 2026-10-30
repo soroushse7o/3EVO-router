@@ -1,7 +1,7 @@
 const PATTERNS = [
-  /Authorization:\s*Bearer\s+\S+/gi,
+  /Authorization:[ \t]*Bearer[ \t]+[^ \t]+/gi,
   /^(Authorization|X-Api-Key|Cookie):.*$/gim,
-  /[?&]key=[^&\s]+/gi,
+  /[?&]key=[^& \t]+/gi,
   /sk-[A-Za-z0-9]{10,}/g
 ];
 export function scrub(text: string): string {

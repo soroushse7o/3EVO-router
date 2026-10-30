@@ -1,13 +1,19 @@
 import { NextRequest } from "next/server";
 import { runWithFallback } from "@/lib/router";
 import { recordUsage } from "@/lib/db";
-import { requireApiKey } from "@/lib/api-key";
+import { validateApiKey } from "@/lib/api-key";
 export async function GET(req: NextRequest) {
-  requireApiKey(req);
+  const key = req.headers?.get?.("authorization")?.replace("Bearer ", "") || req.headers?.get?.("x-api-key");
+  if (!key || !validateApiKey(key)) {
+    return Response.json({ error: "invalid api key" }, { status: 401 });
+  }
   return Response.json({ data: [{ id: "qwen2.5-14b", object: "model", owned_by: "local" }] });
 }
 export async function POST(req: NextRequest) {
-  requireApiKey(req);
+  const key = req.headers?.get?.("authorization")?.replace("Bearer ", "") || req.headers?.get?.("x-api-key");
+  if (!key || !validateApiKey(key)) {
+    return Response.json({ error: "invalid api key" }, { status: 401 });
+  }
   const body = await req.json();
   const upstreamUrl = "http://127.0.0.1:18435/v1/chat/completions";
   if (body.stream) {

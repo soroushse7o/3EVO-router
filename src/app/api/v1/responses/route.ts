@@ -1,7 +1,10 @@
 import { NextRequest } from "next/server";
-import { requireApiKey } from "@/lib/api-key";
+import { validateApiKey } from "@/lib/api-key";
 export async function POST(req: NextRequest) {
-  requireApiKey(req);
+  const key = req.headers?.get?.("authorization")?.replace("Bearer ", "") || req.headers?.get?.("x-api-key");
+  if (!key || !validateApiKey(key)) {
+    return Response.json({ error: "invalid api key" }, { status: 401 });
+  }
   const body = await req.json();
   const input = typeof body.input === "string" ? body.input : (body.input?.map((i: any) => i.content).join("") || "");
   const upstream = await fetch("http://127.0.0.1:18435/v1/chat/completions", {

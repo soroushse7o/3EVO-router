@@ -27,16 +27,14 @@ export function validateApiKey(key: string | undefined): boolean {
   const keys = loadApiKeys();
   for (const k of keys) {
     const hash = crypto.scryptSync(key, Buffer.from(k.salt, "hex"), 64).toString("hex");
-    if (crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(k.keyHash, "hex"))) return true;
+    if (crypto.timingSafeEqual(Buffer.from(hash, "hex"), Buffer.from(k.keyHash, "hex"))) return true;
   }
   return false;
 }
 export function requireApiKey(req: any) {
   const key = req.headers?.get?.("authorization")?.replace("Bearer ", "") || req.headers?.get?.("x-api-key");
   if (!key || !validateApiKey(key)) {
-    const err = new Error("invalid api key") as any;
-    err.status = 401;
-    throw err;
+    throw new Response(JSON.stringify({ error: "invalid api key" }), { status: 401, headers: { "content-type": "application/json" } });
   }
   return { key };
 }
