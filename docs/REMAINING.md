@@ -9,7 +9,7 @@
 - [ ] Mark verified:true in data/providers.json after live check
 
 ### Phase B — Translator (full) + streaming
-- [ ] Gemini format conversion
+- [x] Gemini format conversion
 - [ ] OpenAI Responses API full support
 - [ ] Ollama/Cursor/Kiro/Vertex/Antigravity adapters
 - [ ] Golden-file tests per pair
