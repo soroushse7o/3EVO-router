@@ -119,27 +119,28 @@ locales/          # en.json, fa.json
 - [x] Auth (real)
 - [x] Anthropic /v1/messages + OpenAI /v1/responses
 - [x] Streaming passthrough
-- [x] RTK lib
-- [x] Combo schema (Zod)
-- [x] Combos page (3 templates)
+- [x] RTK lib + API
+- [x] Combo schema (Zod) + combos page
 - [x] MITM opt-in consent (stub)
-- [x] Usage page
+- [x] Usage page + API (SQLite)
 - [x] Quota API + page
 - [x] Console log (SSE)
 - [x] Proxy pools page
 - [x] CLI tools page
 - [x] Circuit breaker
 - [x] SQLite usage DB
-- [x] Translator (stub)
+- [x] Translator (OpenAI↔Anthropic)
 - [x] Router failover helper
 - [x] OAuth start + callback (stub)
 - [x] Accounts store (OAuth tokens)
 - [x] Settings page + API
+- [x] Settings persisted to ~/.3evo/settings.json
 - [x] Health endpoint
 - [x] Log scrubber + tests
 - [x] Vitest (scrubber, rtk)
 - [x] Route test endpoint (runWithFallback)
 - [x] /v1/chat/completions integrated with runWithFallback
+- [x] Gemini format translator
 - [ ] OAuth flows (real)
 - [ ] Translator (full) + streaming
 - [ ] Routing/failover (integrated)
