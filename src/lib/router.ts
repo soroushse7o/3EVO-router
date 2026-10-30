@@ -24,8 +24,6 @@ export async function runWithFallback<T>(tiers: Array<() => Promise<T>>, keyPref
   }
   const tried = tiers.map((_, i) => `${keyPrefix}:tier:${i}`).join(", ");
   const soonest = tiers.map((_, i) => ({ key: `${keyPrefix}:tier:${i}`, retryAfter: getRetryAfter(`${keyPrefix}:tier:${i}`) })).sort((a, b) => a.retryAfter - b.retryAfter)[0];
-  const err = new Error(`all tiers exhausted. tried: [${tried}]. soonest reset: ${soonest.retryAfter}ms (${soonest.key})`);
-  err.tried = tried;
-  err.soonest = soonest;
+  const err = Object.assign(new Error(`all tiers exhausted. tried: [${tried}]. soonest reset: ${soonest.retryAfter}ms (${soonest.key})`), { tried, soonest });
   throw err;
 }
