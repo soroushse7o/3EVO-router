@@ -8,11 +8,12 @@ One compatible endpoint for OpenAI/Anthropic. Automatically and intelligently ro
 
 | Feature | Status | Evidence / File |
 |---------|--------|-----------------|
+| `/api/auth/route.ts` | Dashboard login (scrypt + session) | `src/lib/auth.ts`, `src/app/api/auth/route.ts` |
+| `/api/auth/reset/route.ts` | Password reset (requires AUTH_RESET_TOKEN) | `src/app/api/auth/reset/route.ts` |
 | `/v1/chat/completions` proxy | Working | `src/app/api/v1/chat/completions/route.ts` |
 | `/v1/messages` proxy | Working | `src/app/api/v1/messages/route.ts` |
 | `/v1/responses` proxy | Working | `src/app/api/v1/responses/route.ts` |
 | `/v1/models` | Working | `src/app/api/v1/models/route.ts` |
-| Dashboard login (scrypt + session) | Working | `src/lib/auth.ts`, `src/app/api/auth/route.ts` |
 | API key generation/validation | Working | `src/lib/api-key.ts` |
 | Vault encrypt/decrypt | Working | `src/lib/vault.ts` |
 | Scrubber (basic patterns) | Working | `src/lib/scrubber.ts` |
@@ -83,6 +84,13 @@ Client (OpenAI/Anthropic SDK)
 ## Dashboard password
 
 Set `ADMIN_PASSWORD` in `.env` before first run. If unset, a random password is generated and printed to the terminal on first start, then stored in `~/.3evo/auth.json`.
+
+If you are locked out or forgot the password:
+1. Set `AUTH_RESET_TOKEN=something` in `.env`
+2. `curl -X POST http://localhost:20128/api/auth/reset -H "Content-Type: application/json" -d '{"token":"something","password":"newpass"}'`
+3. Or delete `~/.3evo/auth.json` and restart (only works if `ADMIN_PASSWORD` is set in `.env`)
+
+You can also change the password from the dashboard Settings page after logging in.
 
 ## Quick start
 
@@ -189,8 +197,8 @@ src/
 | Phase | Status | Description |
 |-------|--------|-------------|
 | P0 | ✅ | Baseline honesty: docs match code, hardcoded secrets removed |
-| P1 | 🔄 | Security hardening: S1–S15 (in progress) |
-| P2 | ⏳ | Real routing core: multi-tier, circuit breaker, timeouts |
+| P1 | ✅ | Security hardening: S1–S15 complete (S10 TODO) |
+| P2 | 🔄 | Real routing core: multi-tier, circuit breaker, timeouts |
 | P3 | ⏳ | Translator & streaming fixes |
 | P4 | ⏳ | Real providers/OAuth or honest removal |
 | P5 | ⏳ | Usage/quota/RTK fixes |
