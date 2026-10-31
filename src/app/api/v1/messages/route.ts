@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { recordUsage } from "@/lib/db";
 import { validateApiKey } from "@/lib/api-key";
+import { isSafeUrl } from "@/lib/ssrf";
 export async function POST(req: NextRequest) {
   const key = req.headers?.get?.("authorization")?.replace("Bearer ", "") || req.headers?.get?.("x-api-key");
   if (!key || !validateApiKey(key)) {

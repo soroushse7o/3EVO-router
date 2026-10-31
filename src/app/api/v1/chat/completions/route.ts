@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { runWithFallback } from "@/lib/router";
 import { recordUsage } from "@/lib/db";
 import { validateApiKey } from "@/lib/api-key";
+import { isSafeUrl } from "@/lib/ssrf";
 export async function GET(req: NextRequest) {
   const key = req.headers?.get?.("authorization")?.replace("Bearer ", "") || req.headers?.get?.("x-api-key");
   if (!key || !validateApiKey(key)) {
@@ -16,6 +17,9 @@ export async function POST(req: NextRequest) {
   }
   const body = await req.json();
   const upstreamUrl = process.env.UPSTREAM_URL || "http://127.0.0.1:18434/v1/chat/completions";
+  if (!isSafeUrl(upstreamUrl)) {
+    return Response.json({ error: "blocked url" }, { status: 400 });
+  }
   if (body.stream) {
     const upstream = await fetch(upstreamUrl, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + (process.env.LOCAL_MODEL_API_KEY || "_fZvyqDksRI74Ug0BmDsWbYNxuFpRZmR") }, body: JSON.stringify({ ...body, stream: true }) });
     if (!upstream.ok) {
