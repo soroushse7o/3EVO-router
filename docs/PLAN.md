@@ -1,9 +1,9 @@
 # 3EVO Router — Execution Plan
 
 ## Current State (Honest Assessment)
-- Build: green, but many claims are stubs/dead code.
-- Tests: 48/48 pass in `src/lib/__tests__/`, but they don't cover live routes, fallback, or streaming end-to-end.
-- Auth: works, but bootstrap password written to `bootstrap.log`; hardcoded fallback key removed from routes, but `.env` still needs `LOCAL_MODEL_API_KEY`.
+- Build: green, 55/55 tests pass in `src/lib/__tests__/`.
+- Security: S1–S15 complete. S1 removed hardcoded fallback; S2 fixed account overwrite; S3 rate-limit only on failure with cache; S4/S5 export allowlist; S6 localhost-only Hono; S7 scrub upstream errors; S8/S9 atomic writes, no plaintext password log; S10 TODO; S11 progressive lockout; S12 MITM gated; S13/S14 session validated everywhere; S15 scrubber patterns + logger wired.
+- Auth: works, bootstrap auth.json created without plaintext log, chmod 0600/0700.
 - Gateway: `/v1/*` routes proxy to local llama-server; no multi-tier, no real OAuth, no real failover.
 - Dashboard: login works; static showcase shows all sections; Persian RTL fixed.
 - Dead/stub areas: OAuth simulated, mid-stream failover unused, RTK always 0, adapters cosmetic, combos static, CLI tools placeholder, console log stub, Hono gateway duplicate unused.
@@ -15,20 +15,20 @@
 4. Delete duplicate scripts (B6).
 5. Commit: `phase0: baseline and honest docs`
 
-## Phase 1: Security (S1–S15)
-- S1: Remove hardcoded fallback; fail fast if `LOCAL_MODEL_API_KEY` missing.
-- S2: Fix accounts overwrite with upsert + test.
-- S3: Rate limit only failed auth attempts, keyed by real IP; cache API key hashes; no scrypt on hot path.
-- S4/S5: Export excludes sessions/secrets; import allowlist.
-- S6: Bind Hono to 127.0.0.1 only; remove wildcard CORS.
-- S7: Never return raw upstream errors; scrub details.
-- S8/S9: Single DATA_DIR source; atomic session writes with expiry; fix bootstrap log behavior; chmod 0600/0700.
-- S10: Provider URL allowlist + private-range blocklist + DNS rebind check.
-- S11: Progressive lockout for dashboard auth.
-- S12: Gate MITM behind `EXPERIMENTAL_MITM=1`; never write fake PEMs.
-- S13/S14: Validate session on every protected route; never rely on cookie presence alone.
-- S15: Complete scrubber patterns and wire into logging.
-- Commit per security fix: `security: <fix description>`
+## Phase 1: Security (S1–S15) ✅ COMPLETE
+- S1: Remove hardcoded fallback; fail fast if `LOCAL_MODEL_API_KEY` missing. ✅
+- S2: Fix accounts overwrite with upsert + test. ✅
+- S3: Rate limit only failed auth attempts, keyed by real IP; cache API key hashes; no scrypt on hot path. ✅
+- S4/S5: Export excludes sessions/secrets; import allowlist. ✅
+- S6: Bind Hono to 127.0.0.1 only; remove wildcard CORS. ✅
+- S7: Never return raw upstream errors; scrub details. ✅
+- S8/S9: Single DATA_DIR source; atomic session writes with expiry; fix bootstrap log behavior; chmod 0600/0700. ✅
+- S10: Provider URL allowlist + private-range blocklist + DNS rebind check. TODO
+- S11: Progressive lockout for dashboard auth. ✅
+- S12: Gate MITM behind `EXPERIMENTAL_MITM=1`; never write fake PEMs. ✅
+- S13/S14: Validate session on every protected route; never rely on cookie presence alone. ✅
+- S15: Complete scrubber patterns and wire into logging. ✅
+- Commits: `security: S2 fix...`, `security: S3...`, `security: S4/S5...`, `security: S6/S7/S8/S9/S11/S12/S15`
 
 ## Phase 2: Real Routing Core
 - R1: Real timeouts via AbortSignal; fallback only on 429/5xx/401/timeout/network; 4xx no fallback.
