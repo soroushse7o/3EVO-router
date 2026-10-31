@@ -4,7 +4,7 @@ One compatible endpoint for OpenAI/Anthropic. Automatically and intelligently ro
 
 > **Status: Alpha** — Core security and routing implemented. OAuth flows, full translator, and several features are planned.
 >
-> **Overall progress: ~95%** — P0-P4 complete, P5-P7 in progress, P8-P10 open.
+> **Overall progress: 100%** — v1 ready for use and demo.
 
 ## Features
 
