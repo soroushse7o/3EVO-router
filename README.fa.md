@@ -17,6 +17,7 @@
 | پروکسی `/v1/responses` | Working | `src/app/api/v1/responses/route.ts` |
 | `/v1/models` | Working | `src/app/api/v1/models/route.ts` |
 | لاگین داشبورد (scrypt + session) | Working | `src/lib/auth.ts`, `src/app/api/auth/route.ts` |
+| بازنشانی رمز (نیاز به AUTH_RESET_TOKEN) | Working | `src/app/api/auth/reset/route.ts` |
 | API key generation/validation | Working | `src/lib/api-key.ts` |
 | Vault encrypt/decrypt | Working | `src/lib/vault.ts` |
 | Scrubber (الگوهای پایه) | Working | `src/lib/scrubber.ts` |
@@ -86,6 +87,13 @@ Client (OpenAI/Anthropic SDK)
 ## رمز پنل مدیریت
 
 مقدار `ADMIN_PASSWORD` را در فایل `.env` قبل از اجرای اول تنظیم کنید. اگر این متغیر خالی باشد، یک رمز تصادفی در اولین اجرا در ترمینال نمایش داده شده و در `~/.3evo/auth.json` ذخیره می‌شود.
+
+اگر رمز را فراموش کردید یا قفل شدید:
+1. `AUTH_RESET_TOKEN=چیزی` را در `.env` تنظیم کنید
+2. `curl -X POST http://localhost:20128/api/auth/reset -H "Content-Type: application/json" -d '{"token":"چیزی","password":"رمزجدید"}'`
+3. یا `~/.3evo/auth.json` را حذف و سرور را ری‌استارت کنید (فقط اگر `ADMIN_PASSWORD` در `.env` تنظیم شده باشد)
+
+همچنین می‌توانید پس از ورود به پنل، از بخش Settings رمز را تغییر دهید.
 
 ## شروع سریع
 ```bash
@@ -188,8 +196,8 @@ src/
 | فاز | وضعیت | توضیحات |
 |-----|--------|---------|
 | P0 | ✅ | صادقیت پایه: docs مطابق کد، رازهای هاردکد حذف شد |
-| P1 | 🔄 | امنیت: S1–S15 (در حال انجام) |
-| P2 | ⏳ | هسته مسیریابی واقعی: multi-tier، circuit breaker، timeouts |
+| P1 | ✅ | امنیت: S1–S15 کامل (S10 TODO) |
+| P2 | 🔄 | هسته مسیریابی واقعی: multi-tier، circuit breaker، timeouts |
 | P3 | ⏳ | اصلاح Translator & streaming |
 | P4 | ⏳ | providers/OAuth واقعی یا حذف صادقانه |
 | P5 | ⏳ | اصلاح Usage/quota/RTK |
