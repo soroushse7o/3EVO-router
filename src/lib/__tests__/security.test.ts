@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { scrub } from "../scrubber";
 import { hashPassword, verifyPassword, validatePassword, createSession, validateSession, destroySession, ensureAuth } from "../auth";
 import { upsertAccount, loadAccounts, saveAccounts } from "../accounts";
+import { validateApiKey, createApiKey } from "../api-key";
 describe("P1 security", () => {
   it("scrub removes Bearer token", () => {
     const out = scrub("Authorization: Bearer abc123");
@@ -32,5 +33,13 @@ describe("P1 security", () => {
     upsertAccount({ id: "a3", provider: "p3", token: "t3", expiresAt: Date.now() + 1000 });
     const all = loadAccounts();
     expect(all.map(a => a.id).sort()).toEqual(["a1", "a2", "a3"]);
+  });
+  it("S3: validateApiKey caches result and does not rate-limit valid keys", () => {
+    const key = createApiKey();
+    const first = validateApiKey(key);
+    expect(first).toBe(true);
+    const second = validateApiKey(key);
+    expect(second).toBe(true);
+    expect(validateApiKey("fake-key-123")).toBe(false);
   });
 });

@@ -4,14 +4,15 @@ import { ensureAuth, validatePassword, createSession } from "@/lib/auth";
 import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get("x-forwarded-for") || "unknown";
-  if (!checkRateLimit("auth:" + ip, 5, 60000)) {
-    return Response.json({ error: "rate limited" }, { status: 429 });
-  }
   ensureAuth();
   const { password } = await req.json();
   if (!password) return Response.json({ error: "password required" }, { status: 400 });
-  if (!validatePassword(password)) return Response.json({ error: "invalid password" }, { status: 401 });
+  if (!validatePassword(password)) {
+    const trustProxy = process.env.TRUST_PROXY === "true";
+    const ip = trustProxy ? (req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown") : "unknown";
+    checkRateLimit("auth:" + ip, 5, 60000);
+    return Response.json({ error: "invalid password" }, { status: 401 });
+  }
   const session = createSession();
   const res = Response.json({ ok: true });
   res.headers.set("Set-Cookie", `session=${session}; HttpOnly; SameSite=Strict; Path=/; Max-Age=86400`);

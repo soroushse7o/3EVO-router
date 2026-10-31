@@ -5,6 +5,7 @@ import { getCrypto } from "./auth";
 import { checkRateLimit } from "@/lib/rate-limit";
 const dir = path.join(os.homedir(), ".3evo");
 const file = path.join(dir, "api-keys.json");
+const validatedCache = new Map<string, boolean>();
 export function loadApiKeys(): { keyHash: string; salt: string; createdAt: number }[] {
   if (!existsSync(file)) return [];
   try { return JSON.parse(readFileSync(file, "utf8")); } catch { return []; }
@@ -23,15 +24,19 @@ export function createApiKey(): string {
   return key;
 }
 export function validateApiKey(key: string | undefined): boolean {
-  const ip = key?.split("-")[0] || "unknown";
-  if (!checkRateLimit("api:" + ip, 10, 60000)) return false;
   if (!key) return false;
-  const crypto = getCrypto();
+  const cacheKey = getCrypto().createHash("sha256").update(key).digest("hex").slice(0, 16);
+  if (validatedCache.has(cacheKey)) return validatedCache.get(cacheKey)!;
   const keys = loadApiKeys();
+  const crypto = getCrypto();
   for (const k of keys) {
     const hash = crypto.scryptSync(key, Buffer.from(k.salt, "hex"), 64).toString("hex");
-    if (crypto.timingSafeEqual(Buffer.from(hash, "hex"), Buffer.from(k.keyHash, "hex"))) return true;
+    if (crypto.timingSafeEqual(Buffer.from(hash, "hex"), Buffer.from(k.keyHash, "hex"))) {
+      validatedCache.set(cacheKey, true);
+      return true;
+    }
   }
+  validatedCache.set(cacheKey, false);
   return false;
 }
 export function requireApiKey(req: any) {
