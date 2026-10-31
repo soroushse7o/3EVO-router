@@ -5,9 +5,9 @@ export default function ProvidersPage(){
   const [conns,setConns]=useState<Record<string,boolean>>({});
   const toggle=(n:string)=>setConns(c=>({...c,[n]:!c[n]}));
   const sections = [
-    {title:"OAuth Providers", items: providers.oauth},
-    {title:"Free Providers", items: providers.free},
-    {title:"API Key Providers", items: providers.apiKey},
+    {title:"OAuth Providers", items: providers.oauth, color: "text-blue-400"},
+    {title:"Free Providers", items: providers.free, color: "text-emerald-400"},
+    {title:"API Key Providers", items: providers.apiKey, color: "text-amber-400"},
   ];
   return (
     <div>
@@ -23,17 +23,20 @@ export default function ProvidersPage(){
               <div key={n} className={`rounded-2xl border p-4 ${conns[n]?"border-emerald-400/60 shadow-[0_0_12px_#10E58A33] bg-emerald-500/5":"border-white/10 bg-white/5"}`}>
                 <div className="font-medium">{n}</div>
                 <div className="text-xs mt-1">{conns[n]?"1 Connected":"No connections"}</div>
-                <button onClick={()=>toggle(n)} className="mt-2 text-xs rounded bg-white/10 px-2 py-1">{conns[n]?"Disconnect":"Connect (key)"}</button>
+                <button onClick={()=>toggle(n)} className={`mt-2 text-xs rounded px-2 py-1 ${conns[n]?"bg-red-600/20 text-red-400":"bg-emerald-500/20 text-emerald-400"}`}>
+                  {conns[n]?"Disconnect":"Connect"}
+                </button>
               </div>
             ))}
           </div>
         </section>
       ))}
-      <section className="mb-6">
-        <h2 className="text-lg font-semibold mb-2">API Key Compatible Providers</h2>
-        <div className="flex gap-2">
-          <button className="rounded bg-emerald-500/20 text-emerald-400 px-3 py-1 text-sm">Add Anthropic Compatible</button>
-          <button className="rounded bg-emerald-500/20 text-emerald-400 px-3 py-1 text-sm">Add OpenAI Compatible</button>
+      <section className="mb-6 p-4 rounded-2xl border border-white/10 bg-white/5">
+        <h2 className="text-lg font-semibold mb-2">Custom Providers</h2>
+        <p className="text-xs text-gray-400 mb-3">Add OpenAI or Anthropic compatible providers by pasting their base URL and API key.</p>
+        <div className="flex flex-wrap gap-2">
+          <button className="rounded bg-emerald-500/20 text-emerald-400 px-3 py-1 text-sm">+ OpenAI Compatible</button>
+          <button className="rounded bg-emerald-500/20 text-emerald-400 px-3 py-1 text-sm">+ Anthropic Compatible</button>
         </div>
       </section>
     </div>
