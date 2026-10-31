@@ -10,9 +10,9 @@ export async function GET(req: NextRequest) {
   const session = req.cookies.get("session")?.value;
   if (!validateSession(session)) return Response.json({ error: "unauthorized" }, { status: 401 });
   
-  const files = ["settings.json", "api-keys.json", "accounts.json.enc", "sessions.json", "mitm.json", "proxy-pools.json"];
+  const allowed = ["settings.json", "proxy-pools.json", "mitm.json", "quota.json"];
   const exportData: Record<string, any> = {};
-  for (const f of files) {
+  for (const f of allowed) {
     const fp = path.join(dir, f);
     if (existsSync(fp)) {
       try { exportData[f] = JSON.parse(readFileSync(fp, "utf8")); } catch {}

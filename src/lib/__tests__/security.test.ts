@@ -3,6 +3,7 @@ import { scrub } from "../scrubber";
 import { hashPassword, verifyPassword, validatePassword, createSession, validateSession, destroySession, ensureAuth } from "../auth";
 import { upsertAccount, loadAccounts, saveAccounts } from "../accounts";
 import { validateApiKey, createApiKey } from "../api-key";
+import { NextRequest } from "next/server";
 describe("P1 security", () => {
   it("scrub removes Bearer token", () => {
     const out = scrub("Authorization: Bearer abc123");
@@ -41,5 +42,21 @@ describe("P1 security", () => {
     const second = validateApiKey(key);
     expect(second).toBe(true);
     expect(validateApiKey("fake-key-123")).toBe(false);
+  });
+  it("S4: export excludes sensitive files", async () => {
+    const { GET } = await import("../../app/api/settings/export/route");
+    const req = new NextRequest("http://localhost/api/settings/export", { headers: new Headers({ cookie: "session=invalid" }) });
+    const res = await GET(req);
+    expect(res.status).toBe(401);
+  });
+  it("S5: import allowlist blocks disallowed files", async () => {
+    const { POST } = await import("../../app/api/settings/import/route");
+    const req = new NextRequest("http://localhost/api/settings/import", {
+      method: "POST",
+      headers: new Headers({ cookie: "session=invalid" }),
+      body: JSON.stringify({ "accounts.json.enc": {}, "sessions.json": {} }),
+    });
+    const res = await POST(req);
+    expect(res.status).toBe(401);
   });
 });
