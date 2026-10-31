@@ -1,6 +1,6 @@
 # 3EVO Router — Remaining Roadmap to 100%
 
-## Current: ~80% complete
+## Current: ~65% complete
 
 ### Phase A — OAuth Flows (real)
 - [x] OAuth start + callback (stub)
@@ -58,10 +58,10 @@
 - [x] Security checklist pass
 - [x] docs/CLIENTS.md
 - [x] docs/ASSUMPTIONS.md
-- [ ] Rate limiting (5 attempts/min per IP)
-- [ ] CSRF tokens
-- [ ] SSRF protection
-- [ ] Strict CORS allowlist
+- [x] Rate limiting (5 attempts/min per IP)
+- [x] CSRF tokens
+- [x] SSRF protection
+- [x] Strict CORS allowlist
 - [ ] E2E smoke tests (Playwright)
 
 ### Phase I — Separate Gateway (Hono/Fastify)
@@ -70,4 +70,4 @@
 - [ ] Gateway + Next.js communication config
 - [ ] Unified health endpoint
 
-## Estimated remaining: ~20% (4–8 hours focused)
+## Estimated remaining: ~35% (8–12 hours focused)
