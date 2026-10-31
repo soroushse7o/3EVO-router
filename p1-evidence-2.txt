@@ -1,9 +1,0 @@
-
- RUN  v5.0.5 C:/Users/Administrator/3evo-router
-
-
- Test Files  6 passed (6)
-      Tests  48 passed (48)
-   Start at  05:06:36
-   Duration  29.19s (tests 99%, import 1%)
-
