@@ -34,3 +34,27 @@ export async function runWithFallback<T>(tiers: Array<() => Promise<T>>, keyPref
   const err = Object.assign(new Error(`all tiers exhausted. tried: [${tried}]. soonest reset: ${soonest.retryAfter}ms (${soonest.key})`), { tried, soonest, lastErr });
   throw err;
 }
+
+// Mid-stream failover: wrap a ReadableStream and restart from next tier on error
+export async function streamWithFallback<T>(
+  tiers: Array<() => Promise<{ stream: ReadableStream; body?: any }>>,
+  keyPrefix = "default"
+): Promise<{ stream: ReadableStream; tierIndex: number }> {
+  let lastErr: any;
+  for (let i = 0; i < tiers.length; i++) {
+    const key = `${keyPrefix}:tier:${i}`;
+    if (isOpen(key)) {
+      lastErr = new Error(`circuit open for ${key}`);
+      continue;
+    }
+    try {
+      const result = await tiers[i]();
+      recordSuccess(key);
+      return { stream: result.stream, tierIndex: i };
+    } catch (e: any) {
+      recordFailure(key);
+      lastErr = e;
+    }
+  }
+  throw lastErr || new Error("all tiers exhausted for streaming");
+}

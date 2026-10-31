@@ -212,3 +212,27 @@ export function anthropicStreamToOpenAI(chunk: any) {
   // Anthropic streaming -> OpenAI streaming format
   return chunk;
 }
+
+// ===== Adapter helpers =====
+export function toOpenAICompatible(body: any, provider: string): any {
+  if (provider === "ollama") {
+    return { ...body, model: body.model || "llama3", stream: body.stream ?? false };
+  }
+  if (provider === "cursor" || provider === "kiro" || provider === "antigravity") {
+    return { ...body, model: body.model || "default", stream: body.stream ?? false };
+  }
+  if (provider === "vertex") {
+    return { ...body, model: body.model?.replace("vertex/", "") || "gemini-1.5-pro", stream: body.stream ?? false };
+  }
+  return body;
+}
+
+export function fromOpenAICompatible(resp: any, provider: string): any {
+  if (provider === "ollama" || provider === "cursor" || provider === "kiro" || provider === "antigravity") {
+    return resp;
+  }
+  if (provider === "vertex") {
+    return { ...resp, model: "vertex/" + (resp.model || "") };
+  }
+  return resp;
+}

@@ -13,6 +13,10 @@ export default function ProvidersPage(){
       if(d2.status==="complete"){
         clearInterval(id);
         setConns(c=>({...c,[n]:{status:"connected",device:d.device_code,expires:d.expires_in}}));
+        // verify token
+        fetch("/api/oauth/verify",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({provider:n,account_id:d2.account_id})}).then(r=>r.json()).then(v=>{
+          setConns(c=>({...c,[n]:{...c[n],verified:v.verified}}));
+        });
       }
     },d.interval*1000);
   };
