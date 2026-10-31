@@ -32,21 +32,21 @@ pre{background:var(--card);padding:16px;border-radius:12px;overflow:auto;color:v
 <div class="toggle"><button id="langBtn" onclick="toggleLang()" style="background:var(--card);color:var(--text);border:1px solid #ffffff20;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px">FA</button></div>
 <script>
 let lang="en";
-function showSection(id){document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll("aside nav div").forEach(n=>n.classList.remove("active"));event.target.classList.add("active");}
+function showSection(id, el){document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll("aside nav div").forEach(n=>n.classList.remove("active"));el.classList.add("active");}
 function toggleLang(){lang=lang==="en"?"fa":"en";document.getElementById("langBtn").textContent=lang==="en"?"FA":"EN";document.documentElement.lang=lang;document.documentElement.dir=lang==="fa"?"rtl":"ltr";}
 </script>
 <aside><div class="logo">3EVO Router <span style="font-size:10px;color:var(--muted)">v1.0.0</span></div>
 <nav>
-<div class="nav-item active" onclick="showSection("providers")">Providers</div>
-<div class="nav-item" onclick="showSection("endpoint")">Endpoint</div>
-<div class="nav-item" onclick="showSection("proxy-pools")">Proxy Pools</div>
-<div class="nav-item" onclick="showSection("combos")">Combos</div>
-<div class="nav-item" onclick="showSection("usage")">Usage</div>
-<div class="nav-item" onclick="showSection("quota")">Quota Tracker</div>
-<div class="nav-item" onclick="showSection("mitm")">MITM</div>
-<div class="nav-item" onclick="showSection("cli")">CLI Tools</div>
-<div class="nav-item" onclick="showSection("console")">Console Log</div>
-<div class="nav-item" onclick="showSection("settings")">Settings</div>
+<div class="nav-item active" onclick="showSection('providers', this)">Providers</div>
+<div class="nav-item" onclick="showSection('endpoint', this)">Endpoint</div>
+<div class="nav-item" onclick="showSection('proxy-pools', this)">Proxy Pools</div>
+<div class="nav-item" onclick="showSection('combos', this)">Combos</div>
+<div class="nav-item" onclick="showSection('usage', this)">Usage</div>
+<div class="nav-item" onclick="showSection('quota', this)">Quota Tracker</div>
+<div class="nav-item" onclick="showSection('mitm', this)">MITM</div>
+<div class="nav-item" onclick="showSection('cli', this)">CLI Tools</div>
+<div class="nav-item" onclick="showSection('console', this)">Console Log</div>
+<div class="nav-item" onclick="showSection('settings', this)">Settings</div>
 </nav></aside>
 <main>
 <div class="top"><h1>Providers</h1><span class="badge">Service running</span></div>
