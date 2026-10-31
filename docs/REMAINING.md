@@ -1,73 +1,67 @@
-# 3EVO Router — Remaining Roadmap to 100%
+# 3EVO Router — Remaining Work
 
-## Current: 100% complete
+## Current State (derived from README Verified Feature Status)
 
-### Phase A — OAuth Flows (real)
-- [x] OAuth start + callback (stub)
-- [x] Accounts store (OAuth tokens, encrypted)
-- [x] Device-code flow for each OAuth provider
-- [x] Token refresh proactive + reactive on 401
-- [x] Show token status in providers drawer
-- [x] Mark verified:true in providers.json after live check
+### Phase 0 — Baseline & Honesty ✅ COMPLETE
+- [x] Honest README.md and README.fa.md with Working/Stub/Dead table
+- [x] docs/PLAN.md with Phase 0-6 remediation plan
+- [x] docs/DECISIONS.md with baseline decisions
+- [x] Removed duplicate scripts (progress-check.*)
+- [x] Removed hardcoded fallback bearer tokens from /v1/* routes
 
-### Phase B — Translator (full) + streaming
-- [x] OpenAI ↔ Anthropic basic
-- [x] Gemini format conversion
-- [x] Responses API support
-- [x] Ollama/Cursor/Kiro/Vertex/Antigravity adapters
-- [x] Golden-file tests per pair
-- [x] Mid-stream failover
+### Phase 1 — Security (S1–S15) ✅ MOSTLY COMPLETE
+- [x] S1: Remove hardcoded fallback; LOCAL_MODEL_API_KEY required
+- [x] S2: Fix accounts overwrite with upsert + regression test
+- [x] S3: Rate limit only on failed auth; cache API key validation
+- [x] S4/S5: Export allowlist; import path protection
+- [x] S6: Bind Hono to 127.0.0.1; strict CORS allowlist
+- [x] S7: Scrub upstream errors before returning to client
+- [x] S8/S9: Atomic writes via tmp+rename; no plaintext password in bootstrap.log
+- [x] S11: Progressive lockout after failed auth attempts
+- [x] S12: MITM routes gated behind EXPERIMENTAL_MITM=1
+- [x] S13/S14: validateSession on every protected route
+- [x] S15: Expanded scrubber patterns + logger.ts wired into /v1 routes
+- [ ] S10: Provider URL allowlist + private-range blocklist + DNS rebind check
 
-### Phase C — Routing & failover (integrated)
-- [x] runWithFallback helper
-- [x] /v1/chat/completions uses runWithFallback
-- [x] Account rotation (round-robin/priority) per provider
-- [x] Circuit breaker lib (threshold 3, cooldown 30s)
-- [x] Circuit breaker wired into routing
-- [x] All-tiers-exhausted error body (list tried, soonest reset)
-- [x] Dashboard alert for exhausted tiers
+### Phase 2 — Real Routing Core 🔄 IN PROGRESS
+- [x] R1: Timeouts via AbortSignal; network error fallback
+- [x] R2: Windowed circuit breaker (5min) + single half-open probe
+- [x] R3: Circuit key per provider/account tier
+- [x] R4: Account priority sort; empty-safe rotation
+- [x] R5: 503 on exhaustion; OpenAI-format error bodies
+- [ ] Proxy pools wired into outbound router
+- [ ] Multi-tier failover tested end-to-end with mock upstream
 
-### Phase D — Usage + Quota (DB-backed UI)
-- [x] SQLite usage DB + APIs
-- [x] Usage page + CSV export
-- [x] Quota API + page with 5h rolling window
-- [x] RTK savings measurement recorded
-- [x] Cost per 1M native vs after RTK
+### Phase 3 — Translator & Streaming ⏳ PENDING
+- [ ] T1–T7: Tool calls, image handling, Gemini schema, placeholders, SSE events
+- [ ] Wire translator into /v1/chat/completions and /v1/messages
+- [ ] Propagate client disconnect via AbortSignal
+- [ ] Mid-stream failover before first byte
 
-### Phase E — Settings (full)
-- [x] Settings page + API
-- [x] Settings persisted to ~/.3evo/settings.json
-- [x] Cloud sync with timeout (no UI freeze)
-- [x] Data export/import (secrets excluded unless encrypted)
+### Phase 4 — Providers & OAuth ⏳ PENDING
+- [ ] One real provider path (OpenAI-compatible API key)
+- [ ] OAuth: real official flow or honest removal from UI
+- [ ] Providers page: real Test button
+- [ ] README warning about subscription token reuse
 
-### Phase F — Proxy pools, CLI tools, console log (real)
-- [x] Scaffold pages
-- [x] Proxy CRUD + health check + assignment + rotation
-- [x] CLI tools: detect installed clients, generate/apply config
-- [x] Console log: SSE live stream with level filter + search + secret masking
+### Phase 5 — Usage, Quota, RTK ⏳ PENDING
+- [ ] RTK preserve blank lines, no truncation, fail-open
+- [ ] Record real provider/model from resolved combo
+- [ ] Streaming summary row with real token counts
+- [ ] SQL aggregates for usage/quota/cost; configurable limits
+- [ ] Lazy DB init
 
-### Phase G — MITM (full, opt-in)
-- [x] Opt-in consent stub
-- [x] Consent screen + root cert generation (user installs)
-- [x] Per-host allowlist, one-click uninstall/revoke
+### Phase 6 — UI, CLI, Tests, Packaging ⏳ PENDING
+- [ ] Honest labels for Combos/Providers/CLI/Console
+- [ ] i18n wired into dashboard pages or remove false claim
+- [ ] CLI tools: real config generation for installed clients
+- [ ] E2E tests with temp DATA_DIR and mock upstream
+- [ ] Fix ports, dependencies, packaging
 
-### Phase H — Hardening & docs
-- [x] Log scrubber + tests
-- [x] Vitest (scrubber, rtk, security, router, translator)
-- [x] README EN+FA final
-- [x] Security checklist pass
-- [x] docs/CLIENTS.md
-- [x] docs/ASSUMPTIONS.md
-- [x] Rate limiting (5 attempts/min per IP)
-- [x] CSRF tokens
-- [x] SSRF protection
-- [x] Strict CORS allowlist
-- [x] E2E smoke tests (Playwright scaffold)
-
-### Phase I — Separate Gateway (Hono/Fastify)
-- [x] Hono gateway scaffolded
-- [x] Gateway process management (PM2/systemd)
-- [x] Gateway + Next.js communication config
-- [x] Unified health endpoint
-
-## Status: 100% complete — v1 ready for use and demo
+## Definition of Done
+- [ ] Clean checkout builds and tests pass with no external services
+- [ ] Integration test proves fallback, circuit, streaming, usage row, cancel on disconnect
+- [ ] Official OpenAI/Anthropic SDKs work against mock upstream
+- [ ] No plaintext secrets at rest or in logs/exports
+- [ ] All items above checked with tests or honestly removed
+- [ ] README matches reality; no inflated claims
