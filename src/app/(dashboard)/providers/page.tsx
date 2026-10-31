@@ -6,13 +6,13 @@ export default function ProvidersPage(){
   const toggleOAuth=async(n:string)=>{
     const r=await fetch("/api/oauth/start",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({provider:n,flow:"device"})});
     const d=await r.json();
-    setConns(c=>({...c,[n]:{status:false,device:d.device_code,expires:d.expires_in}}));
+    setConns(c=>({...c,[n]:{status:"pending",device:d.device_code,expires:d.expires_in}}));
     const id=setInterval(async()=>{
       const r2=await fetch("/api/oauth/callback",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({provider:n,device_code:d.device_code})});
       const d2=await r2.json();
       if(d2.status==="complete"){
         clearInterval(id);
-        setConns(c=>({...c,[n]:{status:true,device:d.device_code,expires:d.expires_in}}));
+        setConns(c=>({...c,[n]:{status:"connected",device:d.device_code,expires:d.expires_in}}));
       }
     },d.interval*1000);
   };

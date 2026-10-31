@@ -1,6 +1,6 @@
 # 3EVO Router — Remaining Roadmap to 100%
 
-## Current: ~65% complete
+## Current: ~75% complete
 
 ### Phase A — OAuth Flows (real)
 - [x] OAuth start + callback (stub)
@@ -70,4 +70,4 @@
 - [ ] Gateway + Next.js communication config
 - [ ] Unified health endpoint
 
-## Estimated remaining: ~35% (8–12 hours focused)
+## Estimated remaining: ~25% (6–10 hours focused)
