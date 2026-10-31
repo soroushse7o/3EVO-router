@@ -20,8 +20,12 @@ export async function POST(req: NextRequest) {
   if (!isSafeUrl(upstreamUrl)) {
     return Response.json({ error: "blocked url" }, { status: 400 });
   }
+  const apiKey = process.env.LOCAL_MODEL_API_KEY;
+  if (!apiKey) {
+    return Response.json({ error: "server misconfigured: LOCAL_MODEL_API_KEY is not set" }, { status: 500 });
+  }
   if (body.stream) {
-    const upstream = await fetch(upstreamUrl, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + (process.env.LOCAL_MODEL_API_KEY || "_fZvyqDksRI74Ug0BmDsWbYNxuFpRZmR") }, body: JSON.stringify({ ...body, stream: true }) });
+    const upstream = await fetch(upstreamUrl, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` }, body: JSON.stringify({ ...body, stream: true }) });
     if (!upstream.ok) {
       const err = await upstream.text();
       return Response.json({ error: err }, { status: upstream.status });
@@ -59,7 +63,7 @@ export async function POST(req: NextRequest) {
   }
   try {
     const result = await runWithFallback([async () => {
-      const r = await fetch(upstreamUrl, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + (process.env.LOCAL_MODEL_API_KEY || "_fZvyqDksRI74Ug0BmDsWbYNxuFpRZmR") }, body: JSON.stringify(body) });
+      const r = await fetch(upstreamUrl, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` }, body: JSON.stringify(body) });
       const data = await r.json();
       if (!r.ok) throw { status: r.status, message: data.error?.message || data.error || "upstream error" };
       recordUsage(body.model || "unknown", "chat", data.usage?.prompt_tokens || 0, data.usage?.completion_tokens || 0, 0);

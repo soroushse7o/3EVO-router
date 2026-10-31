@@ -5,14 +5,18 @@ export async function POST(req: NextRequest) {
   const session = req.cookies.get("session")?.value;
   if (!validateSession(session)) return Response.json({ error: "unauthorized" }, { status: 401 });
   const body = await req.json();
+  const apiKey = process.env.LOCAL_MODEL_API_KEY;
+  if (!apiKey) {
+    return Response.json({ error: "server misconfigured: LOCAL_MODEL_API_KEY is not set" }, { status: 500 });
+  }
   const tiers = [
     async () => {
-      const r = await fetch("http://127.0.0.1:18434/v1/chat/completions", { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + (process.env.LOCAL_MODEL_API_KEY || "_fZvyqDksRI74Ug0BmDsWbYNxuFpRZmR") }, body: JSON.stringify(body) });
+      const r = await fetch("http://127.0.0.1:18434/v1/chat/completions", { method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` }, body: JSON.stringify(body) });
       if (!r.ok) throw new Error("tier1 failed");
       return { tier: 1, data: await r.json() };
     },
     async () => {
-      const r = await fetch("http://127.0.0.1:18434/v1/chat/completions", { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + (process.env.LOCAL_MODEL_API_KEY || "_fZvyqDksRI74Ug0BmDsWbYNxuFpRZmR") }, body: JSON.stringify(body) });
+      const r = await fetch("http://127.0.0.1:18434/v1/chat/completions", { method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` }, body: JSON.stringify(body) });
       if (!r.ok) throw new Error("tier2 failed");
       return { tier: 2, data: await r.json() };
     },
