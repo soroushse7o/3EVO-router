@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { validateSession } from "@/lib/auth";
 import { getUsage } from "@/lib/db";
+import { estimateCost } from "@/lib/cost";
 
 export async function GET(req: NextRequest) {
   const session = req.cookies.get("session")?.value;

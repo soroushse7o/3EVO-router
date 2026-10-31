@@ -14,7 +14,7 @@ export default function QuotaPage() {
   return (
     <div>
       <h1 className="text-xl font-bold mb-4">Quota Tracker</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
         <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
           <div className="text-xs text-gray-400">5h Rolling Window</div>
           <div className="text-2xl font-bold text-emerald-400">{q?.used ?? 0} / {q?.limit ?? 100000}</div>
@@ -26,6 +26,10 @@ export default function QuotaPage() {
         <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
           <div className="text-xs text-gray-400">RTK Saved</div>
           <div className="text-2xl font-bold text-emerald-400">{q?.rtkSaved ?? 0}</div>
+        </div>
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+          <div className="text-xs text-gray-400">Est. Cost</div>
+          <div className="text-2xl font-bold text-amber-400">${q?.estimatedCost ? q.estimatedCost.toFixed(4) : "0.0000"}</div>
         </div>
       </div>
       <div className="rounded-2xl border border-white/10 bg-white/5 p-4">

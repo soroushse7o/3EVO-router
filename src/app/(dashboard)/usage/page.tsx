@@ -23,11 +23,12 @@ export default function UsagePage() {
   return (
     <div>
       <h1 className="text-xl font-bold mb-4">Usage</h1>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
         <div className="rounded-2xl border border-white/10 bg-white/5 p-4"><div className="text-xs text-gray-400">Requests</div><div className="text-2xl font-bold">{data?.length ?? 0}</div></div>
         <div className="rounded-2xl border border-white/10 bg-white/5 p-4"><div className="text-xs text-gray-400">Tokens in</div><div className="text-2xl font-bold">{total(data, "tokens_in")}</div></div>
         <div className="rounded-2xl border border-white/10 bg-white/5 p-4"><div className="text-xs text-gray-400">Tokens out</div><div className="text-2xl font-bold">{total(data, "tokens_out")}</div></div>
         <div className="rounded-2xl border border-white/10 bg-white/5 p-4"><div className="text-xs text-gray-400">RTK saved</div><div className="text-2xl font-bold text-emerald-400">{total(data, "rtk_saved")}</div></div>
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-4"><div className="text-xs text-gray-400">Est. Cost</div><div className="text-2xl font-bold text-amber-400">${data?.totalCost ? data.totalCost.toFixed(4) : "0.0000"}</div></div>
       </div>
       <button className="rounded bg-emerald-500/20 text-emerald-400 px-3 py-1 text-sm" onClick={exportCsv}>Export CSV</button>
       <div className="mt-4 overflow-x-auto">
