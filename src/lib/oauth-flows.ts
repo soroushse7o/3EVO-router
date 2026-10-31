@@ -1,4 +1,4 @@
-import { loadAccounts, saveAccounts, type Account } from "@/lib/accounts";
+import { loadAccounts, saveAccounts, upsertAccount, type Account } from "@/lib/accounts";
 
 export async function startDeviceCode(provider: string): Promise<{ device_code: string; user_code: string; verification_uri: string; expires_in: number; interval: number }> {
   // Production: call provider OAuth device-code endpoint
@@ -13,7 +13,7 @@ export async function startDeviceCode(provider: string): Promise<{ device_code: 
     token: "",
     expiresAt: Date.now() + 15 * 60 * 1000,
   };
-  saveAccounts([acc]);
+  upsertAccount(acc);
   
   return { device_code, user_code, verification_uri, expires_in: 900, interval: 5 };
 }
