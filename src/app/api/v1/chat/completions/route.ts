@@ -3,6 +3,7 @@ import { runWithFallback } from "@/lib/router";
 import { recordUsage } from "@/lib/db";
 import { validateApiKey } from "@/lib/api-key";
 import { isSafeUrl } from "@/lib/ssrf";
+import { logError, scrub } from "@/lib/logger";
 export async function GET(req: NextRequest) {
   const key = req.headers?.get?.("authorization")?.replace("Bearer ", "") || req.headers?.get?.("x-api-key");
   if (!key || !validateApiKey(key)) {
@@ -28,7 +29,7 @@ export async function POST(req: NextRequest) {
     const upstream = await fetch(upstreamUrl, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` }, body: JSON.stringify({ ...body, stream: true }) });
     if (!upstream.ok) {
       const err = await upstream.text();
-      return Response.json({ error: err }, { status: upstream.status });
+      return Response.json({ error: scrub(err.slice(0, 200)) }, { status: upstream.status });
     }
     const encoder = new TextEncoder();
     const readable = new ReadableStream({
@@ -71,8 +72,8 @@ export async function POST(req: NextRequest) {
     }], `chat:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`);
     return Response.json(result);
   } catch (e) {
-    console.error("ROUTE_ERROR", e);
+    logError("ROUTE_ERROR", e);
     const err = e as any;
-    return Response.json({ error: err?.message || String(e), stack: err?.stack }, { status: 500 });
+    return Response.json({ error: scrub(err?.message || String(e)) }, { status: 500 });
   }
 }

@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { validateApiKey } from "@/lib/api-key";
 import { isSafeUrl } from "@/lib/ssrf";
+import { logError, scrub } from "@/lib/logger";
 export async function POST(req: NextRequest) {
   const key = req.headers?.get?.("authorization")?.replace("Bearer ", "") || req.headers?.get?.("x-api-key");
   if (!key || !validateApiKey(key)) {
@@ -17,6 +18,10 @@ export async function POST(req: NextRequest) {
     headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
     body: JSON.stringify({ model: body.model || "Qwen2.5-14B-Instruct-Q4_K_M", messages: [{ role: "user", content: input }], max_tokens: body.max_output_tokens || 256 }),
   });
+  if (!upstream.ok) {
+    const err = await upstream.text();
+    return Response.json({ error: scrub(err.slice(0, 200)) }, { status: upstream.status });
+  }
   const data = await upstream.json();
   return Response.json({ id: "resp_1", object: "response", output: [{ type: "message", content: [{ type: "output_text", text: data.choices?.[0]?.message?.content || "" }] }] });
 }

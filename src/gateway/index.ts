@@ -4,7 +4,10 @@ import { runWithFallback } from "../lib/router";
 import { validateApiKey } from "../lib/api-key";
 
 const app = new Hono();
-app.use("*", cors());
+const corsOrigins = process.env.CORS_ORIGINS?.split(",").map(o => o.trim()).filter(Boolean) || [];
+if (corsOrigins.length > 0) {
+  app.use("*", cors({ origin: (origin) => corsOrigins.includes(origin) ? origin : corsOrigins[0], allowHeaders: ["Content-Type", "Authorization"] }));
+}
 
 app.get("/v1/models", (c) => {
   return c.json({ object: "list", data: [{ id: "qwen2.5-coder-7b-instruct-q8_0", object: "model", owned_by: "local" }] });
