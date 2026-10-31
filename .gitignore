@@ -1,6 +1,23 @@
 node_modules/
 .next/
-.env
+tsconfig.tsbuildinfo
 *.log
 .DS_Store
-tsconfig.tsbuildinfo
+
+# secrets and local config
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+master.key
+
+# local data (database, vault, sessions, backups)
+.3evo/
+*.db
+*.sqlite
+*.sqlite3
+bootstrap.log
+
+# reference project (read-only, not part of this repo)
+reference/
