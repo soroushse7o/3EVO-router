@@ -67,6 +67,10 @@ Client (OpenAI/Anthropic SDK)
 - Strict CORS allowlist configured.
 - OS keychain integration planned for v2.
 
+## Dashboard password
+
+Set `ADMIN_PASSWORD` in `.env` before first run. If unset, a random password is generated and printed to the terminal on first start, then stored in `~/.3evo/auth.json`.
+
 ## Quick start
 
 ```bash

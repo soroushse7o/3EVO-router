@@ -70,6 +70,10 @@ Client (OpenAI/Anthropic SDK)
 - CORS strict allowlist پیکربندی شده.
 - یکپارچگی OS keychain برای v2 برنامه‌ریزی شده.
 
+## رمز پنل مدیریت
+
+مقدار `ADMIN_PASSWORD` را در فایل `.env` قبل از اجرای اول تنظیم کنید. اگر این متغیر خالی باشد، یک رمز تصادفی در اولین اجرا در ترمینال نمایش داده شده و در `~/.3evo/auth.json` ذخیره می‌شود.
+
 ## شروع سریع
 ```bash
 git clone https://github.com/soroushse7o/3EVO-router.git
