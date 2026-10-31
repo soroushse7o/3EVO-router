@@ -2,10 +2,22 @@
 import { useState } from "react";
 import providers from "@/data/providers.json";
 export default function ProvidersPage(){
-  const [conns,setConns]=useState<Record<string,boolean>>({});
-  const toggle=(n:string)=>setConns(c=>({...c,[n]:!c[n]}));
+  const [conns,setConns]=useState<Record<string,any>>({});
+  const toggleOAuth=async(n:string)=>{
+    const r=await fetch("/api/oauth/start",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({provider:n,flow:"device"})});
+    const d=await r.json();
+    setConns(c=>({...c,[n]:{status:false,device:d.device_code,expires:d.expires_in}}));
+    const id=setInterval(async()=>{
+      const r2=await fetch("/api/oauth/callback",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({provider:n,device_code:d.device_code})});
+      const d2=await r2.json();
+      if(d2.status==="complete"){
+        clearInterval(id);
+        setConns(c=>({...c,[n]:{status:true,device:d.device_code,expires:d.expires_in}}));
+      }
+    },d.interval*1000);
+  };
   const sections = [
-    {title:"OAuth Providers", items: providers.oauth, color: "text-blue-400"},
+    {title:"OAuth Providers", items: providers.oauth, color: "text-blue-400", action: true},
     {title:"Free Providers", items: providers.free, color: "text-emerald-400"},
     {title:"API Key Providers", items: providers.apiKey, color: "text-amber-400"},
   ];
@@ -23,7 +35,7 @@ export default function ProvidersPage(){
               <div key={n} className={`rounded-2xl border p-4 ${conns[n]?"border-emerald-400/60 shadow-[0_0_12px_#10E58A33] bg-emerald-500/5":"border-white/10 bg-white/5"}`}>
                 <div className="font-medium">{n}</div>
                 <div className="text-xs mt-1">{conns[n]?"1 Connected":"No connections"}</div>
-                <button onClick={()=>toggle(n)} className={`mt-2 text-xs rounded px-2 py-1 ${conns[n]?"bg-red-600/20 text-red-400":"bg-emerald-500/20 text-emerald-400"}`}>
+                <button onClick={()=>toggleOAuth(n)} className={`mt-2 text-xs rounded px-2 py-1 ${conns[n]?"bg-red-600/20 text-red-400":"bg-emerald-500/20 text-emerald-400"}`}>
                   {conns[n]?"Disconnect":"Connect"}
                 </button>
               </div>
