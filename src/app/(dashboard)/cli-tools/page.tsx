@@ -15,14 +15,7 @@ export default function CliToolsPage() {
 
   useEffect(() => {
     const detected: Record<string, boolean> = {};
-    CLIENTS.forEach(c => {
-      try {
-        const fs = require("fs");
-        const path = require("path");
-        const resolved = c.config.replace(/^~/, require("os").homedir());
-        detected[c.name] = fs.existsSync(resolved);
-      } catch { detected[c.name] = false; }
-    });
+    CLIENTS.forEach(c => { detected[c.name] = false; });
     setInstalled(detected);
   }, []);
 
