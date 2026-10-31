@@ -1,6 +1,6 @@
 # 3EVO Router — Remaining Roadmap to 100%
 
-## Current: ~95% complete
+## Current: ~95% complete (v1 ready)
 
 ### Phase A — OAuth Flows (real)
 - [x] OAuth start + callback (stub)
