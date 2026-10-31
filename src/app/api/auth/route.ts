@@ -1,7 +1,13 @@
 import { NextRequest } from "next/server";
 import crypto from "crypto";
 import { ensureAuth, validatePassword, createSession } from "@/lib/auth";
+import { checkRateLimit } from "@/lib/rate-limit";
+
 export async function POST(req: NextRequest) {
+  const ip = req.headers.get("x-forwarded-for") || "unknown";
+  if (!checkRateLimit("auth:" + ip, 5, 60000)) {
+    return Response.json({ error: "rate limited" }, { status: 429 });
+  }
   ensureAuth();
   const { password } = await req.json();
   if (!password) return Response.json({ error: "password required" }, { status: 400 });

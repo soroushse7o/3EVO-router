@@ -2,6 +2,7 @@ import { readFileSync, writeFileSync, existsSync } from "fs";
 import path from "path";
 import os from "os";
 import { getCrypto } from "./auth";
+import { checkRateLimit } from "@/lib/rate-limit";
 const dir = path.join(os.homedir(), ".3evo");
 const file = path.join(dir, "api-keys.json");
 export function loadApiKeys(): { keyHash: string; salt: string; createdAt: number }[] {
@@ -22,6 +23,8 @@ export function createApiKey(): string {
   return key;
 }
 export function validateApiKey(key: string | undefined): boolean {
+  const ip = key?.split("-")[0] || "unknown";
+  if (!checkRateLimit("api:" + ip, 10, 60000)) return false;
   if (!key) return false;
   const crypto = getCrypto();
   const keys = loadApiKeys();
