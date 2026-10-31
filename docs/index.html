@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>3EVO Router — گیت‌وی هوشمند هوش مصنوعی</title>
+<title>3EVO Router — v1.0.0</title>
 <style>
 :root{--bg:#0a0e1a;--card:#121826;--accent:#10E58A;--text:#e6eaf2;--muted:#8a93a6}
 *{box-sizing:border-box;margin:0;padding:0}body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
@@ -20,20 +20,20 @@ footer{text-align:center;color:var(--muted);padding:40px 24px;border-top:1px sol
 <div class="toggle"><button id="langBtn" onclick="toggleLang()" style="background:var(--card);color:var(--text);border:1px solid #ffffff20;border-radius:8px;padding:6px 12px;cursor:pointer">FA</button></div>
 <script>
 const T={
-en:{tag:"Local-first AI gateway + web dashboard. One OpenAI/Anthropic-compatible endpoint, multi-account rotation, 3-tier fallback combos, RTK token compression.",
+en:{tag:"Local-first AI gateway + web dashboard. One OpenAI/Anthropic-compatible endpoint, multi-account rotation, 3-tier fallback combos, RTK token compression, proxy pools, MITM, OAuth device-code flow.",
 gh:"GitHub",docs:"Docs",docsFa:"Docs FA",panel:"Live Panel Demo",
 s1:"Single endpoint",d1:"OpenAI, Anthropic, Responses, /models.",
-s2:"Format translator",d2:"OpenAI ↔ Anthropic ↔ Gemini.",
+s2:"Format translator",d2:"OpenAI ↔ Anthropic ↔ Gemini ↔ Responses.",
 s3:"3-tier fallback",d3:"primary → low-cost → free/credit.",
 s4:"RTK compression",d4:"Measured token savings on tool_result.",
 s5:"Multi-account",d5:"Round-robin / priority rotation.",
-s6:"Security",d6:"AES-256-GCM vault, SECRET_PATH, CORS.",
+s6:"Security",d6:"AES-256-GCM vault, rate limiting, CSRF, SSRF, CORS.",
 arch:"Architecture",archd:"Client\n  ▼\nGateway /v1/*\nTranslator\n  ▼\nRouter (combos, tiers, circuit breaker)\n  ▼\nProviders / Accounts\n  ▼\nRTK\n  ▼\nVault (AES-256-GCM)",
 qs:"Quick start",footer:"MIT License · Built by soroush · GitHub"},
 fa:{tag:"گیت‌وی هوشمند هوش مصنوعی (لوکال + داشبورد تحت وب). یک endpoint سازگار با OpenAI/Anthropic، چرخش چندحسابی، fallback سه‌سطحی، فشرده‌سازی RTK.",
 gh:"گیت‌هاب",docs:"مستندات",docsFa:"مستندات فارسی",panel:"نمایش پنل",
 s1:"یک endpoint",d1:"OpenAI، Anthropic، Responses، /models.",
-s2:"مترجم فرمت",d2:"OpenAI ↔ Anthropic ↔ Gemini.",
+s2:"مترجم فرمت",d2:"OpenAI ↔ Anthropic ↔ Gemini ↔ Responses.",
 s3:"fallback سه‌سطحی",d3:"اصلی → ارزان → رایگان/اعتبار.",
 s4:"فشرده‌سازی RTK",d4:"صرفه‌جویی واقعی توکن در tool_result.",
 s5:"چندحسابی",d5:"چرخش round-robin / priority.",
@@ -60,7 +60,7 @@ document.getElementById('langBtn').textContent=lang==='en'?'FA':'EN';
 </script>
 <div class="hero">
   <h1>3EVO <span>Router</span></h1>
-  <p class="tag">Local-first AI gateway + web dashboard. One OpenAI/Anthropic-compatible endpoint, multi-account rotation, 3-tier fallback combos, RTK token compression.</p>
+  <p class="tag">Local-first AI gateway + web dashboard. One OpenAI/Anthropic-compatible endpoint, multi-account rotation, 3-tier fallback combos, RTK token compression, proxy pools, MITM, OAuth device-code flow.</p>
   <a class="btn" href="https://github.com/soroushse7o/3EVO-router">GitHub</a>
   <a class="btn ghost" href="https://github.com/soroushse7o/3EVO-router#readme">Docs</a>
   <a class="btn ghost" href="https://github.com/soroushse7o/3EVO-router/blob/main/README.fa.md">Docs FA</a>
@@ -68,11 +68,13 @@ document.getElementById('langBtn').textContent=lang==='en'?'FA':'EN';
 </div>
 <div class="grid">
   <div class="card"><h3>Single endpoint</h3><p>OpenAI, Anthropic, Responses, /models.</p></div>
-  <div class="card"><h3>Format translator</h3><p>OpenAI ↔ Anthropic ↔ Gemini.</p></div>
+  <div class="card"><h3>Format translator</h3><p>OpenAI ↔ Anthropic ↔ Gemini ↔ Responses.</p></div>
   <div class="card"><h3>3-tier fallback</h3><p>primary → low-cost → free/credit.</p></div>
   <div class="card"><h3>RTK compression</h3><p>Measured token savings on tool_result.</p></div>
   <div class="card"><h3>Multi-account</h3><p>Round-robin / priority rotation.</p></div>
-  <div class="card"><h3>Security</h3><p>AES-256-GCM vault, SECRET_PATH, CORS.</p></div>
+  <div class="card"><h3>Security</h3><p>AES-256-GCM vault, rate limiting, CSRF, SSRF, CORS.</p></div>
+<div class="card"><h3>Proxy pools</h3><p>CRUD, health check, rotation.</p></div>
+  <div class="card"><h3>MITM</h3><p>Opt-in HTTPS interception with per-host allowlist.</p></div>
 </div>
 <section>
   <h2>Architecture</h2>
@@ -85,7 +87,7 @@ Router
   - Combos, tiers, rotation, circuit breaker
   ▼
 Providers / Accounts
-  - OAuth, API-key, compatible
+  - OAuth device-code, API-key, compatible
   ▼
 RTK
   - tool_result compression

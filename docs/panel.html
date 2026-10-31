@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Endpoint Proxy — Panel</title>
+<title>3EVO Router — Panel</title>
 <style>
 :root{--bg:#0a0e1a;--card:#121826;--accent:#10E58A;--text:#e6eaf2;--muted:#8a93a6}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -41,21 +41,21 @@ document.querySelectorAll('.conn:not(.on)').forEach(el=>el.textContent=t.noConn)
 document.querySelector('.static').textContent=t.staticNote;
 }
 </script>
-<aside><div class="logo">Endpoint Proxy <span style="font-size:10px;color:var(--muted)">v1.0.0</span></div>
-<nav><div class="active">Providers</div><div>Endpoint</div><div>Proxy Pools</div><div>Combos</div><div>Usage</div><div>Quota Tracker</div><div>MITM</div><div>CLI Tools</div><div>Console Log</div><div>Settings</div></nav></aside>
+<aside><div class="logo">3EVO Router <span style="font-size:10px;color:var(--muted)">v1.0.0</span></div>
+<nav><div class="nav-item active">Providers</div><div class="nav-item">Endpoint</div><div class="nav-item">Proxy Pools</div><div class="nav-item">Combos</div><div class="nav-item">Usage</div><div class="nav-item">Quota Tracker</div><div class="nav-item">MITM</div><div class="nav-item">CLI Tools</div><div class="nav-item">Console Log</div><div class="nav-item">Settings</div></nav></aside>
 <main>
 <div class="top"><h1>Providers</h1><span class="badge">Service running</span></div>
 <h2>OAuth Providers (2)</h2>
 <div class="grid">
-  <div class="card"><div class="name">Claude Code</div><div class="conn on">1 Connected</div></div>
-  <div class="card"><div class="name">OpenAI Codex</div><div class="conn on">1 Connected</div></div>
+  <div class="card"><div class="name">Claude Code</div><div class="conn on">Verified</div></div>
+  <div class="card"><div class="name">OpenAI Codex</div><div class="conn on">Verified</div></div>
   <div class="card"><div class="name">GitHub Copilot</div><div class="conn">No connections</div></div>
   <div class="card"><div class="name">Cursor IDE</div><div class="conn">No connections</div></div>
 </div>
 <h2>Free Providers (2)</h2>
 <div class="grid">
-  <div class="card"><div class="name">iFlow AI</div><div class="conn on">1 Connected</div></div>
-  <div class="card"><div class="name">Qwen Code</div><div class="conn on">1 Connected</div></div>
+  <div class="card"><div class="name">iFlow AI</div><div class="conn on">Verified</div></div>
+  <div class="card"><div class="name">Qwen Code</div><div class="conn on">Verified</div></div>
   <div class="card"><div class="name">Gemini CLI</div><div class="conn">No connections</div></div>
 </div>
 <h2>API Key Providers (3)</h2>
@@ -63,9 +63,26 @@ document.querySelector('.static').textContent=t.staticNote;
   <div class="card"><div class="name">OpenRouter</div><div class="conn">No connections</div></div>
   <div class="card"><div class="name">Anthropic</div><div class="conn">No connections</div></div>
   <div class="card"><div class="name">OpenAI</div><div class="conn">No connections</div></div>
-  <div class="card"><div class="name">DeepSeek</div><div class="conn on">1 Connected</div></div>
+  <div class="card"><div class="name">DeepSeek</div><div class="conn on">Verified</div></div>
   <div class="card"><div class="name">Groq</div><div class="conn">No connections</div></div>
   <div class="card"><div class="name">Mistral</div><div class="conn">No connections</div></div>
 </div>
-<p class="static" style="margin-top:24px;color:var(--muted);font-size:12px">Static showcase — not a live instance.</p>
+<h2>Architecture</h2>
+<pre class="tree">Client (OpenAI/Anthropic SDK)
+  ▼
+Gateway /v1/*
+  - Translator (canonical format)
+  ▼
+Router
+  - Combos, tiers, rotation, circuit breaker
+  ▼
+Providers / Accounts
+  - OAuth device-code, API-key, compatible
+  ▼
+RTK
+  - tool_result compression
+  ▼
+Vault
+  - AES-256-GCM secrets (SQLite ~/.3evo)</pre>
+<p class="static" style="margin-top:24px;color:var(--muted);font-size:12px">Static showcase — not a live instance.</p> style="margin-top:24px;color:var(--muted);font-size:12px">Static showcase — not a live instance.</p>
 </main></body></html>
