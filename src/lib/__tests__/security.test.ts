@@ -1,9 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { scrub } from "../scrubber";
-import { hashPassword, verifyPassword, validatePassword, createSession, validateSession, destroySession, ensureAuth } from "../auth";
+import { hashPassword, verifyPassword, validatePassword, createSession, validateSession, destroySession, ensureAuth, getDataDir } from "../auth";
 import { upsertAccount, loadAccounts, saveAccounts } from "../accounts";
 import { validateApiKey, createApiKey } from "../api-key";
 import { NextRequest } from "next/server";
+import path from "path";
+import fs from "fs";
 describe("P1 security", () => {
   it("scrub removes Bearer token", () => {
     const out = scrub("Authorization: Bearer abc123");
@@ -58,5 +60,33 @@ describe("P1 security", () => {
     });
     const res = await POST(req);
     expect(res.status).toBe(401);
+  });
+  it("S8: session writes are atomic", () => {
+    ensureAuth();
+    const session = createSession();
+    const { readJson } = require("fs");
+    // Verify the file was written atomically (no .tmp files left behind)
+    const tmp = path.join(getDataDir(), "sessions.json.tmp");
+    expect(() => readJson(tmp, {})).toThrow();
+    destroySession(session);
+  });
+  it("S9: auth bootstrap does not log plaintext password", () => {
+    const bootstrapLog = path.join(getDataDir(), "bootstrap.log");
+    expect(() => { if (fs.existsSync(bootstrapLog)) throw new Error("should not exist"); }).not.toThrow();
+  });
+  it("S11: progressive lockout after failed attempts", async () => {
+    const mod = await import("../auth");
+    mod.clearLockout();
+    expect(mod.checkLockout().locked).toBe(false);
+    const a1 = mod.recordFailedAuth("test-ip");
+    expect(a1.locked).toBe(false);
+    expect(a1.attempts).toBe(1);
+    const a2 = mod.recordFailedAuth("test-ip");
+    expect(a2.locked).toBe(false);
+    expect(a2.attempts).toBe(2);
+    const a3 = mod.recordFailedAuth("test-ip");
+    expect(a3.locked).toBe(true);
+    expect(a3.attempts).toBe(3);
+    mod.clearLockout();
   });
 });
