@@ -1,0 +1,11 @@
+npm notice run 3evo-router@1.0.0 npx
+npm notice run vitest run src/lib/__tests__/
+
+ RUN  v5.0.5 C:/Users/Administrator/3evo-router
+
+
+ Test Files  6 passed (6)
+      Tests  48 passed (48)
+   Start at  08:10:51
+   Duration  35.35s (tests 99%)
+
