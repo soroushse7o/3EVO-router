@@ -4,7 +4,7 @@ import os from "os";
 import { encrypt, decrypt, masterKey, ensureDataDir } from "@/lib/vault";
 const dir = path.join(os.homedir(), ".3evo");
 const file = path.join(dir, "accounts.json.enc");
-export interface Account { id: string; provider: string; token: string; expiresAt: number; }
+export interface Account { id: string; provider: string; token: string; expiresAt: number; priority?: number; }
 export function loadAccounts(): Account[] {
   ensureDataDir();
   if (!existsSync(file)) return [];
@@ -15,4 +15,11 @@ export function upsertAccount(acc: Account) {
   const accs = loadAccounts().filter(a => a.id !== acc.id);
   accs.push(acc);
   saveAccounts(accs);
+}
+export function getSortedAccounts(provider?: string): Account[] {
+  const now = Date.now();
+  return loadAccounts()
+    .filter(a => !provider || a.provider === provider)
+    .filter(a => a.expiresAt > now)
+    .sort((a, b) => (b.priority || 0) - (a.priority || 0));
 }

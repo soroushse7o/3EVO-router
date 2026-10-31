@@ -14,22 +14,25 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const key = req.headers?.get?.("authorization")?.replace("Bearer ", "") || req.headers?.get?.("x-api-key");
   if (!key || !validateApiKey(key)) {
-    return Response.json({ error: "invalid api key" }, { status: 401 });
+    return Response.json({ error: { message: "invalid api key", type: "auth_error" } }, { status: 401 });
   }
   const body = await req.json();
   const upstreamUrl = process.env.UPSTREAM_URL || "http://127.0.0.1:18434/v1/chat/completions";
   if (!isSafeUrl(upstreamUrl)) {
-    return Response.json({ error: "blocked url" }, { status: 400 });
+    return Response.json({ error: { message: "blocked url", type: "invalid_request_error" } }, { status: 400 });
   }
   const apiKey = process.env.LOCAL_MODEL_API_KEY;
   if (!apiKey) {
-    return Response.json({ error: "server misconfigured: LOCAL_MODEL_API_KEY is not set" }, { status: 500 });
+    return Response.json({ error: { message: "server misconfigured: LOCAL_MODEL_API_KEY is not set", type: "server_error" } }, { status: 500 });
   }
   if (body.stream) {
-    const upstream = await fetch(upstreamUrl, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` }, body: JSON.stringify({ ...body, stream: true }) });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    const upstream = await fetch(upstreamUrl, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` }, body: JSON.stringify({ ...body, stream: true }), signal: controller.signal });
+    clearTimeout(timeoutId);
     if (!upstream.ok) {
       const err = await upstream.text();
-      return Response.json({ error: scrub(err.slice(0, 200)) }, { status: upstream.status });
+      return Response.json({ error: { message: scrub(err.slice(0, 200)), type: "upstream_error" } }, { status: upstream.status });
     }
     const encoder = new TextEncoder();
     const readable = new ReadableStream({
@@ -64,16 +67,20 @@ export async function POST(req: NextRequest) {
   }
   try {
     const result = await runWithFallback([async () => {
-      const r = await fetch(upstreamUrl, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` }, body: JSON.stringify(body) });
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
+      const r = await fetch(upstreamUrl, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` }, body: JSON.stringify(body), signal: controller.signal });
+      clearTimeout(timeoutId);
       const data = await r.json();
-      if (!r.ok) throw { status: r.status, message: data.error?.message || data.error || "upstream error" };
+      if (!r.ok) throw { status: r.status, message: data.error?.message || data.error || "upstream error", type: data.error?.type || "upstream_error" };
       recordUsage(body.model || "unknown", "chat", data.usage?.prompt_tokens || 0, data.usage?.completion_tokens || 0, 0);
       return data;
-    }], `chat:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`);
+    }], `chat:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`, 30000);
     return Response.json(result);
   } catch (e) {
     logError("ROUTE_ERROR", e);
     const err = e as any;
-    return Response.json({ error: scrub(err?.message || String(e)) }, { status: 500 });
+    const status = err?.status || 503;
+    return Response.json({ error: { message: scrub(err?.message || String(e)), type: "server_error" } }, { status });
   }
 }

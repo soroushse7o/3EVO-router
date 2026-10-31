@@ -5,7 +5,7 @@ function rotateAccounts(accounts: string[], strategy: "round-robin" | "priority"
   return [accounts[lastIndex.current], ...accounts.slice(0, lastIndex.current), ...accounts.slice(lastIndex.current + 1)];
 }
 export { rotateAccounts };
-export async function runWithFallback<T>(tiers: Array<() => Promise<T>>, keyPrefix = "default"): Promise<T> {
+export async function runWithFallback<T>(tiers: Array<() => Promise<T>>, keyPrefix = "default", timeoutMs = 30000): Promise<T> {
   let lastErr: any;
   for (let i = 0; i < tiers.length; i++) {
     const key = `${keyPrefix}:tier:${i}`;
@@ -22,16 +22,18 @@ export async function runWithFallback<T>(tiers: Array<() => Promise<T>>, keyPref
       recordFailure(key);
       lastErr = e;
       const status = e?.status || e?.response?.status;
-      if (status && status >= 500 && status < 600 && i < tiers.length - 1) continue;
-      if (status === 429 && i < tiers.length - 1) continue;
-      if (status === 401 && i < tiers.length - 1) continue;
+      const isNetwork = !status && (e?.name === "AbortError" || e?.code === "ECONNREFUSED" || e?.code === "ETIMEDOUT" || e?.code === "ENOTFOUND" || e?.code === "EAI_AGAIN" || e?.message?.includes("timeout") || e?.message?.includes("network"));
+      const shouldFallback = (status && status >= 500) || status === 429 || status === 401 || isNetwork;
+      if (shouldFallback && i < tiers.length - 1) continue;
       if (i === tiers.length - 1) break;
       throw e;
     }
   }
   const tried = tiers.map((_, i) => `${keyPrefix}:tier:${i}`).join(", ");
   const soonest = tiers.map((_, i) => ({ key: `${keyPrefix}:tier:${i}`, retryAfter: getRetryAfter(`${keyPrefix}:tier:${i}`) })).sort((a, b) => a.retryAfter - b.retryAfter)[0];
-  const err = Object.assign(new Error(`all tiers exhausted. tried: [${tried}]. soonest reset: ${soonest.retryAfter}ms (${soonest.key})`), { tried, soonest, lastErr });
+  const msg = `all tiers exhausted. tried: [${tried}]. soonest reset: ${soonest.retryAfter}ms (${soonest.key})`;
+  const err = Object.assign(new Error(msg), { tried, soonest, lastErr }) as Error & { status?: number };
+  if (err.status === undefined) err.status = 503;
   throw err;
 }
 
