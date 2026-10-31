@@ -7,6 +7,10 @@ import {
   responsesToChat,
   toCanonical,
   fromCanonicalOpenAI,
+  openaiStreamToAnthropic,
+  anthropicStreamToOpenAI,
+  toOpenAICompatible,
+  fromOpenAICompatible,
 } from '@/lib/translator';
 
 describe('Translator Golden Tests', () => {
@@ -158,5 +162,50 @@ describe('Translator Golden Tests', () => {
     const canonical = toCanonical(openai);
     expect(canonical[0].tool_calls!).toHaveLength(1);
     expect(canonical[0].tool_calls![0].function.name).toBe("fn");
+  });
+
+  it('T1: tool calls with empty arguments', () => {
+    const openai = { messages: [{ role: "assistant", tool_calls: [{ id: "c1", type: "function", function: { name: "fn", arguments: "{}" } }] }] };
+    const canonical = toCanonical(openai);
+    expect(canonical[0].tool_calls![0].function.arguments).toBe("{}");
+  });
+
+  it('T2: image_url with detail field preserved', () => {
+    const openai = { messages: [{ role: "user", content: [{ type: "image_url", image_url: { url: "data:image/png;base64,ABC", detail: "high" } }] }] };
+    const canonical = toCanonical(openai);
+    expect(canonical[0].content).toHaveLength(1);
+    expect((canonical[0].content as any)[0].image_url.detail).toBe("high");
+  });
+
+  it('T3: Gemini schema preserves systemInstruction', () => {
+    const openai = { model: "gemini", messages: [{ role: "system", content: "sys" }, { role: "user", content: "hi" }] };
+    const result = openaiToGemini(openai);
+    expect(result.systemInstruction?.parts[0].text).toBe("sys");
+  });
+
+  it('T4: placeholder for unknown content type', () => {
+    const openai = { messages: [{ role: "user", content: [{ type: "unknown", foo: "bar" }] }] };
+    const canonical = toCanonical(openai);
+    expect(canonical[0].content).toHaveLength(1);
+    expect((canonical[0].content as any)[0].type).toBe("text");
+  });
+
+  it('T5: Anthropic SSE placeholder roundtrip', () => {
+    const chunk = { type: "content_block_delta", delta: { type: "text_delta", text: "hello" } };
+    expect(openaiStreamToAnthropic(chunk)).toBe(chunk);
+    expect(anthropicStreamToOpenAI(chunk)).toBe(chunk);
+  });
+
+  it('T6: Responses API with array input', () => {
+    const responses = { input: [{ content: [{ text: "hi" }] }], max_output_tokens: 50 };
+    const result = responsesToChat(responses);
+    expect(result.messages[0].content).toBe("hi");
+    expect(result.max_tokens).toBe(50);
+  });
+
+  it('T7: adapter helpers preserve stream flag', () => {
+    const body = { model: "llama3", stream: true };
+    expect(toOpenAICompatible(body, "ollama").stream).toBe(true);
+    expect(fromOpenAICompatible({ model: "gemini" }, "vertex").model).toBe("vertex/gemini");
   });
 });

@@ -1,10 +1,21 @@
 import { recordFailure, recordSuccess, isOpen, getRetryAfter } from "@/lib/circuit";
+import { getSortedAccounts, getAccountById } from "@/lib/accounts";
 function rotateAccounts(accounts: string[], strategy: "round-robin" | "priority" = "round-robin", lastIndex: { current: number } = { current: -1 }): string[] {
   if (strategy === "priority") return accounts.slice().sort((a, b) => a.localeCompare(b));
   lastIndex.current = (lastIndex.current + 1) % accounts.length;
   return [accounts[lastIndex.current], ...accounts.slice(0, lastIndex.current), ...accounts.slice(lastIndex.current + 1)];
 }
 export { rotateAccounts };
+export function createProxyTier(accountId: string, body: any, apiKey: string) {
+  return async () => {
+    const acc = getAccountById(accountId);
+    if (!acc?.upstreamUrl) throw { status: 400, message: "no upstream for account" };
+    const r = await fetch(acc.upstreamUrl, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` }, body: JSON.stringify(body) });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw { status: r.status, message: data.error?.message || data.error || "upstream error" };
+    return data;
+  };
+}
 export async function runWithFallback<T>(tiers: Array<() => Promise<T>>, keyPrefix = "default", timeoutMs = 30000): Promise<T> {
   let lastErr: any;
   for (let i = 0; i < tiers.length; i++) {
