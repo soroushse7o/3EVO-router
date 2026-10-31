@@ -5,6 +5,8 @@ import { validateApiKey } from "@/lib/api-key";
 import { isSafeUrl } from "@/lib/ssrf";
 import { logError, scrub } from "@/lib/logger";
 import { getSortedAccounts } from "@/lib/accounts";
+import { toCanonical, fromCanonicalOpenAI, openaiToAnthropic, anthropicToOpenAI } from "@/lib/translator";
+
 export async function GET(req: NextRequest) {
   const key = req.headers?.get?.("authorization")?.replace("Bearer ", "") || req.headers?.get?.("x-api-key");
   if (!key || !validateApiKey(key)) {
