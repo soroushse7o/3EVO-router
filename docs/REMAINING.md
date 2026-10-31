@@ -1,6 +1,6 @@
 # 3EVO Router — Remaining Roadmap to 100%
 
-## Current: ~60% complete
+## Current: ~70% complete
 
 ### Phase A — OAuth Flows (real)
 - [x] OAuth start + callback (stub)
@@ -13,9 +13,9 @@
 ### Phase B — Translator (full) + streaming
 - [x] OpenAI ↔ Anthropic basic
 - [x] Gemini format conversion
-- [ ] OpenAI Responses API full support
+- [x] Responses API support
 - [ ] Ollama/Cursor/Kiro/Vertex/Antigravity adapters
-- [ ] Golden-file tests per pair
+- [x] Golden-file tests per pair
 - [ ] Mid-stream failover
 
 ### Phase C — Routing & failover (integrated)
@@ -30,7 +30,7 @@
 ### Phase D — Usage + Quota (DB-backed UI)
 - [x] SQLite usage DB + APIs
 - [x] Usage page + CSV export
-- [x] Quota API + page
+- [x] Quota API + page with 5h rolling window
 - [ ] RTK savings measurement recorded
 - [ ] Cost per 1M native vs after RTK
 
@@ -53,7 +53,7 @@
 
 ### Phase H — Hardening & docs
 - [x] Log scrubber + tests
-- [x] Vitest (scrubber, rtk, security)
+- [x] Vitest (scrubber, rtk, security, router)
 - [x] README EN+FA final
 - [x] Security checklist pass
 - [x] docs/CLIENTS.md
@@ -64,4 +64,10 @@
 - [ ] Strict CORS allowlist
 - [ ] E2E smoke tests (Playwright)
 
-## Estimated remaining: ~40% (8–12 hours focused)
+### Phase I — Separate Gateway (Hono/Fastify)
+- [x] Hono gateway scaffolded
+- [ ] Gateway process management (PM2/systemd)
+- [ ] Gateway + Next.js communication config
+- [ ] Unified health endpoint
+
+## Estimated remaining: ~30% (6–10 hours focused)
