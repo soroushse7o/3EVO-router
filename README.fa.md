@@ -2,28 +2,41 @@
 
 یک endpoint واحد و سازگار با OpenAI/Anthropic ارائه می‌دهد و درخواست‌ها را بین چند provider با چرخش چندحسابی، fallback سه‌سطحی و فشرده‌سازی توکن (RTK) به صورت خودکار و هوشمند مسیریابی می‌کند.
 
-> **وضعیت: v1.0.0** — نسخه پایدار. تمام ویژگی‌های اصلی پیاده‌سازی و تست شده‌اند.
-> 
-> **پیشرفت کل: 100%** — v1 آماده استفاده و ارائه است.
+> **وضعیت: آلفا — آماده تولید نیست.** بسیاری از ویژگی‌های اعلام شده در واقع stub، شبیه‌سازی یا کد مرده هستند. جدول [وضعیت ویژگی‌ها](#وضعیت-ویژگی‌ها) واقعیت را نشان می‌دهد.
 
 ---
 
 برای مستندات انگلیسی، به [README.md](README.md) مراجعه کنید.
 
-## قابلیت‌ها
+## وضعیت ویژگی‌ها
 
-- **یک endpoint** — OpenAI (`/v1/chat/completions`, `/v1/responses`)، Anthropic (`/v1/messages`)، `/v1/models`.
-- **احراز هویت واقعی** — رمز با scrypt هش می‌شود، session سمت سرور ذخیره و اعتبارسنجی می‌شود.
-- **API Key** — تولید key تصادفی، ذخیره فقط hash آن با scrypt + salt، اعتبارسنجی در route handlerها.
-- **چرخش حساب‌های OAuth** — round-robin و priority.
-- **3-tier fallback** — قابلیت fallback بین tiers.
-- **Circuit breaker** — آستانه 3 شکست، cooldown 30 ثانیه، حالت half-open.
-- **RTK (Result Token Keeper)** — فشرده‌سازی خروجی‌های تکراری، حداکثر 4000 کاراکتر.
-- **Quota tracker** — 5-hour rolling window.
-- **Usage DB** — ثبت استفاده در SQLite.
-- **Log scrubber** — پاکسازی توکن‌ها از لاگ‌ها.
-- **Dashboard** — پنل وب برای مدیریت providers، accounts، usage، quota، settings.
-- **i18n** — انگلیسی + فارسی (RTL، Vazirmatn).
+| ویژگی | وضعیت | شاهد / فایل |
+|--------|--------|-----------------|
+| پروکسی `/v1/chat/completions` | Working | `src/app/api/v1/chat/completions/route.ts` |
+| پروکسی `/v1/messages` | Working | `src/app/api/v1/messages/route.ts` |
+| پروکسی `/v1/responses` | Working | `src/app/api/v1/responses/route.ts` |
+| `/v1/models` | Working | `src/app/api/v1/models/route.ts` |
+| لاگین داشبورد (scrypt + session) | Working | `src/lib/auth.ts`, `src/app/api/auth/route.ts` |
+| API key generation/validation | Working | `src/lib/api-key.ts` |
+| Vault encrypt/decrypt | Working | `src/lib/vault.ts` |
+| Scrubber (الگوهای پایه) | Working | `src/lib/scrubber.ts` |
+| لاگین استفاده (SQLite) | Stub | `src/lib/db.ts`; aggregates محدود |
+| Quota tracker | Stub | `src/app/api/quota/route.ts`; پنجره 5h هاردکد |
+| RTK token compression | Stub | `src/lib/rtk.ts`; همیشه 0 ذخیره را گزارش می‌دهد |
+| Circuit breaker | Stub | `src/lib/circuit.ts`; in-memory, بدون پایداری |
+| 3-tier failover | Stub | `src/lib/router.ts`; فقط یک tier در `/v1/chat/completions` |
+| Account rotation | Stub | `src/lib/router.ts`; بدون state پایداری |
+| OAuth device-code flow | Simulated | `src/lib/oauth-flows.ts`; token ساختگی |
+| Provider adapters (Ollama/Cursor/etc.) | Cosmetic | `src/lib/translator.ts`; فقط نام مدل تغییر می‌کند |
+| Combos page | Static UI | `src/app/(dashboard)/combos/page.tsx`; 3 کارت ثابت |
+| Providers page | Static UI | `src/app/(dashboard)/providers/page.tsx` |
+| Proxy pools CRUD | Working | `src/app/api/proxy-pools`; در outbound استفاده نمی‌شود |
+| MITM | Experimental | `src/app/api/mitm/*`; بدون اعتراض واقعی |
+| CLI tools config generation | Stub | `src/app/(dashboard)/cli-tools/page.tsx` |
+| Console log | Stub | `src/app/(dashboard)/console-log/page.tsx` |
+| i18n EN/FA + RTL | Working | `src/lib/i18n.ts`, static `docs/panel.html` |
+| Hono gateway server | Dead code | `src/gateway/index.ts`; توسط هیچ route import نمی‌شود |
+| CORS/CSRF/SSRF/rate-limit | Partial | در بعضی routes وجود دارد، ناسازگار |
 
 ## معماری
 ```
@@ -170,20 +183,17 @@ src/
     └ providers.json         # Provider list
 ```
 
-## نقشه راه
+## نقشه راه (واقعی)
+
 | فاز | وضعیت | توضیحات |
-|-----|-------|---------|
-| P0 | ✅ | امنیت پایه: scrypt، session، proxy، API key |
-| P1 | ✅ | تست‌های خودکار: 48/48 پاس |
-| P2 | ✅ | مسیرهای کامل `/v1/*` با upstream واقعی llama-server |
-| P3 | ✅ | Routing و fallback با circuit breaker |
-| P4 | ✅ | Translator کامل: OpenAI/Anthropic/Gemini/Responses |
-| P5 | ✅ | RTK، quota، usage با برآورد هزینه |
-| P6 | ✅ | UI و i18n (EN/FA، RTL، toggle زبان) |
-| P7 | ✅ | سرور جدا Hono gateway |
-| P8 | ✅ | Hardening: rate limiting، CSRF، SSRF، CORS |
-| P9 | ✅ | تست‌های دود:E2E smoke (Playwright scaffold) |
-| P10 | ✅ | Proxy pools CRUD، تولید کانفیگ CLI tools |
+|-----|--------|---------|
+| P0 | ✅ | صادقیت پایه: docs مطابق کد، رازهای هاردکد حذف شد |
+| P1 | 🔄 | امنیت: S1–S15 (در حال انجام) |
+| P2 | ⏳ | هسته مسیریابی واقعی: multi-tier، circuit breaker، timeouts |
+| P3 | ⏳ | اصلاح Translator & streaming |
+| P4 | ⏳ | providers/OAuth واقعی یا حذف صادقانه |
+| P5 | ⏳ | اصلاح Usage/quota/RTK |
+| P6 | ⏳ | UI/i18n/CLI/tests |
 
 ## مجوز
 MIT — see [LICENSE](LICENSE).

@@ -2,24 +2,37 @@
 
 One compatible endpoint for OpenAI/Anthropic. Automatically and intelligently routes requests across multiple providers with multi-account rotation, 3-tier fallback, and token compression (RTK).
 
-> **Status: v1.0.0** — Stable release. All core features implemented and tested.
->
-> **Overall progress: 100%** — v1 ready for use and demo.
+> **Status: Alpha — not production-ready.** Many advertised features are stubs, simulations, or dead code. See [Verified Feature Status](#verified-feature-status) for the current state.
 
-## Features
+## Verified Feature Status
 
-- **Single endpoint** — OpenAI (`/v1/chat/completions`, `/v1/responses`), Anthropic (`/v1/messages`), `/v1/models`.
-- **Real authentication** — Password hashed with scrypt, server-side session storage and validation.
-- **API Key** — Random key generation, only hash stored with scrypt + salt, validation in route handlers.
-- **OAuth account rotation** — Round-robin and priority strategies.
-- **3-tier fallback** — Fallback between tiers.
-- **Circuit breaker** — 3 failures threshold, 30s cooldown, half-open state.
-- **RTK (Result Token Keeper)** — Compresses duplicate output tokens, max 4000 chars.
-- **Quota tracker** — 5-hour rolling window.
-- **Usage DB** — Usage logging in SQLite.
-- **Log scrubber** — Scrubs tokens from logs.
-- **Dashboard** — Web panel for managing providers, accounts, usage, quota, settings.
-- **i18n** — English + Persian (RTL, Vazirmatn).
+| Feature | Status | Evidence / File |
+|---------|--------|-----------------|
+| `/v1/chat/completions` proxy | Working | `src/app/api/v1/chat/completions/route.ts` |
+| `/v1/messages` proxy | Working | `src/app/api/v1/messages/route.ts` |
+| `/v1/responses` proxy | Working | `src/app/api/v1/responses/route.ts` |
+| `/v1/models` | Working | `src/app/api/v1/models/route.ts` |
+| Dashboard login (scrypt + session) | Working | `src/lib/auth.ts`, `src/app/api/auth/route.ts` |
+| API key generation/validation | Working | `src/lib/api-key.ts` |
+| Vault encrypt/decrypt | Working | `src/lib/vault.ts` |
+| Scrubber (basic patterns) | Working | `src/lib/scrubber.ts` |
+| Usage logging (SQLite) | Stub | `src/lib/db.ts`; records rows but aggregates are limited |
+| Quota tracker | Stub | `src/app/api/quota/route.ts`; 5h window hardcoded |
+| RTK token compression | Stub | `src/lib/rtk.ts`; always reports 0 savings |
+| Circuit breaker | Stub | `src/lib/circuit.ts`; in-memory, no persistence |
+| 3-tier failover | Stub | `src/lib/router.ts`; only one tier wired in `/v1/chat/completions` |
+| Account rotation | Stub | `src/lib/router.ts`; no persistent account state |
+| OAuth device-code flow | Simulated | `src/lib/oauth-flows.ts`; fabricates tokens |
+| Provider adapters (Ollama/Cursor/etc.) | Cosmetic | `src/lib/translator.ts`; only changes model name |
+| Combos page | Static UI | `src/app/(dashboard)/combos/page.tsx`; 3 hardcoded cards |
+| Providers page | Static UI | `src/app/(dashboard)/providers/page.tsx` |
+| Proxy pools CRUD | Working | `src/app/api/proxy-pools`; not used in outbound |
+| MITM | Experimental | `src/app/api/mitm/*`; no real interception |
+| CLI tools config generation | Stub | `src/app/(dashboard)/cli-tools/page.tsx` |
+| Console log | Stub | `src/app/(dashboard)/console-log/page.tsx` |
+| i18n EN/FA + RTL | Working | `src/lib/i18n.ts`, static `docs/panel.html` |
+| Hono gateway server | Dead code | `src/gateway/index.ts`; not imported by any route |
+| CORS/CSRF/SSRF/rate-limit | Partial | Present in some routes, inconsistent |
 
 ## Architecture
 
@@ -171,21 +184,17 @@ src/
     └ providers.json         # Provider list
 ```
 
-## Roadmap
+## Roadmap (Honest)
 
 | Phase | Status | Description |
 |-------|--------|-------------|
-| P0 | ✅ | Base security: scrypt, session, proxy, API key |
-| P1 | ✅ | Automated tests: 48/48 passing |
-| P2 | ✅ | Full `/v1/*` routes with real llama-server upstream |
-| P3 | ✅ | Routing and fallback with circuit breaker |
-| P4 | ✅ | Full translator: OpenAI/Anthropic/Gemini/Responses |
-| P5 | ✅ | RTK, quota, usage with cost estimation |
-| P6 | ✅ | UI and i18n (EN/FA, RTL, lang toggle) |
-| P7 | ✅ | Separate Hono gateway server |
-| P8 | ✅ | Hardening: rate limiting, CSRF, SSRF, CORS |
-| P9 | ✅ | E2E smoke tests (Playwright scaffold) |
-| P10 | ✅ | Proxy pools CRUD, CLI tools config generation |
+| P0 | ✅ | Baseline honesty: docs match code, hardcoded secrets removed |
+| P1 | 🔄 | Security hardening: S1–S15 (in progress) |
+| P2 | ⏳ | Real routing core: multi-tier, circuit breaker, timeouts |
+| P3 | ⏳ | Translator & streaming fixes |
+| P4 | ⏳ | Real providers/OAuth or honest removal |
+| P5 | ⏳ | Usage/quota/RTK fixes |
+| P6 | ⏳ | UI/i18n/CLI/tests polish |
 
 ## License
 
