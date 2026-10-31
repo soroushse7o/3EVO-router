@@ -2,7 +2,7 @@
 
 یک endpoint واحد و سازگار با OpenAI/Anthropic ارائه می‌دهد و درخواست‌ها را بین چند provider با چرخش چندحسابی، fallback سه‌سطحی و فشرده‌سازی توکن (RTK) به صورت خودکار و هوشمند مسیریابی می‌کند.
 
-> **وضعیت: Alpha** — امنیت پایه پیاده‌سازی شده، OAuth واقعی و چند قابلیت دیگر planned هستند.
+> **وضعیت: v1.0.0** — نسخه پایدار. تمام ویژگی‌های اصلی پیاده‌سازی و تست شده‌اند.
 > 
 > **پیشرفت کل: 100%** — v1 آماده استفاده و ارائه است.
 
@@ -64,7 +64,11 @@ Client (OpenAI/Anthropic SDK)
 - Session validation در route handlerها؛ proxy Node.js runtime است.
 - Log scrubber: درخواست‌های حساس پاک می‌شوند.
 - Secrets در vault رمزنگاری‌شده ذخیره می‌شوند.
-- **Planned**: argon2، CSRF tokens، rate limiting، OS keychain، SSRF protection، strict CORS allowlist.
+- اعتبارسنجی CSRF token پیاده‌سازی شده.
+- Rate limiting: 5 تلاش.auth/min، 10 تلاش API key/min.
+- محافظت SSRF: فقط localhost/127.0.0.1 مجاز.
+- CORS strict allowlist پیکربندی شده.
+- یکپارچگی OS keychain برای v2 برنامه‌ریزی شده.
 
 ## شروع سریع
 ```bash
@@ -79,25 +83,47 @@ npm run dev
 src/
 ├ app/
 │   ├ (auth)/login/page.tsx
-│   ├ (dashboard)/...        # صفحات داشبورد
-│   ├ api/
-│   │   ├ auth/route.ts      # login/logout
-│   │   ├ v1/
-│   │   │   ├ chat/completions/route.ts
-│   │   │   ├ messages/route.ts
-│   │   │   ├ models/route.ts
-│   │   │   └ responses/route.ts
-│   │   ├ combo/run/route.ts
-│   │   ├ health/route.ts
-│   │   ├ log/stream/route.ts
-│   │   ├ oauth/start/route.ts
-│   │   ├ oauth/callback/route.ts
-│   │   ├ quota/route.ts
-│   │   ├ route/test/route.ts
-│   │   ├ rtk/route.ts
-│   │   ├ settings/route.ts
-│   │   └ usage/route.ts
-│   └ layout.tsx
+│   ├ (dashboard)/
+│   │   ├ page.tsx
+│   │   ├ endpoint/page.tsx
+│   │   ├ providers/page.tsx
+│   │   ├ proxy-pools/page.tsx
+│   │   ├ combos/page.tsx
+│   │   ├ usage/page.tsx
+│   │   ├ quota/page.tsx
+│   │   ├ mitm/page.tsx
+│   │   ├ cli-tools/page.tsx
+│   │   ├ console-log/page.tsx
+│   │   ├ settings/page.tsx
+│   │   └ layout.tsx
+│   └ api/
+│       ├ auth/route.ts
+│       ├ v1/
+│       │   ├ chat/completions/route.ts
+│       │   ├ messages/route.ts
+│       │   ├ models/route.ts
+│       │   └ responses/route.ts
+│       ├ combo/run/route.ts
+│       ├ health/route.ts
+│       ├ log/stream/route.ts
+│       ├ oauth/start/route.ts
+│       ├ oauth/callback/route.ts
+│       ├ oauth/verify/route.ts
+│       ├ quota/route.ts
+│       ├ route/test/route.ts
+│       ├ rtk/route.ts
+│       ├ settings/
+│       │   ├ route.ts
+│       │   ├ cloud/route.ts
+│       │   ├ export/route.ts
+│       │   └ import/route.ts
+│       ├ usage/route.ts
+│       ├ proxy-pools/route.ts
+│       └ mitm/
+│           ├ status/route.ts
+│           ├ toggle/route.ts
+│           ├ allowlist/route.ts
+│           └ cert/route.ts
 ├ cli/index.ts
 ├ lib/
 │   ├ accounts.ts            # OAuth tokens (رمزنگاری‌شده)
@@ -105,33 +131,55 @@ src/
 │   ├ auth.ts                # scrypt auth, session management
 │   ├ circuit.ts             # circuit breaker
 │   ├ combo.ts               # combo schema
+│   ├ cors.ts                # CORS allowlist
+│   ├ cost.ts                # cost estimation
+│   ├ csrf.ts                # CSRF validation
 │   ├ db.ts                  # SQLite usage logging
 │   ├ gemini.ts              # Gemini translator
+│   ├ i18n.ts                # EN/FA translation helper
+│   ├ mitm-certs.ts          # Root cert generation
+│   ├ oauth-flows.ts         # Device-code flow, refresh
 │   ├ oauth.ts               # OAuth helpers
 │   ├ proxy.ts               # Node.js runtime proxy
-│   ├ router.ts              # runWithFallback, account rotation
+│   ├ rate-limit.ts          # Rate limiting
+│   ├ refresh.ts             # Reactive token refresh
+│   ├ router.ts              # runWithFallback, streamWithFallback
 │   ├ rtk.ts                 # token compression
 │   ├ scrubber.ts            # log scrubbing
-│   ├ translator.ts          # OpenAI/Anthropic/Gemini
+│   ├ ssrf.ts                # SSRF protection
+│   ├ translator.ts          # OpenAI/Anthropic/Gemini/Responses
 │   ├ vault.ts               # AES-256-GCM encryption
 │   └ __tests__/
 │       ├ p1-security.test.ts
 │       ├ rtk.test.ts
 │       ├ scrubber.test.ts
-│       └ security.test.ts
+│       ├ security.test.ts
+│       ├ router.integration.test.ts
+│       └ translator.golden.test.ts
+├ gateway/
+│   ├ index.ts               # Hono gateway
+│   ├ server.ts              # Node server + health
+│   └ health.ts              # Health endpoint
+├ components/
+│   └ lang-toggle.tsx        # EN/FA language toggle
+└ data/
+    └ providers.json         # Provider list
 ```
 
 ## نقشه راه
 | فاز | وضعیت | توضیحات |
 |-----|-------|---------|
 | P0 | ✅ | امنیت پایه: scrypt، session، proxy، API key |
-| P1 | 🔄 | تست‌های خودکار: 29/30 پاس |
-| P2 | 🔄 | مسیر کامل `/v1/*` با proxy واقعی |
-| P3 | 🔄 | Routing و fallback |
-| P4 | 🔄 | Translator کامل |
-| P5 | 🔄 | RTK، quota، usage |
-| P6 | 🔄 | UI و i18n |
-| P7 | 🔄 | جدا کردن gateway از داشبورد |
+| P1 | ✅ | تست‌های خودکار: 48/48 پاس |
+| P2 | ✅ | مسیرهای کامل `/v1/*` با upstream واقعی llama-server |
+| P3 | ✅ | Routing و fallback با circuit breaker |
+| P4 | ✅ | Translator کامل: OpenAI/Anthropic/Gemini/Responses |
+| P5 | ✅ | RTK، quota، usage با برآورد هزینه |
+| P6 | ✅ | UI و i18n (EN/FA، RTL، toggle زبان) |
+| P7 | ✅ | سرور جدا Hono gateway |
+| P8 | ✅ | Hardening: rate limiting، CSRF، SSRF، CORS |
+| P9 | ✅ | تست‌های دود:E2E smoke (Playwright scaffold) |
+| P10 | ✅ | Proxy pools CRUD، تولید کانفیگ CLI tools |
 
 ## مجوز
 MIT — see [LICENSE](LICENSE).
