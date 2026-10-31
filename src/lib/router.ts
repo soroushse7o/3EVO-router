@@ -25,11 +25,12 @@ export async function runWithFallback<T>(tiers: Array<() => Promise<T>>, keyPref
       if (status && status >= 500 && status < 600 && i < tiers.length - 1) continue;
       if (status === 429 && i < tiers.length - 1) continue;
       if (status === 401 && i < tiers.length - 1) continue;
+      if (i === tiers.length - 1) break;
       throw e;
     }
   }
   const tried = tiers.map((_, i) => `${keyPrefix}:tier:${i}`).join(", ");
   const soonest = tiers.map((_, i) => ({ key: `${keyPrefix}:tier:${i}`, retryAfter: getRetryAfter(`${keyPrefix}:tier:${i}`) })).sort((a, b) => a.retryAfter - b.retryAfter)[0];
-  const err = Object.assign(new Error(`all tiers exhausted. tried: [${tried}]. soonest reset: ${soonest.retryAfter}ms (${soonest.key})`), { tried, soonest });
+  const err = Object.assign(new Error(`all tiers exhausted. tried: [${tried}]. soonest reset: ${soonest.retryAfter}ms (${soonest.key})`), { tried, soonest, lastErr });
   throw err;
 }
