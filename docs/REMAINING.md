@@ -53,7 +53,7 @@
 
 ### Phase 6 — UI, CLI, Tests, Packaging 🔄 IN PROGRESS
 - [x] Honest labels for Combos/Providers/CLI/Console
-- [x] i18n README honest (UI stub, static panel.html working)
+- [x] i18n README honest (UI wired with EN/FA toggle in dashboard)
 - [x] Settings: drop unused fields (lang, rtk)
 - [x] CLI skeleton
 - [x] E2E tests with temp DATA_DIR and mock upstream
