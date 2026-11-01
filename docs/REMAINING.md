@@ -21,7 +21,7 @@
 - [x] S12: MITM routes gated behind EXPERIMENTAL_MITM=1
 - [x] S13/S14: validateSession on every protected route
 - [x] S15: Expanded scrubber patterns + logger.ts wired into /v1 routes
-- [ ] S10: Provider URL allowlist + private-range blocklist + DNS rebind check
+- [x] S10: Provider URL allowlist + private-range blocklist + DNS rebind check
 
 ### Phase 2 — Real Routing Core ✅ COMPLETE
 - [x] R1: Timeouts via AbortSignal; network error fallback
@@ -56,5 +56,5 @@
 - [x] i18n README honest (UI stub, static panel.html working)
 - [x] Settings: drop unused fields (lang, rtk)
 - [x] CLI skeleton
-- [ ] E2E tests with temp DATA_DIR and mock upstream
+- [x] E2E tests with temp DATA_DIR and mock upstream
 - [x] Remove dead gateway code and unused dependencies (hono)

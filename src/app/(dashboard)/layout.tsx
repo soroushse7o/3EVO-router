@@ -1,3 +1,7 @@
+import { I18nProvider } from "@/components/i18n-provider";
+import Link from "next/link";
+import LanguageToggle from "@/components/language-toggle";
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const links = [
     ["Endpoint", "/endpoint"],
@@ -10,19 +14,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     ["Console Log", "/console-log"],
   ];
   return (
-    <div className="flex min-h-screen">
-      <aside className="w-60 border-r border-white/10 p-4 hidden md:block">
-        <div className="mb-4 flex items-center justify-between text-emerald-400 font-bold">3EVO Router <span className="text-xs text-gray-500">v1.0.0</span></div>
-        <nav className="space-y-1 text-sm">
-          {links.map(([n,h])=>(
-            <a key={n} href={h} className="block px-2 py-1 rounded hover:bg-white/5">{n}</a>
-          ))}
-          <div className="mt-4 text-xs text-gray-500">SYSTEM</div>
-          <a href="/settings" className="block px-2 py-1 rounded hover:bg-white/5">Settings</a>
-        </nav>
-        <div className="mt-8 text-xs text-gray-500">3EVO Router v1.0.0 Alpha</div>
-      </aside>
-      <main className="flex-1 p-6">{children}</main>
-    </div>
+    <I18nProvider>
+      <div className="flex min-h-screen">
+        <aside className="w-60 border-r border-white/10 p-4 hidden md:block">
+          <div className="mb-4 flex items-center justify-between text-emerald-400 font-bold">3EVO Router <span className="text-xs text-gray-500">v1.0.0</span></div>
+          <nav className="space-y-1 text-sm">
+            {links.map(([n,h])=>(
+              <Link key={n} href={h} className="block px-2 py-1 rounded hover:bg-white/5">{n}</Link>
+            ))}
+            <div className="mt-4 text-xs text-gray-500">SYSTEM</div>
+            <Link href="/settings" className="block px-2 py-1 rounded hover:bg-white/5">Settings</Link>
+          </nav>
+          <div className="mt-8 text-xs text-gray-500">3EVO Router v1.0.0 Alpha</div>
+        </aside>
+        <main className="flex-1 p-6">
+          <div className="mb-4 flex justify-end">
+            <LanguageToggle />
+          </div>
+          {children}
+        </main>
+      </div>
+    </I18nProvider>
   );
 }

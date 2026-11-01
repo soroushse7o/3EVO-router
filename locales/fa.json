@@ -11,5 +11,5 @@
     "consoleLog": "لاگ کنسول",
     "settings": "تنظیمات"
   },
-  "common": { "shutdown": "خاموش کردن", "language": "زبان", "theme": "پوسته", "logout": "خروج" }
+  "common": { "shutdown": "خاموش کردن", "language": "زبان", "theme": "پوسته", "logout": "خروج", "loading": "در حال بارگذاری", "save": "ذخیره", "cancel": "لغو", "delete": "حذف", "test": "تست", "working": "کار می‌کند", "failed": "ناموفق", "notTested": "تست نشده" }
 }

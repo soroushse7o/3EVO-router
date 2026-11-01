@@ -1,8 +1,10 @@
 "use client";
 import { useState } from "react";
 import providers from "@/data/providers.json";
+import { useI18n } from "@/components/i18n-provider";
 
 export default function ProvidersPage() {
+  const { t } = useI18n();
   const [custom, setCustom] = useState<any[]>([]);
   const [testResults, setTestResults] = useState<Record<string, any>>({});
   const [form, setForm] = useState({ name: "", baseUrl: "", apiKey: "", model: "gpt-3.5-turbo" });
@@ -35,7 +37,7 @@ export default function ProvidersPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-bold mb-4">Providers</h1>
+      <h1 className="text-xl font-bold mb-4">{t("nav.providers")}</h1>
 
       <section className="mb-6">
         <h2 className="text-lg font-semibold mb-2">API Key Providers</h2>
@@ -45,13 +47,13 @@ export default function ProvidersPage() {
             <div key={n} className="rounded-2xl border border-white/10 bg-white/5 p-4">
               <div className="font-medium">{n}</div>
               <div className="text-xs mt-1">
-                {testResults[n]?.testing ? "Testing..." : testResults[n]?.ok ? "✅ Working" : testResults[n]?.error ? "❌ Failed" : "Not tested"}
+                {testResults[n]?.testing ? t("common.loading") : testResults[n]?.ok ? `✅ ${t("common.working")}` : testResults[n]?.error ? `❌ ${t("common.failed")}` : t("common.notTested")}
               </div>
               <button
                 onClick={() => testProvider(n)}
                 className="mt-2 text-xs rounded px-2 py-1 bg-blue-500/20 text-blue-400"
               >
-                Test
+                {t("common.test")}
               </button>
             </div>
           ))}
@@ -104,7 +106,7 @@ export default function ProvidersPage() {
                   onClick={() => testProvider(c.name, c.baseUrl, c.apiKey, c.model)}
                   className="mt-2 text-xs rounded px-2 py-1 bg-blue-500/20 text-blue-400"
                 >
-                  Test
+                  {t("common.test")}
                 </button>
               </div>
             ))}
