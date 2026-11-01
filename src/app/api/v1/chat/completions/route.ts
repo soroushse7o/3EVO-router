@@ -21,7 +21,8 @@ export async function POST(req: NextRequest) {
   }
   const body = await req.json();
   const upstreamUrl = process.env.UPSTREAM_URL || "http://127.0.0.1:18434/v1/chat/completions";
-  if (!isSafeUrl(upstreamUrl)) {
+  const upstreamHost = new URL(upstreamUrl).hostname;
+  if (!await isSafeUrl(upstreamUrl, [upstreamHost])) {
     return Response.json({ error: { message: "blocked url", type: "invalid_request_error" } }, { status: 400 });
   }
   const apiKey = process.env.LOCAL_MODEL_API_KEY;
@@ -30,7 +31,7 @@ export async function POST(req: NextRequest) {
   }
   const accounts = getSortedAccounts();
   const defaultUpstream = process.env.UPSTREAM_URL || "http://127.0.0.1:18434/v1/chat/completions";
-  if (!isSafeUrl(defaultUpstream)) {
+  if (!await isSafeUrl(defaultUpstream, [upstreamHost])) {
     return Response.json({ error: { message: "blocked url", type: "invalid_request_error" } }, { status: 400 });
   }
   const apiTiers = accounts.map(a => createProxyTier(a.id, body, apiKey));

@@ -1,5 +1,6 @@
 import { recordFailure, recordSuccess, isOpen, getRetryAfter } from "@/lib/circuit";
 import { getSortedAccounts, getAccountById } from "@/lib/accounts";
+import { isSafeUrl } from "@/lib/ssrf";
 function rotateAccounts(accounts: string[], strategy: "round-robin" | "priority" = "round-robin", lastIndex: { current: number } = { current: -1 }): string[] {
   if (strategy === "priority") return accounts.slice().sort((a, b) => a.localeCompare(b));
   lastIndex.current = (lastIndex.current + 1) % accounts.length;
@@ -10,6 +11,7 @@ export function createProxyTier(accountId: string, body: any, apiKey: string) {
   return async () => {
     const acc = getAccountById(accountId);
     if (!acc?.upstreamUrl) throw { status: 400, message: "no upstream for account", provider: acc?.provider };
+    if (!await isSafeUrl(acc.upstreamUrl)) throw { status: 400, message: "blocked url", type: "invalid_request_error" };
     const r = await fetch(acc.upstreamUrl, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` }, body: JSON.stringify(body) });
     const data = await r.json().catch(() => ({}));
     if (!r.ok) throw { status: r.status, message: data.error?.message || data.error || "upstream error" };

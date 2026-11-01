@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { validateSession } from "@/lib/auth";
+import { isSafeUrl } from "@/lib/ssrf";
 import fs from "fs";
 import path from "path";
 import os from "os";
@@ -29,9 +30,14 @@ export async function POST(req: NextRequest) {
   if (!name || !baseUrl || !apiKey) {
     return Response.json({ error: "name, baseUrl, apiKey required" }, { status: 400 });
   }
+  const trimmed = baseUrl.replace(/\/$/, "");
+  const host = new URL(trimmed).hostname;
+  if (!await isSafeUrl(trimmed, [host])) {
+    return Response.json({ error: "blocked url" }, { status: 400 });
+  }
   const list = readProviders();
   const existing = list.findIndex((p: any) => p.name === name);
-  const entry = { name, baseUrl: baseUrl.replace(/\/$/, ""), apiKey, model: model || "gpt-3.5-turbo", createdAt: Date.now() };
+  const entry = { name, baseUrl: trimmed, apiKey, model: model || "gpt-3.5-turbo", createdAt: Date.now() };
   if (existing >= 0) list[existing] = entry; else list.push(entry);
   writeProviders(list);
   return Response.json(entry);
