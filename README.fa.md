@@ -35,7 +35,7 @@
 | MITM | Experimental | `src/app/api/mitm/*`; بدون اعتراض واقعی |
 | CLI tools config generation | Stub | `src/app/(dashboard)/cli-tools/page.tsx` |
 | Console log | Stub | `src/app/(dashboard)/console-log/page.tsx` |
-| i18n EN/FA + RTL | Working | `src/lib/i18n.ts`, static `docs/panel.html` |
+| i18n EN/FA + RTL | Stub | `src/lib/i18n.ts` وجود دارد؛ UI متصل نشده |</p>
 | Hono gateway server | Dead code | `src/gateway/index.ts`; توسط هیچ route import نمی‌شود |
 | CORS/CSRF/SSRF/rate-limit | Partial | در بعضی routes وجود دارد، ناسازگار |
 

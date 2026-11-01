@@ -31,7 +31,7 @@ One compatible endpoint for OpenAI/Anthropic. Automatically and intelligently ro
 | MITM | Experimental | `src/app/api/mitm/*`; no real interception |
 | CLI tools config generation | Stub | `src/app/(dashboard)/cli-tools/page.tsx` |
 | Console log | Stub | `src/app/(dashboard)/console-log/page.tsx` |
-| i18n EN/FA + RTL | Working | `src/lib/i18n.ts`, static `docs/panel.html` |
+| i18n EN/FA + RTL | Stub | `src/lib/i18n.ts` exists; UI not wired |</p>
 | Hono gateway server | Dead code | `src/gateway/index.ts`; not imported by any route |
 | CORS/CSRF/SSRF/rate-limit | Partial | Present in some routes, inconsistent |
 
