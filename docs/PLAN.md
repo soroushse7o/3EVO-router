@@ -6,7 +6,7 @@
 - Auth: works, bootstrap auth.json created without plaintext log, chmod 0600/0700.
 - Gateway: `/v1/*` routes proxy to local llama-server; no multi-tier, no real OAuth, no real failover.
 - Dashboard: login works; static showcase shows all sections; Persian RTL fixed.
-- Dead/stub areas: OAuth simulated, mid-stream failover unused, RTK always 0, adapters cosmetic, combos static, CLI tools placeholder, console log stub, Hono gateway duplicate unused.
+- Dead/stub areas: OAuth removed, mid-stream failover unused, RTK always 0, adapters cosmetic, combos static, CLI tools placeholder, console log stub.
 
 ## Phase 0: Baseline & Honesty
 1. Keep `p1-evidence.txt` as raw baseline.
@@ -36,7 +36,7 @@
 - R3: Circuit key per provider/account, not per IP.
 - R4: Persistent account state; priority sort; empty-safe rotation.
 - R5: Error bodies per OpenAI/Anthropic format; 503 on exhaustion.
-- C7: Delete Hono duplicate or make it the only gateway sharing router module.
+- C7: Remove Hono gateway and unused deps (done).
 - B7: Wire proxy pools into outbound fetch or remove from UI.
 - Commit: `router: real fallback, circuit, timeouts`
 

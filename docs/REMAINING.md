@@ -57,4 +57,4 @@
 - [x] Settings: drop unused fields (lang, rtk)
 - [x] CLI skeleton
 - [ ] E2E tests with temp DATA_DIR and mock upstream
-- [ ] Remove dead gateway code and unused dependencies (hono)
+- [x] Remove dead gateway code and unused dependencies (hono)

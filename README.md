@@ -32,7 +32,7 @@ One compatible endpoint for OpenAI/Anthropic. Automatically and intelligently ro
 | CLI tools config generation | Stub | `src/app/(dashboard)/cli-tools/page.tsx` |
 | Console log | Stub | `src/app/(dashboard)/console-log/page.tsx` |
 | i18n EN/FA + RTL | Stub | `src/lib/i18n.ts` exists; UI not wired |</p>
-| Hono gateway server | Dead code | `src/gateway/index.ts`; not imported by any route |
+| Hono gateway server | Removed | Deleted `src/gateway/` and `hono` deps |
 | CORS/CSRF/SSRF/rate-limit | Partial | Present in some routes, inconsistent |
 
 ## Architecture
@@ -182,8 +182,6 @@ src/
 │       ├ security.test.ts
 │       ├ router.integration.test.ts
 │       └ translator.golden.test.ts
-├ gateway/
-│   ├ index.ts               # Hono gateway
 │   ├ server.ts              # Node server + health
 │   └ health.ts              # Health endpoint
 ├ components/
