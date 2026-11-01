@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
     clearTimeout(timeoutId);
     const data = await r.json().catch(() => ({}));
     if (!r.ok) throw { status: r.status, message: data.error?.message || data.error || "upstream error", type: data.error?.type || "upstream_error" };
-    return data;
+    return { data, provider: "local" };
   };
   const tiers = [...apiTiers, defaultTier];
   if (body.stream) {
@@ -134,8 +134,11 @@ export async function POST(req: NextRequest) {
       defaultStreamTier
     ];
     try {
-      const result = await streamWithFallback(streamTiers, "chat:" + (req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"));
-      return new Response(result.stream, { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache" } });
+      const { stream, tierIndex } = await streamWithFallback(streamTiers, "chat:" + (req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"));
+      const provider = accounts[tierIndex]?.provider || "local";
+      // U3: summary usage row is best-effort; fail-open
+      try { recordUsage(provider, body.model || "unknown", 0, 0, 1); } catch {}
+      return new Response(stream, { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache" } });
     } catch (e: any) {
       logError("STREAM_ERROR", e);
       const err = e;
@@ -144,8 +147,9 @@ export async function POST(req: NextRequest) {
     }
   }
   try {
-    const result = await runWithFallback(tiers, `chat:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`, 30000);
-    recordUsage(body.model || "unknown", "chat", result.usage?.prompt_tokens || 0, result.usage?.completion_tokens || 0, 0);
+    const resolved = await runWithFallback(tiers, `chat:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`, 30000);
+    const result = resolved.data;
+    recordUsage((resolved as any).provider || "local", body.model || "unknown", result.usage?.prompt_tokens || 0, result.usage?.completion_tokens || 0, 0);
     return Response.json(result);
   } catch (e: any) {
     logError("ROUTE_ERROR", e);

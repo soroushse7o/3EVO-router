@@ -153,9 +153,9 @@ export async function POST(req: NextRequest) {
       }
 
       try {
-        const result = await runWithFallback(tiers, "messages:" + (req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"), 30000);
-        const anthropicResponse = anthropicToOpenAI(result);
-        recordUsage(body.model || "unknown", "messages", anthropicResponse.usage?.prompt_tokens || 0, anthropicResponse.usage?.completion_tokens || 0, 0);
+        const resolved = await runWithFallback(tiers, "messages:" + (req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"), 30000);
+        const anthropicResponse = anthropicToOpenAI(resolved.data);
+        recordUsage((resolved as any).provider || "local", body.model || "unknown", anthropicResponse.usage?.prompt_tokens || 0, anthropicResponse.usage?.completion_tokens || 0, 0);
         return Response.json(anthropicResponse);
       } catch (e: any) {
         logError("ROUTE_ERROR", e);

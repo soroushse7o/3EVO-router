@@ -9,11 +9,11 @@ export { rotateAccounts };
 export function createProxyTier(accountId: string, body: any, apiKey: string) {
   return async () => {
     const acc = getAccountById(accountId);
-    if (!acc?.upstreamUrl) throw { status: 400, message: "no upstream for account" };
+    if (!acc?.upstreamUrl) throw { status: 400, message: "no upstream for account", provider: acc?.provider };
     const r = await fetch(acc.upstreamUrl, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` }, body: JSON.stringify(body) });
     const data = await r.json().catch(() => ({}));
     if (!r.ok) throw { status: r.status, message: data.error?.message || data.error || "upstream error" };
-    return data;
+    return { data, provider: acc?.provider };
   };
 }
 export async function runWithFallback<T>(tiers: Array<() => Promise<T>>, keyPrefix = "default", timeoutMs = 30000): Promise<T> {

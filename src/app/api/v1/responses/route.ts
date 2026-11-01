@@ -36,14 +36,14 @@ export async function POST(req: NextRequest) {
     clearTimeout(timeoutId);
     const data = await r.json().catch(() => ({}));
     if (!r.ok) throw { status: r.status, message: data.error?.message || data.error || "upstream error", type: data.error?.type || "upstream_error" };
-    return data;
+    return { data, provider: "local" };
   };
   const tiers = [...apiTiers, defaultTier];
 
   try {
-    const result = await runWithFallback(tiers, "responses:" + (req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"), 30000);
-    const text = result.choices?.[0]?.message?.content || "";
-    recordUsage(body.model || "unknown", "responses", result.usage?.prompt_tokens || 0, result.usage?.completion_tokens || 0, 0);
+    const resolved = await runWithFallback(tiers, "responses:" + (req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"), 30000);
+    const text = resolved.data.choices?.[0]?.message?.content || "";
+    recordUsage((resolved as any).provider || "local", body.model || "unknown", resolved.data.usage?.prompt_tokens || 0, resolved.data.usage?.completion_tokens || 0, 0);
     return Response.json({ id: "resp_1", object: "response", output: [{ type: "message", content: [{ type: "output_text", text }] }] });
   } catch (e) {
     logError("ROUTE_ERROR", e);
