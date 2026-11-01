@@ -1,31 +1,54 @@
 import { NextRequest } from "next/server";
+import { runWithFallback, createProxyTier, streamWithFallback } from "@/lib/router";
+import { recordUsage } from "@/lib/db";
 import { validateApiKey } from "@/lib/api-key";
 import { isSafeUrl } from "@/lib/ssrf";
 import { logError, scrub } from "@/lib/logger";
+import { getSortedAccounts, getAccountById } from "@/lib/accounts";
+import { responsesToChat } from "@/lib/translator";
 export async function POST(req: NextRequest) {
   const key = req.headers?.get?.("authorization")?.replace("Bearer ", "") || req.headers?.get?.("x-api-key");
   if (!key || !validateApiKey(key)) {
     return Response.json({ error: { message: "invalid api key", type: "auth_error" } }, { status: 401 });
   }
   const body = await req.json();
-  const input = typeof body.input === "string" ? body.input : (body.input?.map((i: any) => i.content).join("") || "");
+  const upstreamUrl = process.env.UPSTREAM_URL || "http://127.0.0.1:18434/v1/chat/completions";
+  if (!isSafeUrl(upstreamUrl)) {
+    return Response.json({ error: { message: "blocked url", type: "invalid_request_error" } }, { status: 400 });
+  }
   const apiKey = process.env.LOCAL_MODEL_API_KEY;
   if (!apiKey) {
     return Response.json({ error: { message: "server misconfigured: LOCAL_MODEL_API_KEY is not set", type: "server_error" } }, { status: 500 });
   }
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 30000);
-  const upstream = await fetch(process.env.UPSTREAM_URL || "http://127.0.0.1:18434/v1/chat/completions", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
-    body: JSON.stringify({ model: body.model || "Qwen2.5-14B-Instruct-Q4_K_M", messages: [{ role: "user", content: input }], max_tokens: body.max_output_tokens || 256 }),
-    signal: controller.signal,
-  });
-  clearTimeout(timeoutId);
-  if (!upstream.ok) {
-    const err = await upstream.text();
-    return Response.json({ error: { message: scrub(err.slice(0, 200)), type: "upstream_error" } }, { status: upstream.status });
+  const accounts = getSortedAccounts();
+  const defaultUpstream = process.env.UPSTREAM_URL || "http://127.0.0.1:18434/v1/chat/completions";
+  if (!isSafeUrl(defaultUpstream)) {
+    return Response.json({ error: { message: "blocked url", type: "invalid_request_error" } }, { status: 400 });
   }
-  const data = await upstream.json();
-  return Response.json({ id: "resp_1", object: "response", output: [{ type: "message", content: [{ type: "output_text", text: data.choices?.[0]?.message?.content || "" }] }] });
+
+  const chatBody = responsesToChat(body);
+  const apiTiers = accounts.map(a => createProxyTier(a.id, chatBody, apiKey));
+  const defaultTier = async () => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    req.signal?.addEventListener?.("abort", () => controller.abort());
+    const r = await fetch(defaultUpstream, { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + apiKey }, body: JSON.stringify(chatBody), signal: controller.signal });
+    clearTimeout(timeoutId);
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw { status: r.status, message: data.error?.message || data.error || "upstream error", type: data.error?.type || "upstream_error" };
+    return data;
+  };
+  const tiers = [...apiTiers, defaultTier];
+
+  try {
+    const result = await runWithFallback(tiers, "responses:" + (req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"), 30000);
+    const text = result.choices?.[0]?.message?.content || "";
+    recordUsage(body.model || "unknown", "responses", result.usage?.prompt_tokens || 0, result.usage?.completion_tokens || 0, 0);
+    return Response.json({ id: "resp_1", object: "response", output: [{ type: "message", content: [{ type: "output_text", text }] }] });
+  } catch (e) {
+    logError("ROUTE_ERROR", e);
+    const err = e as any;
+    const status = err?.status || 503;
+    return Response.json({ error: { message: scrub(err?.message || String(e)), type: "server_error" } }, { status });
+  }
 }
