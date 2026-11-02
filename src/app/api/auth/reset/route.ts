@@ -1,22 +1,18 @@
 import { NextRequest } from "next/server";
-import { hashPassword } from "@/lib/auth";
+import crypto from "node:crypto";
+import { hashPassword, validatePassword } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
-  const { token, password } = await req.json();
-  const resetToken = process.env.AUTH_RESET_TOKEN;
-  if (!resetToken || token !== resetToken) {
-    return Response.json({ error: "invalid reset token" }, { status: 403 });
-  }
-  if (!password || password.length < 8) {
-    return Response.json({ error: "password must be at least 8 chars" }, { status: 400 });
-  }
-  const { hash, salt } = hashPassword(password);
-  const fs = require("fs");
-  const path = require("path");
-  const { DATA_DIR } = require("@/lib/paths");
-  const dir = DATA_DIR;
-  fs.mkdirSync(dir, { recursive: true });
-  const authFile = path.join(dir, "auth.json");
-  fs.writeFileSync(authFile, JSON.stringify({ passwordHash: hash, salt }, null, 2));
+  const { currentPassword, newPassword } = await req.json();
+  if (!currentPassword || !newPassword) return Response.json({ error: "currentPassword and newPassword required" }, { status: 400 });
+  if (newPassword.length < 8) return Response.json({ error: "newPassword must be at least 8 chars" }, { status: 400 });
+
+  // This route is intentionally OUTSIDE session middleware (configured in proxy/middleware)
+  // so a locked-out admin can still reset via a direct curl with the known password.
+  if (!validatePassword(currentPassword)) return Response.json({ error: "invalid current password" }, { status: 401 });
+
+  const { hash, salt } = hashPassword(newPassword);
+  const db = (await import("@/lib/db")).getAdapterSync();
+  db.run(`INSERT INTO auth(id, password_hash, salt) VALUES(1, ?, ?) ON CONFLICT(id) DO UPDATE SET password_hash = excluded.password_hash, salt = excluded.salt`, [hash, salt]);
   return Response.json({ ok: true });
 }

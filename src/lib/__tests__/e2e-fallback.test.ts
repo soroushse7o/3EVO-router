@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import http from "node:http";
-import { runWithFallback, createProxyTier } from "@/lib/router";
+import { runWithFallback } from "@/lib/router";
 
 describe("E2E fallback with mock upstream", () => {
   let server: http.Server;

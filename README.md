@@ -15,6 +15,8 @@ Single local endpoint that proxies OpenAI/Anthropic-compatible requests to one o
 - Usage rows written to SQLite (`data.db`) with real upstream token counts when available.
 - SSRF guard: private/link-local ranges are blocked; `localhost` must be explicitly allowlisted via `ALLOWED_UPSTREAM_HOSTS`.
 - All secrets encrypted with AES-256-GCM (`master.key`); no plaintext API keys on disk.
+- Public `/api/health` endpoint.
+- GitHub Actions CI and Dockerfile included.
 
 ## What is intentionally out of scope for v0.1
 
@@ -59,6 +61,13 @@ If `ADMIN_PASSWORD` is unset, a random password is generated on first start.
 2. Click Test to verify connectivity through the SSRF guard.
 3. Requests to `/v1/chat/completions` and `/v1/messages` now fail over through your providers in order.
 
+### Docker
+
+```bash
+docker build -t 3evo-router .
+docker run -p 20128:20128 -v 3evo-data:/home/appuser/.3evo 3evo-router
+```
+
 ## Architecture
 
 ```
@@ -82,7 +91,7 @@ Client (OpenAI/Anthropic SDK)
 - **Storage**: SQLite (`better-sqlite3`) at `$DATA_DIR` (default `~/.3evo`).
 - **Secrets**: AES-256-GCM with `master.key` in `$DATA_DIR`.
 - **Port**: `20128` by default.
-- **Node**: LTS recommended.
+- **Node**: >= 18.
 
 ## Documentation
 

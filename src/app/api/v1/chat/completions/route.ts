@@ -6,24 +6,24 @@ import { logError, scrub } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   const key = req.headers?.get?.("authorization")?.replace("Bearer ", "") || req.headers?.get?.("x-api-key");
-  if (!key || !validateApiKey(key)) {
-    return Response.json({ error: "invalid api key" }, { status: 401 });
-  }
+  if (!key || !validateApiKey(key)) return Response.json({ error: "invalid api key" }, { status: 401 });
   return Response.json({ data: [{ id: "premium-coding", object: "model", owned_by: "local" }], object: "list" });
 }
 
 export async function POST(req: NextRequest) {
   const key = req.headers?.get?.("authorization")?.replace("Bearer ", "") || req.headers?.get?.("x-api-key");
-  if (!key || !validateApiKey(key)) {
-    return Response.json({ error: { message: "invalid api key", type: "auth_error" } }, { status: 401 });
-  }
+  if (!key || !validateApiKey(key)) return Response.json({ error: { message: "invalid api key", type: "auth_error" } }, { status: 401 });
+
   const body = await req.json();
   const { nonStream, stream } = await buildProviderTiers(body, req.signal);
 
   if (body.stream) {
     try {
       const result = await streamWithFallback(stream, `chat:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`);
-      return new Response(result.stream, { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache" } });
+      const readable = result.stream;
+      return new Response(readable, {
+        headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache" },
+      });
     } catch (e: any) {
       logError("STREAM_ERROR", e);
       const status = e?.status || 503;

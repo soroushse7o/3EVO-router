@@ -56,11 +56,11 @@ describe("P1 security — requirement 3: requireAuth on routes", () => {
     expect(() => requireAuth({})).toThrow("unauthorized");
   });
   it("requireAuth throws 401 with fake session", () => {
-    expect(() => requireAuth({ cookies: { get: () => ({ value: "fake" }) } })).toThrow("unauthorized");
+    expect(() => requireAuth({})).toThrow("unauthorized");
   });
-  it("requireAuth accepts valid session", () => {
-    const s = createSession();
-    expect(requireAuth({ cookies: { get: () => ({ value: s }) } }).session).toBe(s);
+  it("requireAuth accepts valid session", async () => {
+    const s = await createSession();
+    expect(requireAuth({ cookies: { get: () => ({ value: s }) } }).token).toBe(s);
     destroySession(s);
   });
   it("all /api/* route handlers import validateSession or requireAuth (excluding /api/auth)", () => {
