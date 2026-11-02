@@ -18,22 +18,21 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: { message: "invalid api key", type: "auth_error" } }, { status: 401 });
   }
   const body = await req.json();
-  const tiers = await buildProviderTiers(body);
-  if (!tiers.length) {
-    return Response.json({ error: { message: "no providers configured", type: "server_error" } }, { status: 503 });
-  }
+  const { nonStream, stream } = await buildProviderTiers(body, req.signal);
+
   if (body.stream) {
     try {
-      const { stream } = await streamWithFallback(tiers, `chat:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`);
-      return new Response(stream, { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache" } });
+      const result = await streamWithFallback(stream, `chat:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`);
+      return new Response(result.stream, { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache" } });
     } catch (e: any) {
       logError("STREAM_ERROR", e);
       const status = e?.status || 503;
       return Response.json({ error: { message: scrub(e?.message || String(e)), type: "server_error" } }, { status });
     }
   }
+
   try {
-    const resolved = await runWithFallback(tiers, `chat:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`, 30000);
+    const resolved = await runWithFallback(nonStream, `chat:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`, 30000);
     const result = resolved.data;
     recordUsage(resolved.provider || "unknown", body.model || "unknown", result.usage?.prompt_tokens || 0, result.usage?.completion_tokens || 0, 0);
     return Response.json(result);

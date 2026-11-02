@@ -1,9 +1,9 @@
 import { NextRequest } from "next/server";
-import { buildProviderTiers, runWithFallback, streamWithFallback } from "@/lib/router";
+import { buildProviderTiers, runWithFallback } from "@/lib/router";
 import { recordUsage } from "@/lib/db";
 import { validateApiKey } from "@/lib/api-key";
 import { logError, scrub } from "@/lib/logger";
-import { openaiToAnthropic, anthropicToOpenAI } from "@/lib/translator";
+import { anthropicToOpenAI } from "@/lib/translator";
 
 export async function POST(req: NextRequest) {
   const key = req.headers?.get?.("authorization")?.replace("Bearer ", "") || req.headers?.get?.("x-api-key");
@@ -11,26 +11,15 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: { message: "invalid api key", type: "auth_error" } }, { status: 401 });
   }
   const body = await req.json();
-  const tiers = await buildProviderTiers(body);
-  if (!tiers.length) {
+  const { nonStream, stream: streamTiers } = await buildProviderTiers(body, req.signal);
+  if (!nonStream.length && !streamTiers.length) {
     return Response.json({ error: { message: "no providers configured", type: "server_error" } }, { status: 503 });
   }
 
-  const anthropicBody = {
-    model: body.model || "Qwen2.5-14B-Instruct-Q4_K_M",
-    max_tokens: body.max_tokens || 256,
-    messages: body.messages || [],
-    system: body.system,
-    tools: body.tools,
-    tool_choice: body.tool_choice,
-    stream: body.stream ?? false,
-  };
-  const openaiBody = openaiToAnthropic(anthropicBody);
-
   if (body.stream) {
     try {
-      const { stream } = await streamWithFallback(tiers, `messages:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`);
-      return new Response(stream, { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache" } });
+      const result = await (await import("@/lib/router")).streamWithFallback(streamTiers, `messages:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`);
+      return new Response(result.stream, { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache" } });
     } catch (e: any) {
       logError("STREAM_ERROR", e);
       const status = e?.status || 503;
@@ -39,7 +28,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const resolved = await runWithFallback(tiers, `messages:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`, 30000);
+    const resolved = await runWithFallback(nonStream, `messages:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`, 30000);
     const anthropicResponse = anthropicToOpenAI(resolved.data);
     recordUsage(resolved.provider || "unknown", body.model || "unknown", anthropicResponse.usage?.prompt_tokens || 0, anthropicResponse.usage?.completion_tokens || 0, 0);
     return Response.json(anthropicResponse);

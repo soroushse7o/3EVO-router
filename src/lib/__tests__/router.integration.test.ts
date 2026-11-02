@@ -54,7 +54,7 @@ describe('Router Integration', () => {
     for (let i = 0; i < 3; i++) {
       try { await runWithFallback([async () => { throw { status: 500 }; }], 'cb-test-open'); } catch {}
     }
-    expect(isOpen('cb-test-open:tier:0')).toBe(true);
+    expect(isOpen('cb-test-open:provider:0')).toBe(true);
   });
 });
 

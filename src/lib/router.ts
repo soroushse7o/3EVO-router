@@ -18,16 +18,35 @@ function getProviderTier(provider: { id: number; name: string; base_url: string;
   };
 }
 
-export async function buildProviderTiers(body: any) {
+function getProviderStreamTier(provider: { id: number; name: string; base_url: string; api_key_enc: string; model: string }, body: any, signal?: AbortSignal) {
+  return async () => {
+    const trimmed = provider.base_url.replace(/\/$/, "");
+    if (!await isSafeUrl(trimmed)) throw { status: 400, message: "blocked url", type: "invalid_request_error" };
+    const apiKey = decrypt(provider.api_key_enc, masterKey());
+    const url = `${trimmed}/chat/completions`;
+    const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` }, body: JSON.stringify({ ...body, stream: true }), signal });
+    if (!r.ok) {
+      const err = await r.text().catch(() => ({}));
+      throw { status: r.status, message: err || "upstream error", type: "upstream_error" };
+    }
+    if (!r.body) throw { status: 502, message: "upstream closed body", type: "upstream_error" };
+    return { stream: r.body, provider: provider.name };
+  };
+}
+
+export async function buildProviderTiers(body: any, signal?: AbortSignal) {
   const providers = listProviders();
-  if (!providers.length) return [];
-  return providers.map((p) => getProviderTier(p));
+  if (!providers.length) return { nonStream: [], stream: [] as Array<() => Promise<{ stream: ReadableStream; provider: string }>> };
+  return {
+    nonStream: providers.map((p) => getProviderTier(p)),
+    stream: providers.map((p) => getProviderStreamTier(p, body, signal)),
+  };
 }
 
 export async function runWithFallback<T>(tiers: Array<() => Promise<T>>, keyPrefix = "default", timeoutMs = 30000): Promise<T> {
   let lastErr: any;
   for (let i = 0; i < tiers.length; i++) {
-    const key = `${keyPrefix}:tier:${i}`;
+    const key = `${keyPrefix}:provider:${i}`;
     if (isOpen(key)) {
       const ra = getRetryAfter(key);
       lastErr = new Error(`circuit open for ${key}, retry-after ${ra}ms`);
@@ -51,21 +70,21 @@ export async function runWithFallback<T>(tiers: Array<() => Promise<T>>, keyPref
       throw e;
     }
   }
-  const tried = tiers.map((_, i) => `${keyPrefix}:tier:${i}`).join(", ");
-  const soonest = tiers.map((_, i) => ({ key: `${keyPrefix}:tier:${i}`, retryAfter: getRetryAfter(`${keyPrefix}:tier:${i}`) })).sort((a, b) => a.retryAfter - b.retryAfter)[0];
+  const tried = tiers.map((_, i) => `${keyPrefix}:provider:${i}`).join(", ");
+  const soonest = tiers.map((_, i) => ({ key: `${keyPrefix}:provider:${i}`, retryAfter: getRetryAfter(`${keyPrefix}:provider:${i}`) })).sort((a, b) => a.retryAfter - b.retryAfter)[0];
   const msg = `all tiers exhausted. tried: [${tried}]. soonest reset: ${soonest.retryAfter}ms (${soonest.key})`;
   const err = Object.assign(new Error(msg), { tried, soonest, lastErr }) as Error & { status?: number };
   if (err.status === undefined) err.status = 503;
   throw err;
 }
 
-export async function streamWithFallback<T>(
-  tiers: Array<() => Promise<{ stream: ReadableStream; body?: any }>>,
+export async function streamWithFallback(
+  tiers: Array<() => Promise<{ stream: ReadableStream; provider: string }>>,
   keyPrefix = "default"
-): Promise<{ stream: ReadableStream; tierIndex: number }> {
+): Promise<{ stream: ReadableStream; provider: string }> {
   let lastErr: any;
   for (let i = 0; i < tiers.length; i++) {
-    const key = `${keyPrefix}:tier:${i}`;
+    const key = `${keyPrefix}:provider:${i}`;
     if (isOpen(key)) {
       lastErr = new Error(`circuit open for ${key}`);
       continue;
@@ -75,7 +94,8 @@ export async function streamWithFallback<T>(
       const timeoutId = setTimeout(() => controller.abort(), 30000);
       const result = await tiers[i]();
       clearTimeout(timeoutId);
-      return { stream: result.stream, tierIndex: i };
+      recordSuccess(key);
+      return { stream: result.stream, provider: result.provider };
     } catch (e: any) {
       recordFailure(key);
       lastErr = e;
