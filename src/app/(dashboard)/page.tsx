@@ -1,11 +1,13 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function DashboardIndex() {
   const [hasKey, setHasKey] = useState(false);
   const [hasProvider, setHasProvider] = useState(false);
   const [checked, setChecked] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     Promise.all([
@@ -29,17 +31,17 @@ export default function DashboardIndex() {
       <section className="rounded-2xl border border-white/10 bg-white/5 p-5" aria-label="Onboarding">
         <h2 className="text-lg font-semibold mb-3">Getting started</h2>
         <ol className="space-y-2 text-sm">
-          <li className={`flex items-center gap-2 ${hasKey ? "text-emerald-300" : "text-gray-300"}`}>
+          <li className={`flex items-center gap-2 ${hasKey ? "text-emerald-300" : "text-gray-200"}`}>
             <span aria-hidden>{hasKey ? "✅" : "⬜"}</span>
             <span>Create an API key in Settings.</span>
-            {!hasKey && <Link href="/settings" className="ml-auto text-xs underline underline-offset-2">Go to Settings</Link>}
+            {!hasKey && <button onClick={() => router.push("/settings")} className="ml-auto text-xs underline underline-offset-2 focus:outline-none focus:ring-2 focus:ring-emerald-400/40">Go to Settings</button>}
           </li>
-          <li className={`flex items-center gap-2 ${hasProvider ? "text-emerald-300" : "text-gray-300"}`}>
+          <li className={`flex items-center gap-2 ${hasProvider ? "text-emerald-300" : "text-gray-200"}`}>
             <span aria-hidden>{hasProvider ? "✅" : "⬜"}</span>
             <span>Add at least one provider.</span>
-            {!hasProvider && <Link href="/providers" className="ml-auto text-xs underline underline-offset-2">Add provider</Link>}
+            {!hasProvider && <button onClick={() => router.push("/providers")} className="ml-auto text-xs underline underline-offset-2 focus:outline-none focus:ring-2 focus:ring-emerald-400/40">Add provider</button>}
           </li>
-          <li className={`flex items-center gap-2 ${onboardingDone ? "text-emerald-300" : "text-gray-300"}`}>
+          <li className={`flex items-center gap-2 ${onboardingDone ? "text-emerald-300" : "text-gray-200"}`}>
             <span aria-hidden>{onboardingDone ? "✅" : "⬜"}</span>
             <span>Call <code className="text-xs bg-black/30 px-1 py-0.5 rounded">/v1/chat/completions</code> with your key.</span>
           </li>
