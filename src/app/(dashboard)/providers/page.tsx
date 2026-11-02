@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import providers from "@/data/providers.json";
 import { useI18n } from "@/components/i18n-provider";
 
@@ -8,6 +8,9 @@ export default function ProvidersPage() {
   const [custom, setCustom] = useState<any[]>([]);
   const [testResults, setTestResults] = useState<Record<string, any>>({});
   const [form, setForm] = useState({ name: "", baseUrl: "", apiKey: "", model: "gpt-3.5-turbo" });
+
+  const load = () => fetch("/api/providers").then(r => r.json()).then(setCustom);
+  useEffect(() => { load(); }, []);
 
   const testProvider = async (name: string, baseUrl?: string, apiKey?: string, model?: string) => {
     setTestResults((r) => ({ ...r, [name]: { testing: true } }));
@@ -31,8 +34,13 @@ export default function ProvidersPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
     });
-    setCustom((c) => [...c, form]);
     setForm({ name: "", baseUrl: "", apiKey: "", model: "gpt-3.5-turbo" });
+    load();
+  };
+
+  const remove = async (id: number) => {
+    await fetch(`/api/providers/${id}`, { method: "DELETE" });
+    load();
   };
 
   return (
@@ -99,15 +107,24 @@ export default function ProvidersPage() {
         {custom.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mt-4">
             {custom.map((c) => (
-              <div key={c.name} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div key={c.id || c.name} className="rounded-2xl border border-white/10 bg-white/5 p-4">
                 <div className="font-medium">{c.name}</div>
                 <div className="text-xs text-gray-400 mt-1">{c.baseUrl}</div>
-                <button
-                  onClick={() => testProvider(c.name, c.baseUrl, c.apiKey, c.model)}
-                  className="mt-2 text-xs rounded px-2 py-1 bg-blue-500/20 text-blue-400"
-                >
-                  {t("common.test")}
-                </button>
+                <div className="text-xs text-gray-500 mt-1">Model: {c.model || "gpt-3.5-turbo"}</div>
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={() => testProvider(c.name, c.baseUrl, c.apiKey, c.model)}
+                    className="text-xs rounded px-2 py-1 bg-blue-500/20 text-blue-400"
+                  >
+                    {t("common.test")}
+                  </button>
+                  <button
+                    onClick={() => remove(c.id)}
+                    className="text-xs rounded px-2 py-1 bg-red-500/20 text-red-400"
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
             ))}
           </div>

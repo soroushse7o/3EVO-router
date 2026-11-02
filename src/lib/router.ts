@@ -1,24 +1,29 @@
 import { recordFailure, recordSuccess, isOpen, getRetryAfter } from "@/lib/circuit";
-import { getSortedAccounts, getAccountById } from "@/lib/accounts";
 import { isSafeUrl } from "@/lib/ssrf";
-function rotateAccounts(accounts: string[], strategy: "round-robin" | "priority" = "round-robin", lastIndex: { current: number } = { current: -1 }): string[] {
-  if (strategy === "priority") return accounts.slice().sort((a, b) => a.localeCompare(b));
-  lastIndex.current = (lastIndex.current + 1) % accounts.length;
-  return [accounts[lastIndex.current], ...accounts.slice(0, lastIndex.current), ...accounts.slice(lastIndex.current + 1)];
-}
-export { rotateAccounts };
-export function createProxyTier(accountId: string, body: any, _fallbackApiKey: string) {
+import { listProviders } from "@/lib/db";
+import { decrypt, masterKey } from "@/lib/vault";
+
+function getProviderTier(provider: { id: number; name: string; base_url: string; api_key_enc: string; model: string }) {
   return async () => {
-    const acc = getAccountById(accountId);
-    if (!acc?.upstreamUrl) throw { status: 400, message: "no upstream for account", provider: acc?.provider };
-    if (!await isSafeUrl(acc.upstreamUrl)) throw { status: 400, message: "blocked url", type: "invalid_request_error" };
-    const authHeader = acc.token ? `Bearer ${acc.token}` : `Bearer ${_fallbackApiKey}`;
-    const r = await fetch(acc.upstreamUrl, { method: "POST", headers: { "Content-Type": "application/json", Authorization: authHeader }, body: JSON.stringify(body) });
-    const data = await r.json().catch(() => ({}));
-    if (!r.ok) throw { status: r.status, message: data.error?.message || data.error || "upstream error" };
-    return { data, provider: acc?.provider };
+    const trimmed = provider.base_url.replace(/\/$/, "");
+    if (!await isSafeUrl(trimmed)) throw { status: 400, message: "blocked url", type: "invalid_request_error" };
+    const apiKey = decrypt(provider.api_key_enc, masterKey());
+    const url = `${trimmed}/chat/completions`;
+    const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` }, body: JSON.stringify({ model: provider.model, messages: [{ role: "user", content: "ping" }], max_tokens: 1 }) });
+    if (!r.ok) {
+      const data = await r.json().catch(() => ({}));
+      throw { status: r.status, message: data.error?.message || data.error || "upstream error", provider: provider.name };
+    }
+    return { data: await r.json(), provider: provider.name };
   };
 }
+
+export async function buildProviderTiers(body: any) {
+  const providers = listProviders();
+  if (!providers.length) return [];
+  return providers.map((p) => getProviderTier(p));
+}
+
 export async function runWithFallback<T>(tiers: Array<() => Promise<T>>, keyPrefix = "default", timeoutMs = 30000): Promise<T> {
   let lastErr: any;
   for (let i = 0; i < tiers.length; i++) {
@@ -29,7 +34,10 @@ export async function runWithFallback<T>(tiers: Array<() => Promise<T>>, keyPref
       continue;
     }
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
       const result = await tiers[i]();
+      clearTimeout(timeoutId);
       recordSuccess(key);
       return result;
     } catch (e: any) {
@@ -51,7 +59,6 @@ export async function runWithFallback<T>(tiers: Array<() => Promise<T>>, keyPref
   throw err;
 }
 
-// Mid-stream failover: wrap a ReadableStream and restart from next tier on error
 export async function streamWithFallback<T>(
   tiers: Array<() => Promise<{ stream: ReadableStream; body?: any }>>,
   keyPrefix = "default"
@@ -64,8 +71,10 @@ export async function streamWithFallback<T>(
       continue;
     }
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
       const result = await tiers[i]();
-      recordSuccess(key);
+      clearTimeout(timeoutId);
       return { stream: result.stream, tierIndex: i };
     } catch (e: any) {
       recordFailure(key);
