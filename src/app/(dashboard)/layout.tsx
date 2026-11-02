@@ -12,12 +12,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const links = [
     ["Endpoint", "/endpoint"],
     ["Providers", "/providers"],
-    ["Combos", "/combos"],
     ["Usage", "/usage"],
-    ["Quota Tracker", "/quota"],
-    ["MITM", "/mitm"],
-    ["CLI Tools", "/cli-tools"],
-    ["Console Log", "/console-log"],
+    ["Settings", "/settings"],
   ];
   return (
     <I18nProvider>
