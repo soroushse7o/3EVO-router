@@ -26,7 +26,7 @@ Checklist status is derived from the actual codebase, not estimates.
 
 ## P2 — After launch
 
-- [ ] Persian/RTL UI.
+- [x] Persian/RTL UI.
 - [ ] Quota/budget limits.
 - [x] `/v1/responses`.
 - [x] Per-key rate limits.
@@ -40,6 +40,6 @@ Checklist status is derived from the actual codebase, not estimates.
 - [x] Failover table: 200, 429→next, 500→next, timeout→next, 400 passthrough, all-fail→503.
 - [x] Circuit: opens after N failures, exactly one half-open probe, closes on success, per-provider.
 - [x] Streaming: byte-for-byte SSE passthrough, mid-stream error event, client abort cancels upstream, one usage row.
-- [ ] OpenAI + Anthropic SDK compatibility against mock upstream.
+- [x] OpenAI + Anthropic SDK compatibility against mock upstream.
 - [x] Security: SSRF matrix, no plaintext secrets on disk, export contains none, log scrubber.
 - [ ] Playwright on port 20128 with login fixture: onboarding to first successful call.

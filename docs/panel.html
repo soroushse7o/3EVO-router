@@ -35,32 +35,20 @@ pre{background:var(--card);padding:16px;border-radius:12px;overflow:auto;color:v
 <script>
 const T_EN = {
   providers:"Providers", serviceRunning:"Service running",
-  oauth:"OAuth Providers", free:"Free Providers", apiKey:"API Key Providers",
+  free:"Free Providers", apiKey:*** Key Providers",
   verified:"Verified", connected:"Connected", noConn:"No connections",
   endpointTitle:"Endpoint", baseUrl:"Base URL", remoteStatus:"Remote tunnel status", offline:"Offline",
-  proxyTitle:"Proxy Pools", addProxy:"Add proxy", proxyName:"Name", proxyUrl:"URL", proxyStrategy:"Strategy", roundRobin:"Round Robin", priority:"Priority",
-  combosTitle:"Combos", premiumCoding:"Premium Coding", budgetCoding:"Budget Coding", freeCombo:"Free Combo",
-  usageTitle:"Usage", requests:"Requests", tokensIn:"Tokens In", tokensOut:"Tokens Out", rtkSaved:"RTK Saved", estCost:"Est. Cost", exportCsv:"Export CSV",
-  quotaTitle:"Quota Tracker", window:"5h Rolling Window", limit:"Limit", rtk:"RTK Saved", resetIn:"Reset in", details:"Details",
-  mitmTitle:"MITM", mitmEnabled:"MITM enabled", consent:"I understand and consent to MITM interception", enable:"Enable MITM", disable:"Disable MITM", rootCert:"Root Certificate", generateCert:"Generate Root Cert", certInstalled:"Cert installed", installCert:"Install the certificate in your OS/browser trust store to enable MITM.", allowlist:"Per-host allowlist", addHost:"Add", remove:"Remove", noHosts:"No hosts allowed.",
-  cliTitle:"CLI Tools", detected:"Detected", notDetected:"Not detected", generate:"Generate", download:"Download",
-  consoleTitle:"Console Log", liveStream:"Live stream", level:"Level", search:"Search", secretMasking:"Secret masking enabled",
-  settingsTitle:"Settings", port:"Port", secretPath:"Secret Path", language:"Language", save:"Save", cloudSync:"Cloud sync", export_:"Export", import_:"Import",
+  usageTitle:"Usage", requests:"Requests", tokensIn:"Tokens In", tokensOut:"Tokens Out", estCost:"Est. Cost", exportCsv:"Export CSV",
+  settingsTitle:"Settings", port:"Port", secretPath:"Secret Path", language:"Language", save:"Save",
   staticNote:"Static showcase — not a live instance.", footer:"MIT License · Built by soroush · GitHub"
 };
 const T_FA = {
   providers:"ارائه‌دهندگان", serviceRunning:"سرویس در حال اجرا",
-  oauth:"ارائه‌دهندگان OAuth", free:"ارائه‌دهندگان رایگان", apiKey:"ارائه‌دهندگان با کلید API",
+  free:"ارائه‌دهندگان رایگان", apiKey:*** با کلید API",
   verified:"تایید شده", connected:"متصل", noConn:"بدون اتصال",
   endpointTitle:"Endpoint", baseUrl:"آدرس پایه", remoteStatus:"وضعیت تونل راه‌دور", offline:"آفلاین",
-  proxyTitle:"استخرهای پروکسی", addProxy:"افزودن پروکسی", proxyName:"نام", proxyUrl:"آدرس", proxyStrategy:"استراتژی", roundRobin:"نوبتی", priority:"اولویت",
-  combosTitle:"ترکیب‌ها", premiumCoding:"کدنویسی پریمیوم", budgetCoding:"کدنویسی اقتصادی", freeCombo:"ترکیب رایگان",
-  usageTitle:"مصرف", requests:"درخواست‌ها", tokensIn:"توکن‌های ورودی", tokensOut:"توکن‌های خروجی", rtkSaved:"RTK ذخیره شده", estCost:"هزینه تخمینی", exportCsv:"خروجی CSV",
-  quotaTitle:"ردیاب سهمیه", window:"پنجره 5 ساعته", limit:"محدودیت", rtk:"RTK", resetIn:"بازنشانی در", details:"جزئیات",
-  mitmTitle:"MITM", mitmEnabled:"MITM فعال", consent:"من درک می‌کنم و رضایت به مداخله HTTPS می‌دهم", enable:"فعال‌سازی MITM", disable:"غیرفعال‌سازی MITM", rootCert:"گواهی ریشه", generateCert:"تولید گواهی ریشه", certInstalled:"گواهی نصب شده", installCert:"گواهی را در مخزن اعتماد OS/مرورگر نصب کنید.", allowlist:"لیست سفارش هر میزبان", addHost:"افزودن", remove:"حذف", noHosts:"هیچ میزبانی اجازه داده نشده.",
-  cliTitle:"ابزارهای CLI", detected:"تشخیص داده شده", notDetected:"تشخیص داده نشده", generate:"تولید", download:"دانلود",
-  consoleTitle:"لاگ کنسول", liveStream:"پخش زنده", level:"سطح", search:"جستجو", secretMasking:"پنهان‌سازی راز فعال",
-  settingsTitle:"تنظیمات", port:"پورت", secretPath:"مسیر راز", language:"زبان", save:"ذخیره", cloudSync:"همگام‌سازی ابری", export_:"خروجی", import_:"وارد کردن",
+  usageTitle:"مصرف", requests:"درخواست‌ها", tokensIn:"توکن‌های ورودی", tokensOut:"توکن‌های خروجی", estCost:"هزینه تخمینی", exportCsv:"خروجی CSV",
+  settingsTitle:"تنظیمات", port:"پورت", secretPath:"مسیر راز", language:"زبان", save:"ذخیره",
   staticNote:"نمایش استاتیک — نمونه زنده نیست.", footer:"مجوز MIT · ساخته شده توسط soroush · گیت‌هاب"
 };
 let lang = "en";
@@ -81,51 +69,37 @@ function toggleLang(){
   document.querySelector("footer").textContent = t.footer;
 }
 </script>
-<aside><div class="logo">3EVO Router <span style="font-size:10px;color:var(--muted)">v1.0.0</span></div>
+<aside><div class="logo">3EVO Router <span style="font-size:10px;color:var(--muted)">v0.1-alpha</span></div>
 <nav>
 <div class="nav-item active" onclick="showSection('providers', this)">Providers</div>
 <div class="nav-item" onclick="showSection('endpoint', this)">Endpoint</div>
-<div class="nav-item" onclick="showSection('proxy-pools', this)">Proxy Pools</div>
-<div class="nav-item" onclick="showSection('combos', this)">Combos</div>
 <div class="nav-item" onclick="showSection('usage', this)">Usage</div>
-<div class="nav-item" onclick="showSection('quota', this)">Quota Tracker</div>
-<div class="nav-item" onclick="showSection('mitm', this)">MITM</div>
-<div class="nav-item" onclick="showSection('cli', this)">CLI Tools</div>
-<div class="nav-item" onclick="showSection('console', this)">Console Log</div>
 <div class="nav-item" onclick="showSection('settings', this)">Settings</div>
 </nav></aside>
 <main>
 <div class="top"><h1>Providers</h1><span class="badge">Service running</span></div>
 
 <div id="providers" class="section active">
-<h2>OAuth Providers</h2>
+<h2 data-i18n="free">Free Providers</h2>
 <div class="grid">
-  <div class="card"><div class="name">Claude Code</div><div class="conn on">Verified</div></div>
-  <div class="card"><div class="name">OpenAI Codex</div><div class="conn on">Verified</div></div>
-  <div class="card"><div class="name">GitHub Copilot</div><div class="conn">No connections</div></div>
-  <div class="card"><div class="name">Cursor IDE</div><div class="conn">No connections</div></div>
+  <div class="card"><div class="name">iFlow AI</div><div class="conn on" data-i18n="verified">Verified</div></div>
+  <div class="card"><div class="name">Qwen Code</div><div class="conn on" data-i18n="verified">Verified</div></div>
 </div>
-<h2>Free Providers</h2>
+<h2 data-i18n="apiKey">API Key Providers</h2>
 <div class="grid">
-  <div class="card"><div class="name">iFlow AI</div><div class="conn on">Verified</div></div>
-  <div class="card"><div class="name">Qwen Code</div><div class="conn on">Verified</div></div>
-  <div class="card"><div class="name">Gemini CLI</div><div class="conn">No connections</div></div>
-</div>
-<h2>API Key Providers</h2>
-<div class="grid">
-  <div class="card"><div class="name">OpenRouter</div><div class="conn">No connections</div></div>
-  <div class="card"><div class="name">Anthropic</div><div class="conn">No connections</div></div>
-  <div class="card"><div class="name">OpenAI</div><div class="conn">No connections</div></div>
-  <div class="card"><div class="name">DeepSeek</div><div class="conn on">Verified</div></div>
-  <div class="card"><div class="name">Groq</div><div class="conn">No connections</div></div>
-  <div class="card"><div class="name">Mistral</div><div class="conn">No connections</div></div>
+  <div class="card"><div class="name">OpenRouter</div><div class="conn" data-i18n="noConn">No connections</div></div>
+  <div class="card"><div class="name">Anthropic</div><div class="conn" data-i18n="noConn">No connections</div></div>
+  <div class="card"><div class="name">OpenAI</div><div class="conn" data-i18n="noConn">No connections</div></div>
+  <div class="card"><div class="name">DeepSeek</div><div class="conn on" data-i18n="verified">Verified</div></div>
+  <div class="card"><div class="name">Groq</div><div class="conn" data-i18n="noConn">No connections</div></div>
+  <div class="card"><div class="name">Mistral</div><div class="conn" data-i18n="noConn">No connections</div></div>
 </div>
 </div>
 
 <div id="endpoint" class="section">
-<h1>Endpoint</h1>
+<h1 data-i18n="endpointTitle">Endpoint</h1>
 <div class="card" style="margin-bottom:16px">
-  <div style="font-size:12px;color:var(--muted);margin-bottom:6px">Base URL</div>
+  <div style="font-size:12px;color:var(--muted);margin-bottom:6px" data-i18n="baseUrl">Base URL</div>
   <code style="color:var(--accent);font-size:13px">http://localhost:20128/v1</code>
 </div>
 <div class="grid">
@@ -136,139 +110,27 @@ function toggleLang(){
 </div>
 </div>
 
-<div id="proxy-pools" class="section">
-<h1>Proxy Pools</h1>
-<div class="card" style="margin-bottom:16px">
-  <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Add proxy</div>
-  <div style="display:flex;gap:8px;margin-bottom:8px">
-    <input placeholder="Name" style="flex:1;background:var(--bg);border:1px solid #ffffff20;border-radius:6px;padding:6px 10px;color:var(--text);font-size:13px">
-    <input placeholder="http://proxy:8080" style="flex:1;background:var(--bg);border:1px solid #ffffff20;border-radius:6px;padding:6px 10px;color:var(--text);font-size:13px">
-  </div>
-  <button class="btn small">Add proxy</button>
-</div>
-<div class="grid">
-  <div class="card"><div class="name">US-East</div><div class="meta">http://proxy.usa:8080 - Round Robin - Active</div></div>
-  <div class="card"><div class="name">EU-West</div><div class="meta">http://proxy.eu:8080 - Priority - Active</div></div>
-  <div class="card"><div class="name">Asia-Pacific</div><div class="meta">http://proxy.asia:8080 - Round Robin - Active</div></div>
-</div>
-</div>
-
-<div id="combos" class="section">
-<h1>Combos</h1>
-<div class="grid">
-  <div class="card" style="border-color:#10E58A40"><div class="name">Premium Coding</div><div class="meta">Primary: GPT-4 -&gt; Fallback: Claude 3 -&gt; Free: Qwen</div><div class="conn on" style="margin-top:8px">Active</div></div>
-  <div class="card" style="border-color:#f59e0b40"><div class="name">Budget Coding</div><div class="meta">Primary: DeepSeek -&gt; Fallback: Groq -&gt; Free: iFlow</div><div class="conn on" style="margin-top:8px">Active</div></div>
-  <div class="card" style="border-color:#6366f140"><div class="name">Free Combo</div><div class="meta">Primary: Qwen -&gt; Fallback: Gemini CLI -&gt; Free: OpenCode</div><div class="conn" style="margin-top:8px">Inactive</div></div>
-</div>
-</div>
-
 <div id="usage" class="section">
-<h1>Usage</h1>
+<h1 data-i18n="usageTitle">Usage</h1>
 <div class="grid">
-  <div class="card"><div class="name">Requests</div><div class="conn on" style="font-size:20px;font-weight:700;margin-top:6px">1,247</div></div>
-  <div class="card"><div class="name">Tokens In</div><div class="conn on" style="font-size:20px;font-weight:700;margin-top:6px">842K</div></div>
-  <div class="card"><div class="name">Tokens Out</div><div class="conn on" style="font-size:20px;font-weight:700;margin-top:6px">1.2M</div></div>
-  <div class="card"><div class="name">RTK Saved</div><div class="conn on" style="font-size:20px;font-weight:700;margin-top:6px">34K</div></div>
-  <div class="card"><div class="name">Est. Cost</div><div class="conn on" style="font-size:20px;font-weight:700;margin-top:6px">$4.82</div></div>
+  <div class="card"><div class="name" data-i18n="requests">Requests</div><div class="conn on" style="font-size:20px;font-weight:700;margin-top:6px">0</div></div>
+  <div class="card"><div class="name" data-i18n="tokensIn">Tokens In</div><div class="conn on" style="font-size:20px;font-weight:700;margin-top:6px">0</div></div>
+  <div class="card"><div class="name" data-i18n="tokensOut">Tokens Out</div><div class="conn on" style="font-size:20px;font-weight:700;margin-top:6px">0</div></div>
+  <div class="card"><div class="name" data-i18n="estCost">Est. Cost</div><div class="conn on" style="font-size:20px;font-weight:700;margin-top:6px">$0.00</div></div>
 </div>
-<button class="btn small">Export CSV</button>
-</div>
-
-<div id="quota" class="section">
-<h1>Quota Tracker</h1>
-<div class="grid">
-  <div class="card"><div class="name">5h Rolling Window</div><div class="conn on" style="font-size:18px;font-weight:700;margin-top:6px">42,300 / 100,000</div></div>
-  <div class="card"><div class="name">Tokens In</div><div class="conn on" style="font-size:18px;font-weight:700;margin-top:6px">18.5K</div></div>
-  <div class="card"><div class="name">Tokens Out</div><div class="conn on" style="font-size:18px;font-weight:700;margin-top:6px">23.8K</div></div>
-  <div class="card"><div class="name">RTK Saved</div><div class="conn on" style="font-size:18px;font-weight:700;margin-top:6px">1,204</div></div>
-</div>
-<div class="card" style="margin-top:16px">
-  <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px">
-    <span>Usage</span>
-    <span style="color:var(--accent)">42.3%</span>
-  </div>
-  <div style="height:8px;background:var(--bg);border-radius:4px;overflow:hidden">
-    <div style="height:8px;background:var(--accent);border-radius:4px;width:42.3%"></div>
-  </div>
-  <div style="font-size:11px;color:var(--muted);margin-top:6px">Reset in: 2h 14m</div>
-</div>
-</div>
-
-<div id="mitm" class="section">
-<h1>MITM</h1>
-<div class="card" style="margin-bottom:16px;border-color:#10E58A40">
-  <div style="font-size:13px;color:var(--accent);margin-bottom:8px">MITM enabled</div>
-  <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px">
-    <input type="checkbox" checked> <span>I understand and consent to MITM interception</span>
-  </label>
-  <button class="btn small">Disable MITM</button>
-</div>
-<div class="card" style="margin-bottom:16px">
-  <h2>Root Certificate</h2>
-  <div style="font-size:12px;color:var(--muted);margin-bottom:6px">Cert installed: ~/.3evo/mitm/root-cert.pem</div>
-  <button class="btn small">Regenerate Root Cert</button>
-  <div style="font-size:11px;color:var(--muted);margin-top:6px">Install the certificate in your OS/browser trust store to enable MITM.</div>
-</div>
-<div class="card">
-  <h2>Per-host allowlist</h2>
-  <div style="display:flex;gap:8px;margin-bottom:8px">
-    <input placeholder="example.com" style="flex:1;background:var(--bg);border:1px solid #ffffff20;border-radius:6px;padding:6px 10px;color:var(--text);font-size:13px">
-    <button class="btn small">Add</button>
-  </div>
-  <div style="font-size:13px;color:var(--text)">api.openai.com</div>
-  <div style="font-size:13px;color:var(--text)">api.anthropic.com</div>
-</div>
-</div>
-
-<div id="cli" class="section">
-<h1>CLI Tools</h1>
-<div class="grid">
-  <div class="card"><div class="name">Claude Code</div><div class="conn on">Detected</div><div class="meta">~/.claude/settings.json</div><button class="btn small" style="margin-top:8px">Generate</button></div>
-  <div class="card"><div class="name">Cursor</div><div class="conn on">Detected</div><div class="meta">~/.cursor/config.json</div><button class="btn small" style="margin-top:8px">Generate</button></div>
-  <div class="card"><div class="name">Cline</div><div class="conn">Not detected</div><div class="meta">~/.cline/config.json</div><button class="btn small ghost" style="margin-top:8px">Generate</button></div>
-  <div class="card"><div class="name">Codex</div><div class="conn">Not detected</div><div class="meta">~/.codex/config.json</div><button class="btn small ghost" style="margin-top:8px">Generate</button></div>
-  <div class="card"><div class="name">OpenClaw</div><div class="conn">Not detected</div><div class="meta">~/.openclaw/config.json</div><button class="btn small ghost" style="margin-top:8px">Generate</button></div>
-</div>
-</div>
-
-<div id="console" class="section">
-<h1>Console Log</h1>
-<div class="card" style="margin-bottom:16px">
-  <div style="display:flex;gap:8px;margin-bottom:8px">
-    <input placeholder="Search logs..." style="flex:1;background:var(--bg);border:1px solid #ffffff20;border-radius:6px;padding:6px 10px;color:var(--text);font-size:13px">
-    <select style="background:var(--bg);border:1px solid #ffffff20;border-radius:6px;padding:6px 10px;color:var(--text);font-size:13px"><option>All</option><option>Info</option><option>Warn</option><option>Error</option></select>
-  </div>
-  <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Secret masking enabled</div>
-</div>
-<pre>2026-10-31 06:00:01 [INFO] Gateway started on port 20128
-2026-10-31 06:00:02 [INFO] Health check passed for local model
-2026-10-31 06:00:03 [INFO] POST /v1/chat/completions 200 1.2s
-2026-10-31 06:00:04 [INFO] RTK saved 342 tokens on tool_result
-2026-10-31 06:00:05 [WARN] Circuit breaker half-open for tier:0
-2026-10-31 06:00:06 [INFO] POST /v1/messages 200 0.8s
-2026-10-31 06:00:07 [ERROR] Upstream timeout for tier:1 (retrying)
-2026-10-31 06:00:08 [INFO] Fallback succeeded on tier:2</pre>
+<button class="btn small" data-i18n="exportCsv">Export CSV</button>
 </div>
 
 <div id="settings" class="section">
-<h1>Settings</h1>
+<h1 data-i18n="settingsTitle">Settings</h1>
 <div class="grid">
-  <div class="card"><div class="name">Port</div><div class="meta">20128</div></div>
-  <div class="card"><div class="name">Secret Path</div><div class="meta">/3evo-router/secure</div></div>
-  <div class="card"><div class="name">Language</div><div class="meta">English / Persian</div></div>
-  <div class="card"><div class="name">RTK</div><div class="conn on">Enabled</div></div>
-</div>
-<div class="card" style="margin-top:16px">
-  <h2 style="margin-top:0">Advanced</h2>
-  <div style="display:flex;gap:8px;margin-bottom:8px">
-    <button class="btn small">Cloud sync</button>
-    <button class="btn small ghost">Export</button>
-    <button class="btn small ghost">Import</button>
-  </div>
+  <div class="card"><div class="name" data-i18n="port">Port</div><div class="meta">20128</div></div>
+  <div class="card"><div class="name" data-i18n="secretPath">Secret Path</div><div class="meta">~/.3evo</div></div>
+  <div class="card"><div class="name" data-i18n="language">Language</div><div class="meta">English / Persian</div></div>
 </div>
 </div>
 
 </main>
-<footer style="position:fixed;bottom:0;left:220px;right:0;text-align:center;color:var(--muted);padding:12px;font-size:11px;background:var(--bg);border-top:1px solid #ffffff10">MIT License - Built by soroush - GitHub</footer>
-<style>[dir="rtl"] footer{left:0;right:220px}</style>
+<div class="static-note" style="position:fixed;bottom:16px;left:220px;right:16px;text-align:center;color:var(--muted);padding:8px;font-size:11px">Static showcase — not a live instance.</div>
+<style>[dir="rtl"] .static-note{left:16px;right:220px}</style>
 </body></html>

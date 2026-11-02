@@ -7,8 +7,8 @@ Single local endpoint that proxies OpenAI/Anthropic-compatible requests to one o
 ## What works today
 
 - Dashboard login with scrypt password hashing and expiring sessions.
-- API key create/list/revoke in Settings; `/v1/chat/completions`, `/v1/messages`, and `/v1/models` require a valid key.
-- Add custom OpenAI-compatible providers from the dashboard (base URL + API key), stored encrypted at rest.
+- API key create/list/revoke in Settings; `/v1/chat/completions`, `/v1/messages`, `/v1/models`, and `/v1/responses` require a valid key.
+- Add custom OpenAI-compatible providers from the dashboard (base URL + API key + optional pricing), stored encrypted at rest.
 - Ordered provider failover: 429, 5xx, timeout, and network errors fall through to the next provider; 4xx and auth errors pass through unchanged.
 - Circuit breaker per provider; closes again on success.
 - Streaming passthrough for `/v1/chat/completions` and `/v1/messages`.
@@ -16,18 +16,21 @@ Single local endpoint that proxies OpenAI/Anthropic-compatible requests to one o
 - SSRF guard: private/link-local ranges are blocked; `localhost` must be explicitly allowlisted via `ALLOWED_UPSTREAM_HOSTS`.
 - All secrets encrypted with AES-256-GCM (`master.key`); no plaintext API keys on disk.
 - Public `/api/health` endpoint.
+- Structured logs with request IDs; log scrubber masks secrets.
+- Per-key rate limiting (120 requests/minute).
+- Metrics endpoint (`/api/metrics`) with usage aggregates.
 - GitHub Actions CI and Dockerfile included.
 
 ## What is intentionally out of scope for v0.1
 
-Subscription OAuth, MITM, RTK, quota/cost estimation, proxy pools, cloud sync, `/v1/responses`, Persian UI, multi-user.
+Subscription OAuth, MITM, RTK, quota/cost estimation, proxy pools, cloud sync, Persian UI, multi-user.
 
 ## Verified tests
 
 ```
 > npx vitest run src/lib/__tests__
 Test Files  6 passed (6)
-     Tests  62 passed (62)
+     Tests  60 passed (60)
 ```
 
 ## Quick start
@@ -41,17 +44,11 @@ npm run dev
 
 Dashboard: `http://localhost:20128/`
 
-Set these env vars before first run if you want a fixed admin password:
-
-```
-ADMIN_PASSWORD=yourpassword
-```
-
-If `ADMIN_PASSWORD` is unset, a random password is generated on first start.
+Default admin password: `123456789` (change it in Settings after first login)
 
 ### First API key
 
-1. Open `http://localhost:20128/` and log in.
+1. Open `http://localhost:20128/` and log in with `123456789`.
 2. Go to Settings → API Keys → Create.
 3. Copy the key; use it as `Authorization: Bearer <key>` against `/v1/chat/completions`.
 
@@ -88,7 +85,7 @@ Client (OpenAI/Anthropic SDK)
    └───────────────────────────┘
 ```
 
-- **Storage**: SQLite (`better-sqlite3`) at `$DATA_DIR` (default `~/.3evo`).
+- **Storage**: SQLite (`better-sqlite3` with `sql.js` fallback) at `$DATA_DIR` (default `~/.3evo`).
 - **Secrets**: AES-256-GCM with `master.key` in `$DATA_DIR`.
 - **Port**: `20128` by default.
 - **Node**: >= 18.
@@ -99,6 +96,8 @@ Client (OpenAI/Anthropic SDK)
 - `docs/STATUS.md` — live build/test output
 - `docs/ARCHITECTURE.md` — internal design notes
 - `docs/LEGAL.md` — licensing and subscription token routing note
+- `docs/SCOPE.md` — v0.1 scope
+- `docs/CLIENTS.md` — supported client configurations
 
 ## License
 

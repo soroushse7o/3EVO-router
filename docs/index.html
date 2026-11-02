@@ -1,106 +1,45 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>3EVO Router — v1.0.0</title>
+<title>3EVO Router — Documentation</title>
 <style>
 :root{--bg:#0a0e1a;--card:#121826;--accent:#10E58A;--text:#e6eaf2;--muted:#8a93a6}
-*{box-sizing:border-box;margin:0;padding:0}body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
-.hero{padding:80px 24px;text-align:center;background:radial-gradient(circle at 50% 0%,#10E58A22,transparent 60%)}
-h1{font-size:48px;letter-spacing:-1px}h1 span{color:var(--accent)}
-.tag{color:var(--muted);max-width:720px;margin:16px auto 32px}
-.btn{display:inline-block;padding:12px 24px;border-radius:12px;background:var(--accent);color:#0a0e1a;font-weight:600;text-decoration:none;margin:4px}
-.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;max-width:1100px;margin:40px auto;padding:0 24px}
-.card{background:var(--card);border:1px solid #ffffff14;border-radius:16px;padding:20px}
-.card h3{color:var(--accent);margin-bottom:8px}
-section{max-width:1100px;margin:60px auto;padding:0 24px}
-h2{font-size:28px;margin-bottom:16px}
-footer{text-align:center;color:var(--muted);padding:40px 24px;border-top:1px solid #ffffff10;margin-top:60px}
-@media(max-width:640px){h1{font-size:32px}.hero{padding:48px 16px}}
-.toggle{position:fixed;top:16px;right:16px;z-index:10}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:32px;max-width:960px;margin:0 auto}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+h1{font-size:28px;margin-bottom:16px;color:var(--text)}
+h2{font-size:18px;margin:24px 0 12px;color:var(--accent)}
+p,li{color:var(--muted);font-size:14px;margin:4px 0}
+pre{background:var(--card);padding:16px;border-radius:12px;overflow:auto;color:var(--muted);font-family:monospace;font-size:13px;white-space:pre;direction:ltr;margin:8px 0}
+.card{background:var(--card);border:1px solid #ffffff14;border-radius:12px;padding:16px;margin:8px 0}
+.badge{font-size:11px;padding:2px 8px;border-radius:999px;background:#10E58A22;color:var(--accent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin:16px 0}
 </style></head><body>
-<div class="toggle"><button id="langBtn" onclick="toggleLang()" style="background:var(--card);color:var(--text);border:1px solid #ffffff20;border-radius:8px;padding:6px 12px;cursor:pointer">FA</button></div>
-<script>
-const T={
-en:{tag:"Local-first AI gateway + web dashboard. One OpenAI/Anthropic-compatible endpoint, multi-account rotation, 3-tier fallback combos, RTK token compression, proxy pools, MITM, OAuth device-code flow.",
-gh:"GitHub",docs:"Docs",docsFa:"Docs FA",panel:"Live Panel Demo",
-s1:"Single endpoint",d1:"OpenAI, Anthropic, Responses, /models.",
-s2:"Format translator",d2:"OpenAI ↔ Anthropic ↔ Gemini ↔ Responses.",
-s3:"3-tier fallback",d3:"primary → low-cost → free/credit.",
-s4:"RTK compression",d4:"Measured token savings on tool_result.",
-s5:"Multi-account",d5:"Round-robin / priority rotation.",
-s6:"Security",d6:"AES-256-GCM vault, rate limiting, CSRF, SSRF, CORS.",
-arch:"Architecture",archd:"Client\n  ▼\nGateway /v1/*\nTranslator\n  ▼\nRouter (combos, tiers, circuit breaker)\n  ▼\nProviders / Accounts\n  ▼\nRTK\n  ▼\nVault (AES-256-GCM)",
-qs:"Quick start",footer:"MIT License · Built by soroush · GitHub"},
-fa:{tag:"گیت‌وی هوشمند هوش مصنوعی (لوکال + داشبورد تحت وب). یک endpoint سازگار با OpenAI/Anthropic، چرخش چندحسابی، fallback سه‌سطحی، فشرده‌سازی RTK.",
-gh:"گیت‌هاب",docs:"مستندات",docsFa:"مستندات فارسی",panel:"نمایش پنل",
-s1:"یک endpoint",d1:"OpenAI، Anthropic، Responses، /models.",
-s2:"مترجم فرمت",d2:"OpenAI ↔ Anthropic ↔ Gemini ↔ Responses.",
-s3:"fallback سه‌سطحی",d3:"اصلی → ارزان → رایگان/اعتبار.",
-s4:"فشرده‌سازی RTK",d4:"صرفه‌جویی واقعی توکن در tool_result.",
-s5:"چندحسابی",d5:"چرخش round-robin / priority.",
-s6:"امنیت",d6:"Vault AES-256-GCM، SECRET_PATH، CORS.",
-arch:"معماری",archd:"کلاینت\n  ▼\nGateway /v1/*\nTranslator\n  ▼\nRouter (combos, tiers, circuit breaker)\n  ▼\nProviders / Accounts\n  ▼\nRTK\n  ▼\nVault (AES-256-GCM)",
-qs:"شروع سریع",footer:"مجوز MIT · ساخته شده توسط soroush · گیت‌هاب"}
-};
-let lang='en';
-function toggleLang(){lang=lang==='en'?'fa':'en';const t=T[lang];document.documentElement.lang=lang;document.documentElement.dir=lang==='fa'?'rtl':'ltr';
-document.querySelector('.tag').textContent=t.tag;
-const btns=document.querySelectorAll('a.btn');
-btns[0].textContent=t.gh;
-btns[1].textContent=t.docs;
-btns[2].textContent=t.docsFa;
-btns[3].textContent=t.panel;
-const cards=document.querySelectorAll('.card');const keys=[['s1','d1'],['s2','d2'],['s3','d3'],['s4','d4'],['s5','d5'],['s6','d6']];
-cards.forEach((c,i)=>{c.querySelector('h3').textContent=t[keys[i][0]];c.querySelector('p').textContent=t[keys[i][1]]});
-document.querySelectorAll('h2')[0].textContent=t.arch;
-const pre=document.querySelector('pre.tree');if(pre) pre.textContent=t.archd;
-document.querySelectorAll('h2')[1].textContent=t.qs;
-document.querySelector('footer').textContent=t.footer;
-document.getElementById('langBtn').textContent=lang==='en'?'FA':'EN';
-}
-</script>
-<div class="hero">
-  <h1>3EVO <span>Router</span></h1>
-  <p class="tag">Local-first AI gateway + web dashboard. One OpenAI/Anthropic-compatible endpoint, multi-account rotation, 3-tier fallback combos, RTK token compression, proxy pools, MITM, OAuth device-code flow.</p>
-  <a class="btn" href="https://github.com/soroushse7o/3EVO-router">GitHub</a>
-  <a class="btn ghost" href="https://github.com/soroushse7o/3EVO-router#readme">Docs</a>
-  <a class="btn ghost" href="https://github.com/soroushse7o/3EVO-router/blob/main/README.fa.md">Docs FA</a>
-  <a class="btn ghost" href="panel.html">Live Panel Demo</a>
-</div>
+<h1>3EVO Router <span class="badge">Alpha</span></h1>
+<p>Local-first AI gateway — proxy OpenAI/Anthropic requests with failover, encrypted secrets, and a web dashboard.</p>
+
+<h2>Quick links</h2>
 <div class="grid">
-  <div class="card"><h3>Single endpoint</h3><p>OpenAI, Anthropic, Responses, /models.</p></div>
-  <div class="card"><h3>Format translator</h3><p>OpenAI ↔ Anthropic ↔ Gemini ↔ Responses.</p></div>
-  <div class="card"><h3>3-tier fallback</h3><p>primary → low-cost → free/credit.</p></div>
-  <div class="card"><h3>RTK compression</h3><p>Measured token savings on tool_result.</p></div>
-  <div class="card"><h3>Multi-account</h3><p>Round-robin / priority rotation.</p></div>
-  <div class="card"><h3>Security</h3><p>AES-256-GCM vault, rate limiting, CSRF, SSRF, CORS.</p></div>
-<div class="card"><h3>Proxy pools</h3><p>CRUD, health check, rotation.</p></div>
-  <div class="card"><h3>MITM</h3><p>Opt-in HTTPS interception with per-host allowlist.</p></div>
+  <div class="card"><a href="../README.md"><strong>README (EN)</strong></a><br><span style="color:var(--muted);font-size:12px">Main docs, setup, architecture</span></div>
+  <div class="card"><a href="../README.fa.md"><strong>README (FA)</strong></a><br><span style="color:var(--muted);font-size:12px">مستندات فارسی</span></div>
+  <div class="card"><a href="CHECKLIST.md"><strong>Checklist</strong></a><br><span style="color:var(--muted);font-size:12px">v0.1 build checklist</span></div>
+  <div class="card"><a href="STATUS.md"><strong>Status</strong></a><br><span style="color:var(--muted);font-size:12px">Build + test output</span></div>
+  <div class="card"><a href="ARCHITECTURE.md"><strong>Architecture</strong></a><br><span style="color:var(--muted);font-size:12px">Internal design notes</span></div>
+  <div class="card"><a href="LEGAL.md"><strong>Legal</strong></a><br><span style="color:var(--muted);font-size:12px">License and TOS note</span></div>
+  <div class="card"><a href="SCOPE.md"><strong>Scope</strong></a><br><span style="color:var(--muted);font-size:12px">v0.1 in/out of scope</span></div>
+  <div class="card"><a href="CLIENTS.md"><strong>Clients</strong></a><br><span style="color:var(--muted);font-size:12px">Client configs</span></div>
+  <div class="card"><a href="ASSUMPTIONS.md"><strong>Assumptions</strong></a><br><span style="color:var(--muted);font-size:12px">Design assumptions</span></div>
+  <div class="card"><a href="DECISIONS.md"><strong>Decisions</strong></a><br><span style="color:var(--muted);font-size:12px">Key design decisions</span></div>
 </div>
-<section>
-  <h2>Architecture</h2>
-  <pre class="tree" style="background:var(--card);padding:20px;border-radius:16px;overflow:auto;color:var(--muted);font-family:monospace;white-space:pre">Client (OpenAI/Anthropic SDK)
-  ▼
-Gateway /v1/*
-  - Translator (canonical format)
-  ▼
-Router
-  - Combos, tiers, rotation, circuit breaker
-  ▼
-Providers / Accounts
-  - OAuth device-code, API-key, compatible
-  ▼
-RTK
-  - tool_result compression
-  ▼
-Vault
-  - AES-256-GCM secrets (SQLite ~/.3evo)</pre>
-</section>
-<section>
-  <h2>Quick start</h2>
-  <pre style="background:var(--card);padding:20px;border-radius:16px;overflow:auto">npm install
-cp .env.example .env
+
+<h2>Run locally</h2>
+<pre>cd C:/Users/Administrator/3evo-router
+npm install
 npm run dev
-# open http://localhost:20128</pre>
-</section>
-<footer>MIT License · Built by soroush · <a href="https://github.com/soroushse7o" style="color:var(--accent)">GitHub</a></footer>
+# Dashboard: http://localhost:20128/</pre>
+
+<h2>Run with Docker</h2>
+<pre>docker build -t 3evo-router .
+docker run -p 20128:20128 -v 3evo-data:/home/appuser/.3evo 3evo-router</pre>
+
+<footer style="margin-top:32px;padding-top:16px;border-top:1px solid #ffffff10;color:var(--muted);font-size:12px">MIT License — Built by soroush — <a href="https://github.com/soroushse7o/3EVO-router">GitHub</a></footer>
 </body></html>

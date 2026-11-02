@@ -1,12 +1,11 @@
 # Assumptions
 
 - Single local gateway endpoint by default; remote binding requires explicit auth and TLS.
-- SQLite (`better-sqlite3`) is the only local storage, under `~/.3evo/`.
-- Secrets are encrypted with AES-256-GCM; key comes from OS keychain or scrypt-derived master file (0600).
-- OAuth flows require explicit user consent; tokens are stored encrypted and never logged.
-- RTK compression applies only to `tool_result` messages; other content types pass through unchanged.
+- SQLite (`better-sqlite3` with `sql.js` fallback) is the only local storage, under `$DATA_DIR` (default `~/.3evo`).
+- Secrets are encrypted with AES-256-GCM; `master.key` lives in `$DATA_DIR` with mode `0600`.
 - Circuit breaker default: 3 failures → open, 30s cooldown, half-open probe.
-- Combo tiers are defined per user; fallback triggers: 429/5xx/timeout/401.
 - Streaming passthrough preserves SSE; mid-stream failover returns an error event rather than silent partial output.
-- No telemetry or cloud sync by default; optional sync endpoint respects a short timeout and never blocks the UI.
-- Secrets never appear in logs, errors, usage stats, or exported CSVs; log scrubber masks known patterns and tests enforce it.
+- No telemetry or cloud sync by default; secrets never appear in logs, errors, usage stats, or exported CSVs; log scrubber masks known patterns and tests enforce it.
+- Provider pricing is optional; when set, usage rows include cost estimation.
+- Per-key rate limiting is 120 requests/minute.
+- `ALLOWED_UPSTREAM_HOSTS` env controls which upstream hosts are reachable; private/link-local ranges are always blocked.
