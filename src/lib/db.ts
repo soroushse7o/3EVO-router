@@ -1,9 +1,9 @@
 import Database from "better-sqlite3";
 import path from "path";
-import os from "os";
+import { DATA_DIR } from "@/lib/paths";
 import fs from "fs";
 
-const dir = path.join(os.homedir(), ".3evo");
+const dir = DATA_DIR;
 fs.mkdirSync(dir, { recursive: true });
 const db = new Database(path.join(dir, "data.db"));
 db.exec(`CREATE TABLE IF NOT EXISTS usage (id INTEGER PRIMARY KEY, ts INTEGER, provider TEXT, model TEXT, tokens_in INTEGER, tokens_out INTEGER, rtk_saved INTEGER)`);

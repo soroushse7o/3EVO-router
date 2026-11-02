@@ -2,9 +2,9 @@ import { NextRequest } from "next/server";
 import { validateSession } from "@/lib/auth";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import path from "path";
-import os from "os";
+import { DATA_DIR } from "@/lib/paths";
 
-const file = path.join(os.homedir(), ".3evo", "mitm.json");
+const file = path.join(DATA_DIR, "mitm.json");
 
 export async function POST(req: NextRequest) {
   if (process.env.EXPERIMENTAL_MITM !== "1") return Response.json({ error: "experimental feature disabled" }, { status: 403 });

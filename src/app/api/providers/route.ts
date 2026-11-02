@@ -3,9 +3,9 @@ import { validateSession } from "@/lib/auth";
 import { isSafeUrl } from "@/lib/ssrf";
 import fs from "fs";
 import path from "path";
-import os from "os";
+import { DATA_DIR } from "@/lib/paths";
 
-const file = path.join(os.homedir(), ".3evo", "custom-providers.json");
+const file = path.join(DATA_DIR, "custom-providers.json");
 
 function readProviders() {
   if (!fs.existsSync(file)) return [];

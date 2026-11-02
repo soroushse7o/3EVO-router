@@ -1,8 +1,8 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import path from "path";
-import os from "os";
+import { DATA_DIR } from "@/lib/paths";
 import { encrypt, decrypt, masterKey, ensureDataDir } from "@/lib/vault";
-const dir = path.join(os.homedir(), ".3evo");
+const dir = DATA_DIR;
 const file = path.join(dir, "accounts.json.enc");
 export interface Account { id: string; provider: string; token: string; expiresAt: number; priority?: number; upstreamUrl?: string; }
 export function loadAccounts(): Account[] {

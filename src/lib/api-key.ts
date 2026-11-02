@@ -1,10 +1,10 @@
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import path from "path";
-import os from "os";
+import { DATA_DIR } from "@/lib/paths";
 import { getCrypto } from "./auth";
 import { checkRateLimit } from "@/lib/rate-limit";
 
-const dir = path.join(os.homedir(), ".3evo");
+const dir = DATA_DIR;
 const file = path.join(dir, "api-keys.json");
 const validatedCache = new Map<string, boolean>();
 

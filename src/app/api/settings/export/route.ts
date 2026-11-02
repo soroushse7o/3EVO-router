@@ -2,9 +2,9 @@ import { NextRequest } from "next/server";
 import { validateSession } from "@/lib/auth";
 import { readFileSync, existsSync } from "fs";
 import path from "path";
-import os from "os";
+import { DATA_DIR } from "@/lib/paths";
 
-const dir = path.join(os.homedir(), ".3evo");
+const dir = DATA_DIR;
 
 export async function GET(req: NextRequest) {
   const session = req.cookies.get("session")?.value;

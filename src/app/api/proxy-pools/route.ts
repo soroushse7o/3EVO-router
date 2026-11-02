@@ -2,9 +2,9 @@ import { NextRequest } from "next/server";
 import { validateSession } from "@/lib/auth";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import path from "path";
-import os from "os";
+import { DATA_DIR } from "@/lib/paths";
 
-const file = path.join(os.homedir(), ".3evo", "proxy-pools.json");
+const file = path.join(DATA_DIR, "proxy-pools.json");
 
 export async function GET(req: NextRequest) {
   const session = req.cookies.get("session")?.value;

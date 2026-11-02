@@ -13,8 +13,8 @@ export async function POST(req: NextRequest) {
   const { hash, salt } = hashPassword(password);
   const fs = require("fs");
   const path = require("path");
-  const os = require("os");
-  const dir = path.join(os.homedir(), ".3evo");
+  const { DATA_DIR } = require("@/lib/paths");
+  const dir = DATA_DIR;
   fs.mkdirSync(dir, { recursive: true });
   const authFile = path.join(dir, "auth.json");
   fs.writeFileSync(authFile, JSON.stringify({ passwordHash: hash, salt }, null, 2));

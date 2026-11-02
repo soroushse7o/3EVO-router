@@ -1,9 +1,9 @@
 import { execSync } from "child_process";
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import path from "path";
-import os from "os";
+import { DATA_DIR } from "@/lib/paths";
 
-const dir = path.join(os.homedir(), ".3evo", "mitm");
+const dir = path.join(DATA_DIR, "mitm");
 const certPath = path.join(dir, "root-cert.pem");
 const keyPath = path.join(dir, "root-key.pem");
 
