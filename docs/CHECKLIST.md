@@ -28,10 +28,10 @@ Checklist status is derived from the actual codebase, not estimates.
 
 - [ ] Persian/RTL UI.
 - [ ] Quota/budget limits.
-- [ ] `/v1/responses`.
-- [ ] Per-key rate limits.
+- [x] `/v1/responses`.
+- [x] Per-key rate limits.
 - [ ] Optional OAuth only via official vendor-sanctioned flows.
-- [ ] Metrics endpoint.
+- [x] Metrics endpoint.
 - [ ] Packaged installer.
 
 ## Section 8 must-have tests
