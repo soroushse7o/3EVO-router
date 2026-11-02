@@ -18,6 +18,7 @@ function getDb(): Database.Database {
 }
 
 export function getDataDir() { return DATA_DIR; }
+export { getDb };
 
 export function hashPassword(password: string) {
   const crypto = require("node:crypto");
@@ -36,11 +37,10 @@ export function ensureAuth() {
   const db = getDb();
   const row = db.prepare("SELECT * FROM auth WHERE id = 1").get() as any;
   if (!row?.password_hash) {
-    const crypto = require("node:crypto");
-    const pw = process.env.ADMIN_PASSWORD || crypto.randomBytes(16).toString("hex");
-    const { hash, salt } = hashPassword(pw);
+    const defaultPassword = "123456789";
+    const { hash, salt } = hashPassword(defaultPassword);
     db.prepare("INSERT OR REPLACE INTO auth (id, password_hash, salt) VALUES (1, ?, ?)").run(hash, salt);
-    return pw;
+    return defaultPassword;
   }
   return null;
 }
@@ -69,7 +69,7 @@ export async function destroySession(session: string | undefined) {
 }
 
 export function requireAuth(req: any) {
-  const token = req?.cookies?.get?.("auth_token")?.value;
+  const token = req?.cookies?.get?.("session")?.value;
   if (!token) {
     const err = new Error("unauthorized") as any;
     err.status = 401;

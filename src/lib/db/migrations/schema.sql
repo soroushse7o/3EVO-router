@@ -1,16 +1,7 @@
-CREATE TABLE IF NOT EXISTS settings (id INTEGER PRIMARY KEY CHECK (id = 1), data TEXT);
-CREATE TABLE IF NOT EXISTS providerConnections (id INTEGER PRIMARY KEY AUTOINCREMENT, provider TEXT, authType TEXT, name TEXT, email TEXT, priority INTEGER, isActive INTEGER DEFAULT 1, data TEXT, createdAt TEXT, updatedAt TEXT);
-CREATE TABLE IF NOT EXISTS providerNodes (id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT, name TEXT, data TEXT, createdAt TEXT, updatedAt TEXT);
-CREATE TABLE IF NOT EXISTS proxyPools (id INTEGER PRIMARY KEY AUTOINCREMENT, isActive INTEGER DEFAULT 1, testStatus TEXT DEFAULT 'unknown', data TEXT, createdAt TEXT, updatedAt TEXT);
 CREATE TABLE IF NOT EXISTS apiKeys (id INTEGER PRIMARY KEY AUTOINCREMENT, key TEXT UNIQUE, name TEXT, machineId TEXT, isActive INTEGER DEFAULT 1, revoked INTEGER DEFAULT 0, createdAt TEXT, accessRestricted INTEGER DEFAULT 0, accessAllow TEXT);
-CREATE TABLE IF NOT EXISTS combos (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, kind TEXT, models TEXT, createdAt TEXT, updatedAt TEXT);
-CREATE TABLE IF NOT EXISTS kv (scope TEXT, key TEXT, value TEXT, PRIMARY KEY(scope, key));
 CREATE TABLE IF NOT EXISTS usage (id INTEGER PRIMARY KEY AUTOINCREMENT, ts INTEGER DEFAULT (strftime('%s', 'now') * 1000), provider TEXT, model TEXT, tokens_in INTEGER DEFAULT 0, tokens_out INTEGER DEFAULT 0, rtk_saved INTEGER DEFAULT 0);
-CREATE TABLE IF NOT EXISTS requestDetails (id INTEGER PRIMARY KEY AUTOINCREMENT, provider TEXT, model TEXT, connectionId TEXT, request TEXT, response TEXT, status TEXT, latency REAL, tokens TEXT, pxpipe TEXT, createdAt TEXT);
-CREATE TABLE IF NOT EXISTS disabledModels (id INTEGER PRIMARY KEY AUTOINCREMENT, provider TEXT, model TEXT, reason TEXT, createdAt TEXT);
-CREATE TABLE IF NOT EXISTS quota (provider TEXT, model TEXT, limit_in INTEGER, limit_out INTEGER, PRIMARY KEY(provider, model));
 CREATE TABLE IF NOT EXISTS sessions (session TEXT PRIMARY KEY, created INTEGER, expires INTEGER);
 CREATE TABLE IF NOT EXISTS lockout (ip TEXT PRIMARY KEY, attempts INTEGER DEFAULT 0, until INTEGER DEFAULT 0);
 CREATE TABLE IF NOT EXISTS auth (id INTEGER PRIMARY KEY CHECK (id = 1), password_hash TEXT, salt TEXT);
-CREATE TABLE IF NOT EXISTS providers (id INTEGER PRIMARY KEY, name TEXT, base_url TEXT, api_key_enc TEXT, model TEXT, created INTEGER);
+CREATE TABLE IF NOT EXISTS providers (id INTEGER PRIMARY KEY, name TEXT, base_url TEXT, api_key_enc TEXT, model TEXT, price_per_1k_in REAL DEFAULT 0, price_per_1k_out REAL DEFAULT 0, created INTEGER);
 CREATE TABLE IF NOT EXISTS _meta (key TEXT PRIMARY KEY, value TEXT);

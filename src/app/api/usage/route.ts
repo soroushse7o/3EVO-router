@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   const session = req.cookies.get("session")?.value;
   if (!validateSession(session)) return Response.json({ error: "unauthorized" }, { status: 401 });
   const rows = await getUsage();
-  const totalCost = rows.reduce((sum: number, r: any) => sum + estimateCost(r.model || "", r.tokens_in || 0, r.tokens_out || 0), 0);
+  const totalCost = rows.reduce((sum: number, r: any) => sum + estimateCost(r.model || "", r.tokens_in || 0, r.tokens_out || 0, r.provider), 0);
   return Response.json({ rows, totalCost });
 }
 

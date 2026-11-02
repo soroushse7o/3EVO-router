@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
 
   const session = await createSession();
   const res = Response.json({ ok: true });
-  res.headers.set("Set-Cookie", `auth_token=${session}; HttpOnly; SameSite=Strict; Path=/; Max-Age=604800`);
+  res.headers.set("Set-Cookie", `session=${session}; HttpOnly; SameSite=Strict; Path=/; Max-Age=604800`);
   return res;
 }
 

@@ -8,7 +8,7 @@ export default function ProvidersPage() {
   const { t } = useI18n();
   const [custom, setCustom] = useState<any[]>([]);
   const [testResults, setTestResults] = useState<Record<string, any>>({});
-  const [form, setForm] = useState({ name: "", baseUrl: "", apiKey: "", model: "gpt-3.5-turbo" });
+  const [form, setForm] = useState({ name: "", baseUrl: "", apiKey: "", model: "gpt-3.5-turbo", priceIn: 0, priceOut: 0 });
   const [loading, setLoading] = useState(false);
 
   const load = () => fetch("/api/providers").then(r => r.json()).then(setCustom).catch(() => toast("Failed to load providers", "error"));
@@ -34,7 +34,7 @@ export default function ProvidersPage() {
     try {
       const res = await fetch("/api/providers", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
       if (!res.ok) throw new Error("Failed to add provider");
-      setForm({ name: "", baseUrl: "", apiKey: "", model: "gpt-3.5-turbo" });
+      setForm({ name: "", baseUrl: "", apiKey: "", model: "gpt-3.5-turbo", priceIn: 0, priceOut: 0 });
       load();
       toast("Provider added", "success");
     } catch (e: any) {
@@ -78,6 +78,8 @@ export default function ProvidersPage() {
           <input className="rounded bg-white/10 border border-white/20 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400/40" placeholder="Base URL" value={form.baseUrl} onChange={(e) => setForm({ ...form, baseUrl: e.target.value })} required />
           <input className="rounded bg-white/10 border border-white/20 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400/40" placeholder="API Key" type="password" value={form.apiKey} onChange={(e) => setForm({ ...form, apiKey: e.target.value })} required />
           <input className="rounded bg-white/10 border border-white/20 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400/40" placeholder="Model" value={form.model} onChange={(e) => setForm({ ...form, model: e.target.value })} />
+          <input className="rounded bg-white/10 border border-white/20 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400/40" placeholder="Price in/1k" type="number" step="0.01" value={form.priceIn} onChange={(e) => setForm({ ...form, priceIn: Number(e.target.value) })} />
+          <input className="rounded bg-white/10 border border-white/20 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400/40" placeholder="Price out/1k" type="number" step="0.01" value={form.priceOut} onChange={(e) => setForm({ ...form, priceOut: Number(e.target.value) })} />
           <button type="submit" disabled={loading} className="rounded bg-emerald-500/20 text-emerald-400 px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400/40 hover:bg-emerald-500/30 disabled:opacity-50">
             {loading ? "Saving…" : "+ Add Provider"}
           </button>
@@ -89,6 +91,7 @@ export default function ProvidersPage() {
                 <div className="font-medium">{c.name}</div>
                 <div className="text-xs text-gray-400 mt-1">{c.baseUrl}</div>
                 <div className="text-xs text-gray-500 mt-1">Model: {c.model || "gpt-3.5-turbo"}</div>
+                <div className="text-xs text-gray-500">Price: ${(c.price_in || c.priceIn || 0).toFixed(4)} in / ${(c.price_out || c.priceOut || 0).toFixed(4)} out per 1k</div>
                 <div className="flex gap-2 mt-2">
                   <button onClick={() => testProvider(c.name, c.baseUrl, c.apiKey, c.model)} className="text-xs rounded px-2 py-1 bg-blue-500/20 text-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/40 hover:bg-blue-500/30">
                     {t("common.test")}

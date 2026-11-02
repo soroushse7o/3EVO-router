@@ -175,9 +175,9 @@ describe("P1 security — requirement 7: Edge runtime docs", () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "..", "package.json"), "utf8"));
     expect(pkg.dependencies.next).toMatch(/\^16\./);
   });
-  it("proxy (Node.js runtime) CAN import Node.js modules", () => {
+  it("auth (Node.js runtime) CAN import Node.js modules", () => {
     const src = fs.readFileSync(path.join(__dirname, "..", "..", "..", "src", "proxy.ts"), "utf8");
-    // proxy.ts uses Node.js runtime but imports from next/server and local libs
+    // auth.ts uses Node.js runtime but imports from next/server and local libs
     // The key point is it CAN use Node.js modules (no Edge restriction)
     expect(src).toContain("import");
     expect(src).toContain("validateApiKey");
@@ -209,7 +209,7 @@ describe("P1 security — requirement 8: test list", () => {
       "P1 security — requirement 6: accounts encryption > vault tamper fails",
       "P1 security — requirement 6: accounts encryption > accounts file is encrypted (no plaintext sk- or Bearer)",
       "P1 security — requirement 7: Edge runtime docs > Next.js version documented",
-      "P1 security — requirement 7: Edge runtime docs > proxy (Node.js runtime) CAN import Node.js modules",
+      "P1 security — requirement 7: Edge runtime docs > auth (Node.js runtime) CAN import Node.js modules",
     ];
     expect(names.length).toBeGreaterThanOrEqual(1);
   });
