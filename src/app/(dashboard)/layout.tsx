@@ -1,8 +1,14 @@
+import { redirect } from "next/navigation";
 import { I18nProvider } from "@/components/i18n-provider";
 import Link from "next/link";
 import LanguageToggle from "@/components/language-toggle";
+import { validateSession } from "@/lib/auth";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const cookieStore = await import("next/headers").then(m => m.cookies());
+  const session = cookieStore.get("session")?.value;
+  if (!validateSession(session)) redirect("/login");
+
   const links = [
     ["Endpoint", "/endpoint"],
     ["Providers", "/providers"],
