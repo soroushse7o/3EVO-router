@@ -21,16 +21,6 @@ export function getUsageAggregates() {
   return getUsageStats();
 }
 
-export function setQuota(provider: string, model: string, limitIn: number, limitOut: number) {
-  const db = getAdapterSync();
-  db.run(`INSERT OR REPLACE INTO quota (provider, model, limit_in, limit_out) VALUES (?,?,?,?)`, [provider, model, limitIn, limitOut]);
-}
-
-export function getQuota() {
-  const db = getAdapterSync();
-  return db.all(`SELECT * FROM quota`);
-}
-
 export function estimateCost(model: string, tokensIn: number, tokensOut: number, provider?: string): number {
   const db = getAdapterSync();
   let priceIn = 0;
@@ -58,27 +48,10 @@ export function createProvider(name: string, baseUrl: string, apiKey: string, mo
 
 export function listProviders() {
   const db = getAdapterSync();
-  return db.all(`SELECT id, name, base_url, model, price_per_1k_in, price_per_1k_out, created FROM providers ORDER BY created DESC`);
-}
-
-export function getProvider(id: number) {
-  const db = getAdapterSync();
-  return db.get(`SELECT id, name, base_url, api_key_enc, model, price_per_1k_in, price_per_1k_out, created FROM providers WHERE id = ?`, [id]);
+  return db.all(`SELECT * FROM providers ORDER BY created ASC`).map((r: any) => ({ ...r }));
 }
 
 export function deleteProvider(id: number) {
   const db = getAdapterSync();
   db.run(`DELETE FROM providers WHERE id = ?`, [id]);
-}
-
-export { validateApiKey, createApiKey, revokeApiKey, listApiKeys };
-
-let ensuredPricing = false;
-export function ensureProviderPricingColumns() {
-  if (ensuredPricing) return;
-  const db = getAdapterSync();
-  const cols = db.all("PRAGMA table_info(providers)").map((c: any) => c.name);
-  if (!cols.includes("price_per_1k_in")) db.run("ALTER TABLE providers ADD COLUMN price_per_1k_in REAL DEFAULT 0");
-  if (!cols.includes("price_per_1k_out")) db.run("ALTER TABLE providers ADD COLUMN price_per_1k_out REAL DEFAULT 0");
-  ensuredPricing = true;
 }
