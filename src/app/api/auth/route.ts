@@ -14,15 +14,16 @@ export async function POST(req: NextRequest) {
     if (attempt.locked) return Response.json({ error: "locked", until: attempt.until }, { status: 429 });
     return Response.json({ error: "invalid password", attempts: attempt.attempts || 0 }, { status: 401 });
   }
+  const isHttps = req.nextUrl.protocol === "https:";
   const session = createSession();
   const res = Response.json({ ok: true });
-  res.headers.set("Set-Cookie", `session=${session}; HttpOnly; SameSite=Strict; Path=/; Max-Age=86400`);
+  res.headers.set("Set-Cookie", `session=${session}; HttpOnly; SameSite=Strict; Path=/; Max-Age=86400${isHttps ? "; Secure" : ""}`);
   return res;
 }
 export async function DELETE(req: NextRequest) {
   const session = req.cookies.get("session")?.value;
   const res = Response.json({ ok: true });
   if (session) { import("@/lib/auth").then(m => m.destroySession(session)); }
-  res.headers.set("Set-Cookie", "session=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0");
+  res.headers.set("Set-Cookie", `session=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0`);
   return res;
 }

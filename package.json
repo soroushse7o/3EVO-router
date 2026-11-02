@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "bin": {
-    "3evo-router": "src/cli/index.ts"
-  },
   "directories": {
     "doc": "docs"
   },
