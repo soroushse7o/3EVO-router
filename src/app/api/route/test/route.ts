@@ -9,6 +9,12 @@ export async function POST(req: NextRequest) {
   if (!url || !apiKey) {
     return Response.json({ ok: false, error: "url and apiKey required" }, { status: 400 });
   }
+  const trimmed = url.replace(/\/$/, "");
+  const host = new URL(trimmed).hostname;
+  const { isSafeUrl } = await import("@/lib/ssrf");
+  if (!await isSafeUrl(trimmed, [host])) {
+    return Response.json({ ok: false, error: "blocked url" }, { status: 400 });
+  }
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000);

@@ -33,7 +33,6 @@ async function resolveHost(host: string): Promise<string[]> {
   }
 }
 
-const defaultAllowlist = new Set(["localhost", "127.0.0.1", "::1"]);
 const envAllowlist = new Set(
   (process.env.ALLOWED_UPSTREAM_HOSTS || "").split(",").map(s => s.trim()).filter(Boolean)
 );
@@ -43,7 +42,7 @@ export async function isSafeUrl(url: string, extraAllowlist: string[] = []): Pro
     const u = new URL(url);
     if (u.protocol !== "http:" && u.protocol !== "https:") return false;
     const host = u.hostname;
-    const allowlist = new Set([...defaultAllowlist, ...envAllowlist, ...extraAllowlist]);
+    const allowlist = new Set([...envAllowlist, ...extraAllowlist]);
     if (allowlist.has(host)) return true;
     if (PRIVATE_NETWORKS.some(r => r.test(host))) return false;
     const ips = await resolveHost(host);

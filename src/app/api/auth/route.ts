@@ -6,8 +6,6 @@ export async function POST(req: NextRequest) {
   ensureAuth();
   const { password } = await req.json();
   if (!password) return Response.json({ error: "password required" }, { status: 400 });
-  const lockout = checkLockout();
-  if (lockout.locked) return Response.json({ error: "locked", until: lockout.until }, { status: 429 });
   if (!validatePassword(password)) {
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
     const attempt = recordFailedAuth(ip);

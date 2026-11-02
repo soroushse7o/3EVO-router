@@ -7,12 +7,13 @@ function rotateAccounts(accounts: string[], strategy: "round-robin" | "priority"
   return [accounts[lastIndex.current], ...accounts.slice(0, lastIndex.current), ...accounts.slice(lastIndex.current + 1)];
 }
 export { rotateAccounts };
-export function createProxyTier(accountId: string, body: any, apiKey: string) {
+export function createProxyTier(accountId: string, body: any, _fallbackApiKey: string) {
   return async () => {
     const acc = getAccountById(accountId);
     if (!acc?.upstreamUrl) throw { status: 400, message: "no upstream for account", provider: acc?.provider };
     if (!await isSafeUrl(acc.upstreamUrl)) throw { status: 400, message: "blocked url", type: "invalid_request_error" };
-    const r = await fetch(acc.upstreamUrl, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` }, body: JSON.stringify(body) });
+    const authHeader = acc.token ? `Bearer ${acc.token}` : `Bearer ${_fallbackApiKey}`;
+    const r = await fetch(acc.upstreamUrl, { method: "POST", headers: { "Content-Type": "application/json", Authorization: authHeader }, body: JSON.stringify(body) });
     const data = await r.json().catch(() => ({}));
     if (!r.ok) throw { status: r.status, message: data.error?.message || data.error || "upstream error" };
     return { data, provider: acc?.provider };
