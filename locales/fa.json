@@ -1,15 +1,21 @@
 {
   "nav": {
-    "endpoint": "端点",
+    "endpoint": "پایانه",
     "providers": "ارائه‌دهندگان",
-    "proxyPools": "استخرهای پروکسی",
-    "combos": "ترکیب‌ها",
     "usage": "مصرف",
-    "quota": "ردیاب سهمیه",
-    "mitm": "MITM",
-    "cliTools": "ابزارهای CLI",
-    "consoleLog": "لاگ کنسول",
     "settings": "تنظیمات"
   },
-  "common": { "shutdown": "خاموش کردن", "language": "زبان", "theme": "پوسته", "logout": "خروج", "loading": "در حال بارگذاری", "save": "ذخیره", "cancel": "لغو", "delete": "حذف", "test": "تست", "working": "کار می‌کند", "failed": "ناموفق", "notTested": "تست نشده" }
+  "common": {
+    "language": "زبان",
+    "theme": "پوسته",
+    "logout": "خروج",
+    "loading": "در حال بارگذاری",
+    "save": "ذخیره",
+    "cancel": "لغو",
+    "delete": "حذف",
+    "test": "تست",
+    "working": "کار می‌کند",
+    "failed": "ناموفق",
+    "notTested": "تست نشده"
+  }
 }
