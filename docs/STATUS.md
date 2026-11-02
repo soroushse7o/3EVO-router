@@ -31,24 +31,16 @@ npm warn install-scripts better-sqlite3@13.0.3 (install: node-gyp rebuild)
 ```
 > npm run build
 ▲ Next.js 16.4.3 (Turbopack)
-✓ Compiled successfully in 1884ms
+✓ Compiled successfully in 7.3s
 ✓ Generating static pages (41/41)
-Route (app)
-├ ○ /
-├ ƒ /api/auth
-...
-└ ƒ /usage
-ƒ Proxy (Middleware)
-○ (Static) prerendered as static content
-ƒ (Dynamic) server-rendered on demand
 ```
 
 ## Test (project tests only: src/lib/__tests__)
 
 ```
 > npx vitest run src/lib/__tests__
-Test Files  7 passed (7)
-     Tests  64 passed (64)
+Test Files  6 passed (6)
+     Tests  62 passed (62)
 ```
 
 ## Test (full suite including reference/tests)
@@ -60,7 +52,7 @@ Test Files  267 failed | 153 passed | 4 skipped (424)
 ```
 
 Notes:
-- The 64 project tests in `src/lib/__tests__` all pass.
+- The 62 project tests in `src/lib/__tests__` all pass.
 - The 424-file suite also picks up `reference/tests/` and `reference/src/` from a
   reference implementation tree. Many of those tests import modules that do not
   exist in this repo (`open-sse/...`, `@/sse/...`, `@/lib/...`), so they are
