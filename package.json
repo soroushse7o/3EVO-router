@@ -1,10 +1,13 @@
 {
   "name": "3evo-router",
   "version": "1.0.0",
-  "description": "",
+  "description": "Local AI gateway with failover and encrypted secrets",
   "main": "index.js",
   "directories": {
     "doc": "docs"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "scripts": {
     "dev": "next dev -H 127.0.0.1 -p 20128",
