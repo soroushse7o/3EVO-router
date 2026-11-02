@@ -4,6 +4,7 @@ import { recordUsage } from "@/lib/db";
 import { validateApiKey } from "@/lib/api-key";
 import { logError } from "@/lib/logger";
 import { scrub } from "@/lib/scrubber";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 export async function GET(req: NextRequest) {
   const key = req.headers?.get?.("authorization")?.replace("Bearer ", "") || req.headers?.get?.("x-api-key");
@@ -14,6 +15,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const key = req.headers?.get?.("authorization")?.replace("Bearer ", "") || req.headers?.get?.("x-api-key");
   if (!key || !validateApiKey(key)) return Response.json({ error: { message: "invalid api key", type: "auth_error" } }, { status: 401 });
+  if (!checkRateLimit(key)) return Response.json({ error: { message: "rate limit exceeded", type: "rate_limit_error" } }, { status: 429 });
 
   const body = await req.json();
   const { nonStream, stream } = await buildProviderTiers(body, req.signal);

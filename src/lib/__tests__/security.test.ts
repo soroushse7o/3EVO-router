@@ -67,3 +67,10 @@ describe("P1 security", () => {
     expect(text).not.toContain(secret);
   });
 });
+
+  it("rate limit blocks after threshold", async () => {
+    const { checkRateLimit } = await import("../rateLimit");
+    const key = "rate-test-key";
+    for (let i = 0; i < 120; i++) expect(checkRateLimit(key)).toBe(true);
+    expect(checkRateLimit(key)).toBe(false);
+  });
