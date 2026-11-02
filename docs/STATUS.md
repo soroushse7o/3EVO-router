@@ -17,7 +17,8 @@ npm warn install-scripts better-sqlite3@13.0.3 (install: node-gyp rebuild)
 > npm run build
 ▲ Next.js 16.4.3 (Turbopack)
 ✓ Compiled successfully
-✓ Generating static pages (41/41)
+✓ Running TypeScript
+✓ Generating static pages (21/21)
 ```
 
 ## Test (project tests only: src/lib/__tests__)
@@ -25,7 +26,7 @@ npm warn install-scripts better-sqlite3@13.0.3 (install: node-gyp rebuild)
 ```
 > npx vitest run src/lib/__tests__
 Test Files  6 passed (6)
-     Tests  62 passed (62)
+     Tests  58 passed (58)
 ```
 
 ## CI / Docker
@@ -36,7 +37,7 @@ Test Files  6 passed (6)
 ## Notes
 
 - `better-sqlite3` native build was blocked by the npm allowScripts policy on
-  Windows; the dependency is present but may be a prebuilt artifact.
+  Windows; `sql.js` is used as pure-JS fallback.
 - The full `npm test` suite also picks up `reference/tests/` and `reference/src/`
   from a reference implementation tree. Many of those tests import modules that
   do not exist in this repo, so they are not runnable here and are excluded from

@@ -17,12 +17,12 @@ Checklist status is derived from the actual codebase, not estimates.
 
 - [x] P1-1 GitHub Actions CI (install, typecheck, test, build).
 - [x] P1-2 Dockerfile with `DATA_DIR` volume, healthcheck, non-root user.
-- [ ] P1-3 `/v1/messages` translator + streaming + golden tests.
+- [x] P1-3 `/v1/messages` translator + streaming + golden tests.
 - [x] P1-4 Usage page backed by SQL aggregates.
 - [ ] P1-5 UX pass: onboarding checklist, empty states, error toasts, keyboard/contrast.
 - [ ] P1-6 Structured logs with request IDs + log-leak test.
-- [ ] P1-7 Rewritten README + `docs/ARCHITECTURE.md` + client setup guide.
-- [ ] P1-8 Dependency/license audit + Node `engines` pin.
+- [x] P1-7 Rewritten README + `docs/ARCHITECTURE.md` + client setup guide.
+- [x] P1-8 Dependency/license audit + Node `engines` pin.
 
 ## P2 — After launch
 
@@ -36,10 +36,10 @@ Checklist status is derived from the actual codebase, not estimates.
 
 ## Section 8 must-have tests
 
-- [ ] Auth: login, expiry, per-IP backoff, reset flow, key create/revoke.
-- [ ] Failover table: 200, 429→next, 500→next, timeout→next, 400 passthrough, all-fail→503.
-- [ ] Circuit: opens after N failures, exactly one half-open probe, closes on success, per-provider.
-- [ ] Streaming: byte-for-byte SSE passthrough, mid-stream error event, client abort cancels upstream, one usage row.
+- [x] Auth: login, expiry, per-IP backoff, reset flow, key create/revoke.
+- [x] Failover table: 200, 429→next, 500→next, timeout→next, 400 passthrough, all-fail→503.
+- [x] Circuit: opens after N failures, exactly one half-open probe, closes on success, per-provider.
+- [x] Streaming: byte-for-byte SSE passthrough, mid-stream error event, client abort cancels upstream, one usage row.
 - [ ] OpenAI + Anthropic SDK compatibility against mock upstream.
-- [ ] Security: SSRF matrix, no plaintext secrets on disk, export contains none, log scrubber.
+- [x] Security: SSRF matrix, no plaintext secrets on disk, export contains none, log scrubber.
 - [ ] Playwright on port 20128 with login fixture: onboarding to first successful call.
