@@ -16,14 +16,16 @@ Single local endpoint that proxies OpenAI/Anthropic-compatible requests to one o
 - SSRF guard: private/link-local ranges are blocked; `localhost` must be explicitly allowlisted via `ALLOWED_UPSTREAM_HOSTS`.
 - All secrets encrypted with AES-256-GCM (`master.key`); no plaintext API keys on disk.
 - Public `/api/health` endpoint.
-- Structured logs with request IDs; log scrubber masks secrets.
-- Per-key rate limiting (120 requests/minute).
+- Centralized auth guard with deny-by-default for API and dashboard routes.
+- Progressive login lockout with exponential backoff (5 attempts, escalating timeouts).
 - Metrics endpoint (`/api/metrics`) with usage aggregates.
-- GitHub Actions CI and Dockerfile included.
+- GitHub Actions CI, Dockerfile, and centralized Next.js middleware included.
+- Machine-ID-based CLI token auth for local tool access.
+- Provider executor pattern: DefaultExecutor with standardized auth, response parsing, and stream passthrough.
 
 ## What is intentionally out of scope for v0.1
 
-Subscription OAuth, MITM, RTK, quota/cost estimation, proxy pools, cloud sync, Persian UI, multi-user.
+Subscription OAuth, MITM, RTK, quota/cost estimation, proxy pools, cloud sync, Persian UI, multi-user
 
 ## Verified tests
 
@@ -102,3 +104,4 @@ Client (OpenAI/Anthropic SDK)
 ## License
 
 MIT — see `LICENSE`.
+

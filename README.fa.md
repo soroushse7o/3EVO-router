@@ -31,6 +31,11 @@
 | Persian/RTL locales | Partial | `locales/fa.json`; UI منوی ساده |
 | SSE streaming | Working | `src/lib/streamController.js` |
 | Trusted peer headers | Planned | `src/lib/auth/trustedPeer.js` |
+| مرکزی Auth Guard (deny-by-default) | Working | `src/lib/dashboardGuard.ts`, `middleware.ts` |
+| Progressive login lockout | Working | `src/lib/loginLimiter.ts` |
+| CLI token auth (machine-ID) | Working | `src/lib/cliToken.ts` |
+| Provider executor pattern | Working | `src/lib/providers/DefaultExecutor.ts` |
+| Repository pattern ( barrel export) | Working | `src/lib/db/index.ts` |
 
 ## معماری
 
