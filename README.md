@@ -20,7 +20,7 @@ Single local endpoint that proxies OpenAI/Anthropic-compatible requests to one o
 - Progressive login lockout with exponential backoff (5 attempts, escalating timeouts).
 - Metrics endpoint (`/api/metrics`) with usage aggregates.
 - GitHub Actions CI, Dockerfile, and centralized Next.js middleware included.
-- Machine-ID-based CLI token auth for local tool access.
+- Trusted peer header validation (`x-3r-peer-token`) for local proxy bypass.
 - Provider executor pattern: DefaultExecutor with standardized auth, response parsing, and stream passthrough.
 
 ## What is intentionally out of scope for v0.1

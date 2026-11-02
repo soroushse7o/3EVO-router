@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { hasTrustedPeerHeaders } from "@/lib/auth/trustedPeer";
 
-const PUBLIC_PREFIXES = ["/v1", "/v1beta", "/api/v1", "/responses"];
+const PUBLIC_API_PREFIXES = ["/v1", "/v1beta", "/api/v1", "/responses"];
 const PUBLIC_PATHS = ["/api/health", "/api/init", "/api/locale", "/api/auth/login", "/api/auth/logout", "/api/auth/status", "/api/version", "/api/settings/require-login"];
 
 function isPublicLlmApi(pathname: string) {
-  return PUBLIC_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+  return PUBLIC_API_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 }
 
 function isPublicApi(pathname: string) {
@@ -15,6 +16,11 @@ function isPublicApi(pathname: string) {
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Trusted peer bypass
+  if (hasTrustedPeerHeaders(request)) {
+    return NextResponse.next();
+  }
 
   // Public LLM API prefixes — allow through; deeper auth happens in route handlers
   if (isPublicLlmApi(pathname)) {
@@ -32,7 +38,6 @@ export function middleware(request: NextRequest) {
     if (!session) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
-    // Session validity is checked in route handlers; we just gate access here
     return NextResponse.next();
   }
 

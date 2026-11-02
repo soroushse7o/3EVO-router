@@ -35,6 +35,7 @@
 | Progressive login lockout | Working | `src/lib/loginLimiter.ts` |
 | CLI token auth (machine-ID) | Working | `src/lib/cliToken.ts` |
 | Provider executor pattern | Working | `src/lib/providers/DefaultExecutor.ts` |
+| Trusted peer header validation | Working | `src/lib/auth/trustedPeer.ts` + `middleware.ts` |
 | Repository pattern ( barrel export) | Working | `src/lib/db/index.ts` |
 
 ## معماری
