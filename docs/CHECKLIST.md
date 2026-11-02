@@ -23,6 +23,11 @@ Checklist status is derived from the actual codebase, not estimates.
 - [x] P1-6 Structured logs with request IDs + log-leak test.
 - [x] P1-7 Rewritten README + `docs/ARCHITECTURE.md` + client setup guide.
 - [x] P1-8 Dependency/license audit + Node `engines` pin.
+- [x] P1-9 Repository pattern: `settingsRepo`, `sessionsRepo`, `lockoutRepo`, `providersRepo`, `authRepo`.
+- [x] P1-10 Central auth guard: `dashboardGuard.ts` with deny-by-default, public API prefixes, JWT, CLI token support.
+- [x] P1-11 Settings management: `settings` table + `settingsRepo` + dashboard UI.
+- [x] P1-12 Provider executors: `DefaultExecutor` class for OpenAI-compatible providers.
+- [x] P1-13 Trusted peer integration: `trustedPeer.ts` + `x-9r-peer-token` validation.
 
 ## P2 — After launch
 
