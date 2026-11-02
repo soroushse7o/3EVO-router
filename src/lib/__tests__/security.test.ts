@@ -57,4 +57,13 @@ describe("P1 security", () => {
     const dec = decrypt(enc, masterKey());
     expect(dec).toBe(plain);
   });
+
+  it("log scrubber removes secrets from meta", async () => {
+    const { log, getRecentLogs } = await import("../logger");
+    const secret = "Bearer secret-key-xyz";
+    log("info", "test", { auth: secret, nested: { password: secret } });
+    const logs = getRecentLogs(5);
+    const text = JSON.stringify(logs);
+    expect(text).not.toContain(secret);
+  });
 });

@@ -2,7 +2,8 @@ import { NextRequest } from "next/server";
 import { buildProviderTiers, runWithFallback, streamWithFallback } from "@/lib/router";
 import { recordUsage } from "@/lib/db";
 import { validateApiKey } from "@/lib/api-key";
-import { logError, scrub } from "@/lib/logger";
+import { logError } from "@/lib/logger";
+import { scrub } from "@/lib/scrubber";
 
 export async function GET(req: NextRequest) {
   const key = req.headers?.get?.("authorization")?.replace("Bearer ", "") || req.headers?.get?.("x-api-key");

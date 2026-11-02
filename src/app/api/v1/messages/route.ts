@@ -2,7 +2,8 @@ import { NextRequest } from "next/server";
 import { buildProviderTiers, runWithFallback } from "@/lib/router";
 import { recordUsage } from "@/lib/db";
 import { validateApiKey } from "@/lib/api-key";
-import { logError, scrub } from "@/lib/logger";
+import { logError } from "@/lib/logger";
+import { scrub } from "@/lib/scrubber";
 import { anthropicToOpenAI } from "@/lib/translator";
 
 export async function POST(req: NextRequest) {
