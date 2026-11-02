@@ -33,8 +33,9 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const result = await runWithFallback(nonStream, `messages:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`);
-    const data = anthropicToOpenAI(result.data || result);
+    const resolved = await runWithFallback<any>(nonStream, `messages:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`);
+    recordUsage(resolved.provider || "unknown", body.model || "unknown", resolved.data.usage?.prompt_tokens || 0, resolved.data.usage?.completion_tokens || 0, 0);
+    const data = anthropicToOpenAI(resolved.data || resolved);
     return Response.json(data, { status: 200 });
   } catch (e: any) {
     logError("CHAT_ERROR", scrub(e?.message || String(e)));

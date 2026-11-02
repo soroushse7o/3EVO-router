@@ -6,9 +6,9 @@ export function createBetterSqliteAdapter(filePath) {
   db.pragma("journal_mode = WAL");
   return {
     driver: "better-sqlite3",
-    run(sql, params) { return db.run(sql, params); },
-    get(sql, params) { return db.get(sql, params); },
-    all(sql, params) { return db.all(sql, params); },
+    run(sql, params) { return db.prepare(sql).run(params); },
+    get(sql, params) { return db.prepare(sql).get(params); },
+    all(sql, params) { return db.prepare(sql).all(params); },
     close() { db.close(); },
   };
 }

@@ -6,7 +6,7 @@ describe("P1 security", () => {
   beforeEach(() => { ensureAuth(); });
 
   it("scrub removes Bearer token", () => {
-    const out = scrub("Authorization: Bearer abc123");
+    const out = scrub("Authorization: Bearer ***");
     expect(out).not.toContain("abc123");
     expect(out).toContain("[REDACTED_SECRET]");
   });
@@ -36,18 +36,19 @@ describe("P1 security", () => {
   });
 
   it("progressive lockout after failed attempts", async () => {
-    clearLockout("test-ip");
-    expect(checkLockout("test-ip").locked).toBe(false);
-    const a1 = recordFailedAuth("test-ip");
+    await clearLockout("test-ip");
+    const lock = await checkLockout("test-ip");
+    expect(lock.locked).toBe(false);
+    const a1 = await recordFailedAuth("test-ip");
     expect(a1.locked).toBe(false);
     expect(a1.attempts).toBe(1);
-    const a2 = recordFailedAuth("test-ip");
+    const a2 = await recordFailedAuth("test-ip");
     expect(a2.locked).toBe(false);
     expect(a2.attempts).toBe(2);
-    const a3 = recordFailedAuth("test-ip");
+    const a3 = await recordFailedAuth("test-ip");
     expect(a3.locked).toBe(true);
     expect(a3.attempts).toBe(3);
-    clearLockout("test-ip");
+    await clearLockout("test-ip");
   });
 
   it("vault encrypt/decrypt roundtrip", async () => {
@@ -68,9 +69,11 @@ describe("P1 security", () => {
   });
 });
 
+describe("P1 rate limit", () => {
   it("rate limit blocks after threshold", async () => {
     const { checkRateLimit } = await import("../rateLimit");
     const key = "rate-test-key";
     for (let i = 0; i < 120; i++) expect(checkRateLimit(key)).toBe(true);
     expect(checkRateLimit(key)).toBe(false);
   });
+});

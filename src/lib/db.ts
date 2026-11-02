@@ -1,6 +1,5 @@
 import { getAdapter, getAdapterSync } from "@/lib/db/driver";
-import { saveRequestUsage, getUsageHistory, getUsageStats } from "@/lib/db/repos/usageRepo.js";
-import { getApiKeys, validateApiKey, createApiKey, revokeApiKey, listApiKeys } from "@/lib/db/repos/apiKeysRepo.js";
+import * as repo from "@/lib/db/index";
 
 export { getAdapter, getAdapterSync };
 
@@ -10,15 +9,15 @@ export function getDb() {
 }
 
 export function recordUsage(provider: string, model: string, tin: number, tout: number, saved: number) {
-  saveRequestUsage({ provider, model, tokens_in: tin, tokens_out: tout, rtk_saved: saved });
+  repo.saveRequestUsage({ provider, model, tokens_in: tin, tokens_out: tout, rtk_saved: saved });
 }
 
 export function getUsage() {
-  return getUsageHistory(100);
+  return repo.getUsageHistory(100);
 }
 
 export function getUsageAggregates() {
-  return getUsageStats();
+  return repo.getUsageStats();
 }
 
 export function estimateCost(model: string, tokensIn: number, tokensOut: number, provider?: string): number {
@@ -55,3 +54,6 @@ export function deleteProvider(id: number) {
   const db = getAdapterSync();
   db.run(`DELETE FROM providers WHERE id = ?`, [id]);
 }
+
+// Re-export repo functions for convenience
+export * from "@/lib/db/index";

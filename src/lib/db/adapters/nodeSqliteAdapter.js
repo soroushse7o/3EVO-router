@@ -6,9 +6,9 @@ export async function createNodeSqliteAdapter(filePath) {
   await db.exec("PRAGMA journal_mode = WAL");
   return {
     driver: "node:sqlite",
-    async run(sql, params) { return db.run(sql, params); },
-    async get(sql, params) { return db.get(sql, params); },
-    async all(sql, params) { return db.all(sql, params); },
+    async run(sql, params) { return db.prepare(sql).run(params); },
+    async get(sql, params) { return db.prepare(sql).get(params); },
+    async all(sql, params) { return db.prepare(sql).all(params); },
     async close() { db.close(); },
   };
 }

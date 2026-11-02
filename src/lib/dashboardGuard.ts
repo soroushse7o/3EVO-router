@@ -2,10 +2,25 @@ import { NextResponse } from "next/server";
 import { validateSession } from "@/lib/auth";
 import { validateApiKey } from "@/lib/api-key";
 import { hasTrustedPeerHeaders } from "@/lib/auth/trustedPeer";
+import { getCliToken, hasValidCliToken } from "@/lib/cliToken";
 
 const PUBLIC_API_PREFIXES = ["/v1", "/v1beta", "/api/v1", "/responses"];
-const PUBLIC_PATHS = ["/api/health", "/api/init", "/api/locale", "/api/auth/login", "/api/auth/logout", "/api/auth/status", "/api/auth/oidc", "/api/version", "/api/settings/require-login"];
-const ALWAYS_PROTECTED = ["/api/shutdown", "/api/settings/database", "/api/version/shutdown", "/api/version/update"];
+const PUBLIC_PATHS = [
+  "/api/health",
+  "/api/init",
+  "/api/locale",
+  "/api/auth/login",
+  "/api/auth/logout",
+  "/api/auth/status",
+  "/api/version",
+  "/api/settings/require-login",
+];
+const ALWAYS_PROTECTED = [
+  "/api/shutdown",
+  "/api/settings/database",
+  "/api/version/shutdown",
+  "/api/version/update",
+];
 const LOCAL_ONLY_PATHS: string[] = [];
 
 export function isPublicLlmApi(pathname: string) {
@@ -35,6 +50,7 @@ export async function hasValidSession(request: Request) {
 export async function canAccessPublicLlmApi(request: Request) {
   if (await hasValidApiKey(request)) return true;
   if (await hasValidSession(request)) return true;
+  if (await hasValidCliToken(request)) return true;
   return false;
 }
 
@@ -56,7 +72,7 @@ export async function proxy(request: Request) {
     }
   }
 
-  // Public LLM API — requires API key or session
+  // Public LLM API — requires API key or session or CLI token
   if (isPublicLlmApi(pathname)) {
     if (await canAccessPublicLlmApi(request)) return NextResponse.next();
     return NextResponse.json({ error: "API key required for remote API access" }, { status: 401 });

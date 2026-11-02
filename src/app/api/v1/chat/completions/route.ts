@@ -35,10 +35,9 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const resolved = await runWithFallback(nonStream, `chat:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`, 30000);
-    const result = resolved.data;
-    recordUsage(resolved.provider || "unknown", body.model || "unknown", result.usage?.prompt_tokens || 0, result.usage?.completion_tokens || 0, 0);
-    return Response.json(result);
+    const resolved = await runWithFallback<any>(nonStream, `chat:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`, 30000);
+    recordUsage(resolved.provider || "unknown", body.model || "unknown", resolved.data.usage?.prompt_tokens || 0, resolved.data.usage?.completion_tokens || 0, 0);
+    return Response.json(resolved.data);
   } catch (e: any) {
     logError("ROUTE_ERROR", e);
     const status = e?.status || 503;

@@ -1,49 +1,33 @@
 import { recordFailure, recordSuccess, isOpen, getRetryAfter } from "@/lib/circuit";
 import { isSafeUrl } from "@/lib/ssrf";
-import { listProviders } from "@/lib/db";
+import { listProvidersRows } from "@/lib/db/repos/providersRepo.js";
 import { decrypt, masterKey } from "@/lib/vault";
 import { createStreamController } from "@/lib/streamController.js";
+import { DefaultExecutor, ProviderResult } from "@/lib/providers/DefaultExecutor";
 
 interface ProviderRow { id: number; name: string; base_url: string; api_key_enc: string; model: string; }
 
-function getProviderTier(provider: ProviderRow) {
-  return async () => {
-    const trimmed = provider.base_url.replace(/\/$/, "");
-    if (!await isSafeUrl(trimmed)) throw { status: 400, message: "blocked url" };
-    const apiKey = decrypt(provider.api_key_enc, masterKey());
-    const url = `${trimmed}/chat/completions`;
-    const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` }, body: JSON.stringify({ model: provider.model, messages: [{ role: "user", content: "ping" }], max_tokens: 1 }) });
-    if (!r.ok) {
-      const data = await r.json().catch(() => ({}));
-      throw { status: r.status, message: data.error?.message || data.error || "upstream error", provider: provider.name };
-    }
-    return { data: await r.json(), provider: provider.name };
-  };
-}
-
-function getProviderStreamTier(provider: ProviderRow, body: any, signal?: AbortSignal) {
-  return async () => {
-    const trimmed = provider.base_url.replace(/\/$/, "");
-    if (!await isSafeUrl(trimmed)) throw { status: 400, message: "blocked url" };
-    const apiKey = decrypt(provider.api_key_enc, masterKey());
-    const url = `${trimmed}/chat/completions`;
-    const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` }, body: JSON.stringify({ ...body, stream: true }), signal });
-    if (!r.ok) {
-      const err = await r.text().catch(() => ({}));
-      throw { status: r.status, message: err || "upstream error" };
-    }
-    if (!r.body) throw { status: 502, message: "upstream closed body" };
-    return { stream: r.body, provider: provider.name };
-  };
-}
-
 export async function buildProviderTiers(body: any, signal?: AbortSignal) {
-  const providers = listProviders() as ProviderRow[];
+  const providers = await listProvidersRows() as ProviderRow[];
   if (!providers.length) return { nonStream: [], stream: [] as Array<() => Promise<{ stream: ReadableStream; provider: string }>> };
-  return {
-    nonStream: providers.map(p => getProviderTier(p)),
-    stream: providers.map(p => getProviderStreamTier(p, body, signal)),
-  };
+
+  const nonStream = providers.map((p) => async () => {
+    const trimmed = p.base_url.replace(/\/$/, "");
+    if (!isSafeUrl(trimmed)) throw { status: 400, message: "blocked url" };
+    const apiKey = decrypt(p.api_key_enc, masterKey());
+    const executor = new DefaultExecutor({ name: p.name, baseUrl: trimmed, apiKey, model: p.model });
+    return await executor.fetchJson("/chat/completions", { model: p.model, messages: [{ role: "user", content: "ping" }], max_tokens: 1 });
+  });
+
+  const stream = providers.map((p) => () => {
+    const trimmed = p.base_url.replace(/\/$/, "");
+    if (!isSafeUrl(trimmed)) throw { status: 400, message: "blocked url" };
+    const apiKey = decrypt(p.api_key_enc, masterKey());
+    const executor = new DefaultExecutor({ name: p.name, baseUrl: trimmed, apiKey, model: p.model });
+    return executor.stream("/chat/completions", body, signal);
+  });
+
+  return { nonStream, stream };
 }
 
 export async function runWithFallback<T>(tiers: Array<() => Promise<T>>, keyPrefix: string, timeoutMs = 30000): Promise<T> {

@@ -1,14 +1,15 @@
-import Database from "better-sqlite3";
-import path from "path";
 import { DATA_DIR } from "@/lib/paths";
 import fs from "node:fs";
+import { getAuthRecord, upsertAuthRecord, createSessionRecord, deleteSession as dbDeleteSession } from "@/lib/db";
+import { getLockout, setLockout, clearLockout as dbClearLockout } from "@/lib/db";
 
-const DB_PATH = path.join(DATA_DIR, "data.db");
-let db: Database.Database | null = null;
+const DB_PATH = `${DATA_DIR}/data.db`;
+let db: any = null;
 
-function getDb(): Database.Database {
+function getDb() {
   if (!db) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
+    const Database = require("better-sqlite3");
     db = new Database(DB_PATH);
     db.exec(`CREATE TABLE IF NOT EXISTS sessions (session TEXT PRIMARY KEY, created INTEGER, expires INTEGER)`);
     db.exec(`CREATE TABLE IF NOT EXISTS lockout (ip TEXT PRIMARY KEY, attempts INTEGER DEFAULT 0, until INTEGER DEFAULT 0)`);
@@ -33,28 +34,27 @@ export function verifyPassword(password: string, saltHex: string, hashHex: strin
   return crypto.timingSafeEqual(hash, Buffer.from(hashHex, "hex"));
 }
 
-export function ensureAuth() {
-  const db = getDb();
-  const row = db.prepare("SELECT * FROM auth WHERE id = 1").get() as any;
+export async function ensureAuth() {
+  const row = await getAuthRecord();
   if (!row?.password_hash) {
     const defaultPassword = "123456789";
     const { hash, salt } = hashPassword(defaultPassword);
-    db.prepare("INSERT OR REPLACE INTO auth (id, password_hash, salt) VALUES (1, ?, ?)").run(hash, salt);
+    await upsertAuthRecord(hash, salt);
     return defaultPassword;
   }
   return null;
 }
 
-export function validatePassword(password: string) {
-  const db = getDb();
-  const row = db.prepare("SELECT password_hash, salt FROM auth WHERE id = 1").get() as any;
+export async function validatePassword(password: string) {
+  const row = await getAuthRecord();
   if (!row?.password_hash) return false;
   return verifyPassword(password, row.salt, row.password_hash);
 }
 
 export async function createSession() {
   const { createDashboardAuthToken } = await import("./auth/dashboardSession.js");
-  return createDashboardAuthToken("dashboard");
+  const token = await createDashboardAuthToken("dashboard");
+  return token;
 }
 
 export async function validateSession(session: string | undefined): Promise<boolean> {
@@ -65,7 +65,7 @@ export async function validateSession(session: string | undefined): Promise<bool
 
 export async function destroySession(session: string | undefined) {
   if (!session) return;
-  getDb().prepare("DELETE FROM sessions WHERE session = ?").run(session);
+  await dbDeleteSession(session);
 }
 
 export function requireAuth(req: any) {
@@ -78,23 +78,23 @@ export function requireAuth(req: any) {
   return { token };
 }
 
-export function checkLockout(ip: string) {
-  const db = getDb();
-  const row = db.prepare("SELECT attempts, until FROM lockout WHERE ip = ?").get(ip) as any;
-  return { locked: row ? Date.now() < row.until : false, until: row?.until || 0, attempts: row?.attempts || 0 };
+export async function checkLockout(ip: string) {
+  const row = await getLockout(ip);
+  if (!row) return { locked: false, until: 0, attempts: 0 };
+  const locked = Date.now() < row.until;
+  return { locked, until: row.until || 0, attempts: row.attempts || 0 };
 }
 
-export function recordFailedAuth(ip: string) {
-  const db = getDb();
-  const row = db.prepare("SELECT attempts, until FROM lockout WHERE ip = ?").get(ip) as any;
+export async function recordFailedAuth(ip: string) {
+  const row = await getLockout(ip);
   const now = Date.now();
   const until = row && now < row.until ? row.until : 0;
   const attempts = until ? row.attempts : (row?.attempts || 0) + 1;
   const newUntil = attempts >= 3 ? now + Math.pow(2, attempts - 2) * 1000 : 0;
-  db.prepare("INSERT OR REPLACE INTO lockout (ip, attempts, until) VALUES (?, ?, ?)").run(ip, attempts, newUntil);
+  await setLockout(ip, attempts, newUntil);
   return { locked: newUntil > 0 && now < newUntil, until: newUntil, attempts };
 }
 
-export function clearLockout(ip: string) {
-  getDb().prepare("DELETE FROM lockout WHERE ip = ?").run(ip);
+export async function clearLockout(ip: string) {
+  await dbClearLockout(ip);
 }
