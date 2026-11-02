@@ -7,16 +7,16 @@ Checklist status is derived from the actual codebase, not estimates.
 
 - [x] P0-1 Clean-clone status recorded in `docs/STATUS.md`; false status docs deleted.
 - [x] P0-2 `src/lib/paths.ts` added; all `os.homedir()` replaced with `DATA_DIR`.
-- [ ] P0-3 API key create/list/revoke in SQLite + UI + `/v1/models` works end-to-end.
+- [x] P0-3 API key create/list/revoke in SQLite + UI + `/v1/models` works end-to-end.
 - [x] P0-4 Login form posts JSON; `Secure` cookie flag on HTTPS.
 - [x] P0-10 Simulated routes/pages removed from nav and filesystem.
-- [ ] P0-11 Provider keys encrypted at rest via vault; no plaintext secrets in `DATA_DIR`.
-- [ ] P0-12 Legal/provenance note added (`docs/LEGAL.md`).
+- [x] P0-11 Provider keys encrypted at rest via vault; no plaintext secrets in `DATA_DIR`.
+- [x] P0-12 Legal/provenance note added (`docs/LEGAL.md`).
 
 ## P1 — Required for usable beta
 
-- [ ] P1-1 GitHub Actions CI (install, typecheck, test, build).
-- [ ] P1-2 Dockerfile with `DATA_DIR` volume, healthcheck, non-root user.
+- [x] P1-1 GitHub Actions CI (install, typecheck, test, build).
+- [x] P1-2 Dockerfile with `DATA_DIR` volume, healthcheck, non-root user.
 - [ ] P1-3 `/v1/messages` translator + streaming + golden tests.
 - [ ] P1-4 Usage page backed by SQL aggregates.
 - [ ] P1-5 UX pass: onboarding checklist, empty states, error toasts, keyboard/contrast.
