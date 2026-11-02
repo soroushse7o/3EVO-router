@@ -8,6 +8,10 @@ fs.mkdirSync(dir, { recursive: true });
 const db = new Database(path.join(dir, "data.db"));
 db.exec(`CREATE TABLE IF NOT EXISTS usage (id INTEGER PRIMARY KEY, ts INTEGER, provider TEXT, model TEXT, tokens_in INTEGER, tokens_out INTEGER, rtk_saved INTEGER)`);
 db.exec(`CREATE TABLE IF NOT EXISTS quota (provider TEXT, model TEXT, limit_in INTEGER, limit_out INTEGER, PRIMARY KEY(provider, model))`);
+db.exec(`CREATE TABLE IF NOT EXISTS sessions (session TEXT PRIMARY KEY, created INTEGER, expires INTEGER)`);
+db.exec(`CREATE TABLE IF NOT EXISTS api_keys (id INTEGER PRIMARY KEY, key_hash TEXT, salt TEXT, name TEXT, created INTEGER, expires INTEGER, revoked INTEGER DEFAULT 0)`);
+db.exec(`CREATE TABLE IF NOT EXISTS lockout (ip TEXT PRIMARY KEY, attempts INTEGER DEFAULT 0, until INTEGER DEFAULT 0)`);
+db.exec(`CREATE TABLE IF NOT EXISTS auth (id INTEGER PRIMARY KEY CHECK (id = 1), password_hash TEXT, salt TEXT)`);
 
 export function recordUsage(provider: string, model: string, tin: number, tout: number, saved: number) {
   db.prepare("INSERT INTO usage (ts,provider,model,tokens_in,tokens_out,rtk_saved) VALUES (?,?,?,?,?,?)").run(Date.now(), provider, model, tin, tout, saved);

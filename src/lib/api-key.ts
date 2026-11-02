@@ -1,54 +1,57 @@
-import { readFileSync, writeFileSync, existsSync } from "fs";
+import Database from "better-sqlite3";
 import path from "path";
 import { DATA_DIR } from "@/lib/paths";
-import { getCrypto } from "./auth";
-import { checkRateLimit } from "@/lib/rate-limit";
+import fs from "fs";
 
-const dir = DATA_DIR;
-const file = path.join(dir, "api-keys.json");
-const validatedCache = new Map<string, boolean>();
+const DB_PATH = path.join(DATA_DIR, "data.db");
+let db: Database.Database | null = null;
 
-export function loadApiKeys(): { keyHash: string; salt: string; createdAt: number }[] {
-  if (!existsSync(file)) return [];
-  try { return JSON.parse(readFileSync(file, "utf8")); } catch { return []; }
+function getDb(): Database.Database {
+  if (!db) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    db = new Database(DB_PATH);
+    db.exec(`CREATE TABLE IF NOT EXISTS api_keys (id INTEGER PRIMARY KEY, key_hash TEXT, salt TEXT, name TEXT, created INTEGER, expires INTEGER, revoked INTEGER DEFAULT 0)`);
+  }
+  return db;
 }
 
-function saveApiKeys(keys: { keyHash: string; salt: string; createdAt: number }[]) {
-  writeFileSync(file, JSON.stringify(keys, null, 2));
-}
-
-export function createApiKey(): string {
-  const crypto = getCrypto();
+export function createApiKey(name = ""): string {
+  const crypto = require("crypto");
   const salt = crypto.randomBytes(16).toString("hex");
   const key = "3evo-" + crypto.randomBytes(24).toString("hex");
   const hash = crypto.scryptSync(key, Buffer.from(salt, "hex"), 64).toString("hex");
-  const keys = loadApiKeys();
-  keys.push({ keyHash: hash, salt, createdAt: Date.now() });
-  saveApiKeys(keys);
+  getDb().prepare("INSERT INTO api_keys (key_hash, salt, name, created, expires) VALUES (?, ?, ?, ?, ?)").run(hash, salt, name, Date.now(), 0);
   return key;
 }
 
 export function validateApiKey(key: string | undefined): boolean {
   if (!key) return false;
-  const cacheKey = getCrypto().createHash("sha256").update(key).digest("hex").slice(0, 16);
-  if (validatedCache.has(cacheKey)) return validatedCache.get(cacheKey)!;
-  const keys = loadApiKeys();
-  const crypto = getCrypto();
-  for (const k of keys) {
+  const crypto = require("crypto");
+  const cacheKey = crypto.createHash("sha256").update(key).digest("hex").slice(0, 16);
+  const cache = new Map<string, boolean>();
+  if (cache.has(cacheKey)) return cache.get(cacheKey)!;
+  const rows = getDb().prepare("SELECT key_hash, salt, revoked FROM api_keys").all() as { key_hash: string; salt: string; revoked: number }[];
+  for (const k of rows) {
+    if (k.revoked) continue;
     const hash = crypto.scryptSync(key, Buffer.from(k.salt, "hex"), 64).toString("hex");
-    if (crypto.timingSafeEqual(Buffer.from(hash, "hex"), Buffer.from(k.keyHash, "hex"))) {
-      validatedCache.set(cacheKey, true);
+    if (crypto.timingSafeEqual(Buffer.from(hash, "hex"), Buffer.from(k.key_hash, "hex"))) {
+      cache.set(cacheKey, true);
       return true;
     }
   }
-  validatedCache.set(cacheKey, false);
+  cache.set(cacheKey, false);
   return false;
 }
 
-export function requireApiKey(req: any) {
-  const key = req.headers?.get?.("authorization")?.replace("Bearer ", "") || req.headers?.get?.("x-api-key");
-  if (!key || !validateApiKey(key)) {
-    throw new Response(JSON.stringify({ error: "invalid api key" }), { status: 401, headers: { "content-type": "application/json" } });
-  }
-  return { key };
+export function revokeApiKey(id: number) {
+  getDb().prepare("UPDATE api_keys SET revoked = 1 WHERE id = ?").run(id);
+}
+
+export function listApiKeys() {
+  return getDb().prepare("SELECT id, name, created, revoked FROM api_keys ORDER BY created DESC").all() as { id: number; name: string; created: number; revoked: number }[];
+}
+
+export function loadApiKeys() {
+  const rows = getDb().prepare("SELECT key_hash, salt, created FROM api_keys WHERE revoked = 0").all() as { key_hash: string; salt: string; createdAt: number }[];
+  return rows.map(r => ({ keyHash: r.key_hash, salt: r.salt, createdAt: r.createdAt }));
 }
