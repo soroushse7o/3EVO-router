@@ -20,7 +20,7 @@
 | بازنشانی رمز | Working | `src/app/api/auth/reset/route.ts` |
 | مدیریت API Key | Working | `src/lib/db/repos/apiKeysRepo.js` + UI داشبورد |
 | Vault encrypt/decrypt | Working | `src/lib/vault.ts` |
-| 3-tier failover | Working | `src/lib/router.ts`; چند tier واقعی |
+| Multi-tier failover | Working | `src/lib/router.ts`; چند tier واقعی |
 | Provider pricing | Working | `price_per_1k_in/out` در SQLite |
 | Circuit breaker | Working | `src/lib/circuit.ts`; in-memory, per-provider |
 | Rate limiting | Working | `src/lib/rateLimit.ts`; 120 req/min |
