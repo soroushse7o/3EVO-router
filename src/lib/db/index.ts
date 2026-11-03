@@ -22,5 +22,11 @@ export { getLockout, setLockout, incrementLockout, clearLockout } from "./repos/
 // Auth
 export { getAuthRecord, upsertAuthRecord } from "./repos/authRepo.js";
 
+// Aliases
+export { listAliases, getAlias, createAlias, updateAlias, deleteAlias } from "./repos/aliasesRepo.js";
+
+// Request Details
+export { saveRequestDetail, getRequestDetails, getRequestDetail } from "./repos/requestDetailsRepo.js";
+
 // Legacy sync accessor
 export { getDb } from "../db";

@@ -6,3 +6,5 @@ CREATE TABLE IF NOT EXISTS auth (id INTEGER PRIMARY KEY CHECK (id = 1), password
 CREATE TABLE IF NOT EXISTS providers (id INTEGER PRIMARY KEY, name TEXT, base_url TEXT, api_key_enc TEXT, model TEXT, price_per_1k_in REAL DEFAULT 0, price_per_1k_out REAL DEFAULT 0, created INTEGER);
 CREATE TABLE IF NOT EXISTS _meta (key TEXT PRIMARY KEY, value TEXT);
 CREATE TABLE IF NOT EXISTS settings (id INTEGER PRIMARY KEY CHECK (id = 1), data TEXT);
+CREATE TABLE IF NOT EXISTS model_aliases (alias TEXT PRIMARY KEY, provider TEXT, model TEXT, fallback TEXT DEFAULT '[]');
+CREATE TABLE IF NOT EXISTS request_details (id TEXT PRIMARY KEY, ts INTEGER, route TEXT, provider TEXT, model TEXT, ip TEXT, api_key_prefix TEXT, status INTEGER, latency_ms INTEGER, request_headers TEXT, request_body TEXT, response_headers TEXT, response_body TEXT, error TEXT);
