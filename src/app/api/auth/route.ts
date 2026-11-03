@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   const lock = await checkLockout(ip);
   if (lock.locked) return Response.json({ error: "locked", until: lock.until }, { status: 429 });
 
-  if (!validatePassword(password)) {
+  if (!(await validatePassword(password))) {
     const attempt = await recordFailedAuth(ip);
     if (attempt.locked) return Response.json({ error: "locked", until: attempt.until }, { status: 429 });
     return Response.json({ error: "invalid password", attempts: attempt.attempts || 0 }, { status: 401 });
