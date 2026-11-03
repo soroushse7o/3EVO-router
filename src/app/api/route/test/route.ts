@@ -3,7 +3,7 @@ import { validateSession } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
   const session = req.cookies.get("session")?.value;
-  if (!validateSession(session)) return Response.json({ error: "unauthorized" }, { status: 401 });
+  if (!(await validateSession(session))) return Response.json({ error: "unauthorized" }, { status: 401 });
   const body = await req.json();
   const { url, apiKey, model } = body || {};
   if (!url || !apiKey) {

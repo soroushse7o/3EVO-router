@@ -4,14 +4,14 @@ import { createApiKey, listApiKeys, revokeApiKey } from "@/lib/api-key";
 
 export async function GET(req: NextRequest) {
   const session = req.cookies.get("session")?.value;
-  if (!validateSession(session)) return Response.json({ error: "unauthorized" }, { status: 401 });
+  if (!(await validateSession(session))) return Response.json({ error: "unauthorized" }, { status: 401 });
   const keys = listApiKeys();
   return Response.json(keys);
 }
 
 export async function POST(req: NextRequest) {
   const session = req.cookies.get("session")?.value;
-  if (!validateSession(session)) return Response.json({ error: "unauthorized" }, { status: 401 });
+  if (!(await validateSession(session))) return Response.json({ error: "unauthorized" }, { status: 401 });
   const body = await req.json().catch(() => ({}));
   const name = body?.name || "";
   const key = createApiKey(name);

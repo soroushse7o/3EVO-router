@@ -5,13 +5,13 @@ import { createProvider, listProviders } from "@/lib/db";
 
 export async function GET(req: NextRequest) {
   const session = req.cookies.get("session")?.value;
-  if (!validateSession(session)) return Response.json({ error: "unauthorized" }, { status: 401 });
+  if (!(await validateSession(session))) return Response.json({ error: "unauthorized" }, { status: 401 });
   return Response.json(listProviders());
 }
 
 export async function POST(req: NextRequest) {
   const session = req.cookies.get("session")?.value;
-  if (!validateSession(session)) return Response.json({ error: "unauthorized" }, { status: 401 });
+  if (!(await validateSession(session))) return Response.json({ error: "unauthorized" }, { status: 401 });
   const body = await req.json();
   const { name, baseUrl, apiKey, model, priceIn, priceOut } = body || {};
   if (!name || !baseUrl || !apiKey) {
