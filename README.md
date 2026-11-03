@@ -22,6 +22,9 @@ Single local endpoint that proxies OpenAI/Anthropic-compatible requests to one o
 - Instrumentation: in-memory request timing and provider/route stats exposed via `/api/metrics`.
 - Monthly budget limit: configurable USD cap in Settings; `/v1/*` returns 429 when exceeded.
 - GitHub Actions CI, Dockerfile, and centralized Next.js middleware included.
+- Model aliases with per-model fallback chains.
+- Request details tab with full headers/body capture.
+- Packaged single-binary installer via `pkg` (Windows/macOS/Linux).
 - Playwright E2E test scaffold (`playwright-tests/basic.spec.ts`).
 - Trusted peer header validation (`x-3r-peer-token`) for local proxy bypass.
 - Provider executor pattern: DefaultExecutor with standardized auth, response parsing, and stream passthrough.
