@@ -37,7 +37,7 @@ Checklist status is derived from the actual codebase, not estimates.
 - [x] Per-key rate limits.
 - [ ] Optional OAuth only via official vendor-sanctioned flows.
 - [x] Metrics endpoint with instrumentation (`/api/metrics` exposes provider + route stats).
-- [ ] Packaged installer.
+- [x] Packaged installer (`pkg` scripts for Windows/macOS/Linux).
 
 ## Section 8 must-have tests
 

@@ -23,10 +23,13 @@
 - [x] Instrumentation (request timing, provider/route stats)
 - [x] Quota/budget limits per provider or global
 
-## Phase D — Polish (v0.2)
-- [ ] Packaged installer (Windows `.exe` / `.msi`, Homebrew, etc.)
+## Phase D — Polish (v0.2) ✅
+- [x] Packaged installer (`.exe`/binary via `pkg` for Windows/macOS/Linux)
 - [x] Persian RTL polish in dashboard UI
 - [x] Playwright E2E test scaffold: health, models auth, login page visibility
+- [x] Model aliases and routing rules
+- [x] Per-model fallback chains
+- [x] Request details tab with headers/body
 
 ## Phase E — OAuth (post-v0.2)
 - [ ] Optional OAuth via official vendor flows only
