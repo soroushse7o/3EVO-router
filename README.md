@@ -2,17 +2,18 @@
 
 Single local endpoint that proxies OpenAI/Anthropic-compatible requests to one or more upstream providers with failover and encrypted secret storage.
 
-> **Status: Alpha — not production-ready.** See `docs/CHECKLIST.md` for what ships in v0.1.
+> **Status: Beta — core proxy hardened.** See `docs/CHECKLIST.md` for build status.
 
 ## What works today
 
 - Dashboard login with scrypt password hashing and expiring sessions.
 - API key create/list/revoke in Settings; `/v1/chat/completions`, `/v1/messages`, `/v1/models`, and `/v1/responses` require a valid key.
-- Add custom OpenAI-compatible providers from the dashboard (base URL + API key + optional pricing), stored encrypted at rest.
+- Add custom OpenAI-compatible and Anthropic-compatible providers from the dashboard (base URL + API key + optional pricing), stored encrypted at rest.
 - Ordered provider failover: 429, 5xx, timeout, and network errors fall through to the next provider; 4xx and auth errors pass through unchanged.
 - Circuit breaker per provider; closes again on success.
 - Streaming passthrough for `/v1/chat/completions` and `/v1/messages`.
 - Usage rows written to SQLite (`data.db`) with real upstream token counts when available.
+- Cost tracking: per-request cost computed from provider pricing; monthly budget enforced.
 - SSRF guard: private/link-local ranges are blocked; `localhost` must be explicitly allowlisted via `ALLOWED_UPSTREAM_HOSTS`.
 - All secrets encrypted with AES-256-GCM (`master.key`); no plaintext API keys on disk.
 - Public `/api/health` endpoint.
@@ -24,14 +25,13 @@ Single local endpoint that proxies OpenAI/Anthropic-compatible requests to one o
 - GitHub Actions CI, Dockerfile, and centralized Next.js middleware included.
 - Model aliases with per-model fallback chains.
 - Request details tab with full headers/body capture.
-- Packaged single-binary installer via `pkg` (Windows/macOS/Linux).
-- Playwright E2E test scaffold (`playwright-tests/basic.spec.ts`).
 - Trusted peer header validation (`x-3r-peer-token`) for local proxy bypass.
 - Provider executor pattern: DefaultExecutor with standardized auth, response parsing, and stream passthrough.
+- Multi-adapter SQLite: better-sqlite3 → node:sqlite → sql.js fallback.
 
 ## What is intentionally out of scope for v0.1
 
-Subscription OAuth, MITM, RTK, quota/cost estimation, proxy pools, cloud sync, Persian UI, multi-user
+Subscription OAuth, MITM, RTK, proxy pools, cloud sync, multi-user
 
 ## Verified tests
 
