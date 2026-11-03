@@ -36,15 +36,15 @@ describe("P1 security — requirement 1: password", () => {
   });
 });
 describe("P1 security — requirement 2: API key", () => {
-  it("creates and validates API key", () => {
-    const key = createApiKey();
+  it("creates and validates API key", async () => {
+    const key = await createApiKey();
     expect(key).toMatch(/^3evo-[a-f0-9]+$/);
-    expect(validateApiKey(key)).toBe(true);
-    expect(validateApiKey("fake-key-123")).toBe(false);
-    expect(validateApiKey(undefined)).toBe(false);
+    expect(await validateApiKey(key)).toBe(true);
+    expect(await validateApiKey("fake-key-123")).toBe(false);
+    expect(await validateApiKey(undefined)).toBe(false);
   });
-  it("only hash stored, not plaintext", () => {
-    const keys = loadApiKeys();
+  it("only hash stored, not plaintext", async () => {
+    const keys = await loadApiKeys();
     for (const k of keys) {
       expect(k.keyHash).not.toContain("3evo-");
       expect(k.salt).toBeTruthy();
@@ -88,7 +88,7 @@ describe("P1 security — requirement 4: /v1/* works with API key", () => {
     expect(res.status).toBe(401);
   });
   it("valid API key on /v1/models → 200", async () => {
-    const key = createApiKey();
+    const key = await createApiKey();
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 3000);
     try {

@@ -29,10 +29,10 @@ describe("P1 security", () => {
 
   it("validateApiKey creates and validates", async () => {
     const { createApiKey, validateApiKey } = await import("../api-key");
-    const key = createApiKey("test");
-    expect(validateApiKey(key)).toBe(true);
-    expect(validateApiKey("fake-key-123")).toBe(false);
-    expect(validateApiKey(undefined)).toBe(false);
+    const key = await createApiKey("test");
+    expect(await validateApiKey(key)).toBe(true);
+    expect(await validateApiKey("fake-key-123")).toBe(false);
+    expect(await validateApiKey(undefined)).toBe(false);
   });
 
   it("progressive lockout after failed attempts", async () => {

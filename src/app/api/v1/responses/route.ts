@@ -12,7 +12,7 @@ import { scrub } from "@/lib/scrubber";
 export async function POST(req: NextRequest) {
   const start = Date.now();
   const key = req.headers?.get?.("authorization")?.replace("Bearer ", "") || req.headers?.get?.("x-api-key");
-  if (!key || !validateApiKey(key)) {
+  if (!key || !(await validateApiKey(key))) {
     recordRouteRequest("/v1/responses", Date.now() - start, true);
     return Response.json({ error: { message: "invalid api key", type: "auth_error" } }, { status: 401 });
   }

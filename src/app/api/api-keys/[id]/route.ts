@@ -6,6 +6,6 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   const { id } = await params;
   const session = req.cookies.get("session")?.value;
   if (!(await validateSession(session))) return Response.json({ error: "unauthorized" }, { status: 401 });
-  revokeApiKey(Number(id));
+  await revokeApiKey(Number(id));
   return Response.json({ ok: true });
 }

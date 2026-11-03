@@ -13,7 +13,7 @@ import { recordRouteRequest } from "@/lib/instrumentation";
 export async function POST(req: NextRequest) {
   const start = Date.now();
   const key = req.headers?.get?.("authorization")?.replace("Bearer ", "") || req.headers?.get?.("x-api-key");
-  if (!key || !validateApiKey(key)) {
+  if (!key || !(await validateApiKey(key))) {
     recordRouteRequest("/v1/messages", Date.now() - start, true);
     return Response.json({ error: { message: "invalid api key", type: "auth_error" } }, { status: 401 });
   }
