@@ -16,11 +16,7 @@
     "dev": "next dev -H 127.0.0.1 -p 20128",
     "build": "next build",
     "start": "next start -H 127.0.0.1 -p 20128",
-    "test": "vitest run",
-    "pkg": "pkg . --targets node18-win-x64,node18-macos-x64,node18-linux-x64 --output dist/3evo-router",
-    "pkg:win": "pkg . --targets node18-win-x64 --output dist/3evo-router.exe",
-    "pkg:mac": "pkg . --targets node18-macos-x64 --output dist/3evo-router-macos",
-    "pkg:linux": "pkg . --targets node18-linux-x64 --output dist/3evo-router-linux"
+    "test": "vitest run"
   },
   "keywords": [],
   "type": "module",
@@ -41,21 +37,6 @@
   "devDependencies": {
     "@playwright/test": "^1.64.1",
     "@types/better-sqlite3": "^9.6.0",
-    "pkg": "^5.8.1",
     "vitest": "^5.0.5"
-  },
-  "pkg": {
-    "assets": [
-      "public/**/*",
-      ".next/**/*",
-      "locales/**/*"
-    ],
-    "scripts": "dist/**/*.js",
-    "targets": [
-      "node18-win-x64",
-      "node18-macos-x64",
-      "node18-linux-x64"
-    ],
-    "outputPath": "dist"
   }
 }

@@ -1,22 +1,7 @@
 import { DATA_DIR } from "@/lib/paths";
-import fs from "node:fs";
 import { getAuthRecord, upsertAuthRecord, createSessionRecord, deleteSession as dbDeleteSession } from "@/lib/db";
 import { getLockout, setLockout, clearLockout as dbClearLockout } from "@/lib/db";
-
-const DB_PATH = `${DATA_DIR}/data.db`;
-let db: any = null;
-
-function getDb() {
-  if (!db) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-    const Database = require("better-sqlite3");
-    db = new Database(DB_PATH);
-    db.exec(`CREATE TABLE IF NOT EXISTS sessions (session TEXT PRIMARY KEY, created INTEGER, expires INTEGER)`);
-    db.exec(`CREATE TABLE IF NOT EXISTS lockout (ip TEXT PRIMARY KEY, attempts INTEGER DEFAULT 0, until INTEGER DEFAULT 0)`);
-    db.exec(`CREATE TABLE IF NOT EXISTS auth (id INTEGER PRIMARY KEY CHECK (id = 1), password_hash TEXT, salt TEXT)`);
-  }
-  return db;
-}
+import { getDb } from "@/lib/db";
 
 export function getDataDir() { return DATA_DIR; }
 export { getDb };

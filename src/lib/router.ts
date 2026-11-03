@@ -38,7 +38,7 @@ export async function buildProviderTiers(body: any, signal?: AbortSignal) {
     if (!isSafeUrl(trimmed)) throw { status: 400, message: "blocked url" };
     const apiKey = decrypt(p.api_key_enc, masterKey());
     const executor = new DefaultExecutor({ name: p.name, baseUrl: trimmed, apiKey, model: p.model });
-    return await executor.fetchJson("/chat/completions", { model: p.model, messages: [{ role: "user", content: "ping" }], max_tokens: 1 });
+    return await executor.fetchJson("/chat/completions", body);
   });
 
   const stream = ordered.map((p) => () => {

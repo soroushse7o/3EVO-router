@@ -17,9 +17,13 @@ function isPublicApi(pathname: string) {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Trusted peer bypass
+  // Trusted peer bypass — only from localhost
   if (hasTrustedPeerHeaders(request)) {
-    return NextResponse.next();
+    const origin = request.headers.get("origin") || request.headers.get("referer") || "";
+    const isLocal = origin.includes("localhost") || origin.includes("127.0.0.1") || !origin;
+    if (isLocal) {
+      return NextResponse.next();
+    }
   }
 
   // Public LLM API prefixes — allow through; deeper auth happens in route handlers

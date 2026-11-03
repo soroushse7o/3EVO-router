@@ -6,6 +6,7 @@ import { logError } from "@/lib/logger";
 import { scrub } from "@/lib/scrubber";
 import { checkRateLimit } from "@/lib/rateLimit";
 import { checkBudget } from "@/lib/budget";
+import { estimateCost } from "@/lib/cost";
 import { recordRouteRequest } from "@/lib/instrumentation";
 
 export async function GET(req: NextRequest) {
@@ -56,6 +57,7 @@ export async function POST(req: NextRequest) {
     const model = body.model || "unknown";
     const tokensIn = resolved.data.usage?.prompt_tokens || 0;
     const tokensOut = resolved.data.usage?.completion_tokens || 0;
+    const cost = estimateCost(model, tokensIn, tokensOut, provider);
 
     const budget = await checkBudget(provider, model, tokensIn, tokensOut);
     if (budget.exceeded) {
@@ -63,7 +65,7 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: { message: `monthly budget exceeded (remaining: $${budget.remaining?.toFixed(2)})`, type: "budget_exceeded" } }, { status: 429 });
     }
 
-    recordUsage(provider, model, tokensIn, tokensOut, 0);
+    recordUsage(provider, model, tokensIn, tokensOut, cost);
     recordRouteRequest("/v1/chat/completions", Date.now() - start);
     return Response.json(resolved.data);
   } catch (e: any) {

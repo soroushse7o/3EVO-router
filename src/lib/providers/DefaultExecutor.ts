@@ -20,12 +20,16 @@ export class DefaultExecutor {
   async fetchJson(path: string, body: any, signal?: AbortSignal): Promise<ProviderResult> {
     const baseUrl = this.getBaseUrls()[0].replace(/\/$/, "");
     const url = `${baseUrl}${path}`;
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (baseUrl.includes("anthropic")) {
+      headers["x-api-key"] = this.config.apiKey;
+      headers["anthropic-version"] = "2023-06-01";
+    } else {
+      headers["Authorization"] = `Bearer ${this.config.apiKey}`;
+    }
     const r = await fetch(url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${this.config.apiKey}`,
-      },
+      headers,
       body: JSON.stringify(body),
       signal,
     });
@@ -42,15 +46,25 @@ export class DefaultExecutor {
   async stream(path: string, body: any, signal?: AbortSignal) {
     const baseUrl = this.getBaseUrls()[0].replace(/\/$/, "");
     const url = `${baseUrl}${path}`;
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (baseUrl.includes("anthropic")) {
+      headers["x-api-key"] = this.config.apiKey;
+      headers["anthropic-version"] = "2023-06-01";
+    } else {
+      headers["Authorization"] = `Bearer ${this.config.apiKey}`;
+    }
     const r = await fetch(url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${this.config.apiKey}`,
-      },
+      headers,
       body: JSON.stringify(body),
       signal,
     });
+    if (!r.ok) {
+      const data = await r.text();
+      const err = new Error(data || `upstream error ${r.status}`) as any;
+      err.status = r.status;
+      throw err;
+    }
     if (!r.body) throw new Error("upstream closed body");
     return { stream: r.body, provider: this.config.name };
   }
