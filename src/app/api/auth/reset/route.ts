@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
 
   // This route is intentionally OUTSIDE session middleware (configured in proxy/middleware)
   // so a locked-out admin can still reset via a direct curl with the known password.
-  if (!validatePassword(currentPassword)) return Response.json({ error: "invalid current password" }, { status: 401 });
+  if (!(await validatePassword(currentPassword))) return Response.json({ error: "invalid current password" }, { status: 401 });
 
   const { hash, salt } = hashPassword(newPassword);
   const db = (await import("@/lib/db")).getAdapterSync();

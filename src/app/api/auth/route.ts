@@ -1,9 +1,9 @@
 import { NextRequest } from "next/server";
 import crypto from "node:crypto";
-import { ensureAuth, validatePassword, recordFailedAuth, checkLockout } from "@/lib/auth";
+import { ensureAuth, validatePassword, recordFailedAuth, checkLockout, createSession } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
-  ensureAuth();
+  await ensureAuth();
   const { password } = await req.json();
   if (!password) return Response.json({ error: "password required" }, { status: 400 });
 
@@ -21,9 +21,4 @@ export async function POST(req: NextRequest) {
   const res = Response.json({ ok: true });
   res.headers.set("Set-Cookie", `session=${session}; HttpOnly; SameSite=Strict; Path=/; Max-Age=604800`);
   return res;
-}
-
-async function createSession() {
-  const { createDashboardAuthToken } = await import("@/lib/auth/dashboardSession.js");
-  return createDashboardAuthToken("dashboard");
 }
