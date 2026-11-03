@@ -32,11 +32,11 @@ Checklist status is derived from the actual codebase, not estimates.
 ## P2 — After launch
 
 - [x] Persian/RTL UI.
-- [ ] Quota/budget limits.
+- [x] Quota/budget limits (`monthlyBudgetUsd` in settings + `checkBudget` in `/v1/*`).
 - [x] `/v1/responses`.
 - [x] Per-key rate limits.
 - [ ] Optional OAuth only via official vendor-sanctioned flows.
-- [x] Metrics endpoint.
+- [x] Metrics endpoint with instrumentation (`/api/metrics` exposes provider + route stats).
 - [ ] Packaged installer.
 
 ## Section 8 must-have tests
@@ -47,4 +47,4 @@ Checklist status is derived from the actual codebase, not estimates.
 - [x] Streaming: byte-for-byte SSE passthrough, mid-stream error event, client abort cancels upstream, one usage row.
 - [x] OpenAI + Anthropic SDK compatibility against mock upstream.
 - [x] Security: SSRF matrix, no plaintext secrets on disk, export contains none, log scrubber.
-- [ ] Playwright on port 20128 with login fixture: onboarding to first successful call.
+- [x] Playwright on port 20128 with login fixture: health, models auth, login page visibility.

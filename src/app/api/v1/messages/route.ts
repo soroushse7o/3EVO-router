@@ -6,17 +6,25 @@ import { logError } from "@/lib/logger";
 import { scrub } from "@/lib/scrubber";
 import { checkRateLimit } from "@/lib/rateLimit";
 import { anthropicToOpenAI } from "@/lib/translator";
+import { checkBudget } from "@/lib/budget";
+import { recordRouteRequest } from "@/lib/instrumentation";
 
 export async function POST(req: NextRequest) {
+  const start = Date.now();
   const key = req.headers?.get?.("authorization")?.replace("Bearer ", "") || req.headers?.get?.("x-api-key");
   if (!key || !validateApiKey(key)) {
+    recordRouteRequest("/v1/messages", Date.now() - start, true);
     return Response.json({ error: { message: "invalid api key", type: "auth_error" } }, { status: 401 });
   }
-  if (!checkRateLimit(key)) return Response.json({ error: { message: "rate limit exceeded", type: "rate_limit_error" } }, { status: 429 });
+  if (!checkRateLimit(key)) {
+    recordRouteRequest("/v1/messages", Date.now() - start, true);
+    return Response.json({ error: { message: "rate limit exceeded", type: "rate_limit_error" } }, { status: 429 });
+  }
 
   const body = await req.json();
   const { nonStream, stream: streamTiers } = await buildProviderTiers(body, req.signal);
   if (!nonStream.length && !streamTiers.length) {
+    recordRouteRequest("/v1/messages", Date.now() - start, true);
     return Response.json({ error: { message: "no providers configured", type: "server_error" } }, { status: 503 });
   }
 
@@ -24,9 +32,11 @@ export async function POST(req: NextRequest) {
     try {
       const result = await (await import("@/lib/router")).streamWithFallback(streamTiers, `messages:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`);
       const readable = result.stream;
+      recordRouteRequest("/v1/messages", Date.now() - start);
       return new Response(readable, { headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache" } });
     } catch (e: any) {
       logError("STREAM_ERROR", scrub(e?.message || String(e)));
+      recordRouteRequest("/v1/messages", Date.now() - start, true);
       const status = e?.status || 503;
       return Response.json({ error: { message: scrub(e?.message || String(e)), type: "server_error" } }, { status });
     }
@@ -34,11 +44,24 @@ export async function POST(req: NextRequest) {
 
   try {
     const resolved = await runWithFallback<any>(nonStream, `messages:${req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown"}`);
-    recordUsage(resolved.provider || "unknown", body.model || "unknown", resolved.data.usage?.prompt_tokens || 0, resolved.data.usage?.completion_tokens || 0, 0);
+    const provider = resolved.provider || "unknown";
+    const model = body.model || "unknown";
+    const tokensIn = resolved.data?.usage?.prompt_tokens || 0;
+    const tokensOut = resolved.data?.usage?.completion_tokens || 0;
+
+    const budget = await checkBudget(provider, model, tokensIn, tokensOut);
+    if (budget.exceeded) {
+      recordRouteRequest("/v1/messages", Date.now() - start, true);
+      return Response.json({ error: { message: `monthly budget exceeded (remaining: $${budget.remaining?.toFixed(2)})`, type: "budget_exceeded" } }, { status: 429 });
+    }
+
+    recordUsage(provider, model, tokensIn, tokensOut, 0);
+    recordRouteRequest("/v1/messages", Date.now() - start);
     const data = anthropicToOpenAI(resolved.data || resolved);
     return Response.json(data, { status: 200 });
   } catch (e: any) {
     logError("CHAT_ERROR", scrub(e?.message || String(e)));
+    recordRouteRequest("/v1/messages", Date.now() - start, true);
     const status = e?.status || 503;
     return Response.json({ error: { message: scrub(e?.message || String(e)), type: "server_error" } }, { status });
   }

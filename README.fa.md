@@ -37,6 +37,9 @@
 | Provider executor pattern | Working | `src/lib/providers/DefaultExecutor.ts` |
 | Trusted peer header validation | Working | `src/lib/auth/trustedPeer.ts` + `middleware.ts` |
 | Repository pattern ( barrel export) | Working | `src/lib/db/index.ts` |
+| Instrumentation (request timing, provider stats) | Working | `src/lib/instrumentation.ts` + `/api/metrics` |
+| Monthly budget limits | Working | `src/lib/budget.ts` + Settings UI |
+| Playwright E2E tests | Partial | `playwright-tests/basic.spec.ts` |
 
 ## معماری
 

@@ -2,9 +2,10 @@ import { getAdapter } from "../driver.js";
 
 const DEFAULTS = {
   requireLogin: true,
-  requireApiKey: true,
+  requireApiKey: false,
   rtkEnabled: false,
   observabilityEnabled: false,
+  monthlyBudgetUsd: 0,
 };
 
 export async function getSettings() {

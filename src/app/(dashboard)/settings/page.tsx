@@ -7,11 +7,12 @@ type Settings = {
   requireApiKey: boolean;
   rtkEnabled: boolean;
   observabilityEnabled: boolean;
+  monthlyBudgetUsd: number;
 };
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState<Settings | null>(null);
-  const [form, setForm] = useState<Settings>({ requireLogin: true, requireApiKey: false, rtkEnabled: false, observabilityEnabled: false });
+  const [form, setForm] = useState<Settings>({ requireLogin: true, requireApiKey: false, rtkEnabled: false, observabilityEnabled: false, monthlyBudgetUsd: 0 });
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -24,6 +25,7 @@ export default function SettingsPage() {
           requireApiKey: d.requireApiKey ?? false,
           rtkEnabled: d.rtkEnabled ?? false,
           observabilityEnabled: d.observabilityEnabled ?? false,
+          monthlyBudgetUsd: Number(d.monthlyBudgetUsd || 0),
         });
       })
       .catch(() => toast("Failed to load settings", "error"));
@@ -48,7 +50,7 @@ export default function SettingsPage() {
     }
   };
 
-  const toggle = (key: keyof Settings) => setForm((f) => ({ ...f, [key]: !f[key] }));
+  const toggle = (key: keyof Omit<Settings, "monthlyBudgetUsd">) => setForm((f) => ({ ...f, [key]: !f[key] }));
 
   return (
     <div className="max-w-2xl space-y-4">
@@ -69,6 +71,10 @@ export default function SettingsPage() {
         <label className="flex items-center justify-between">
           <span>Observability</span>
           <input type="checkbox" checked={form.observabilityEnabled} onChange={() => toggle("observabilityEnabled")} className="h-4 w-4" />
+        </label>
+        <label className="flex items-center justify-between">
+          <span>Monthly budget (USD, 0 = unlimited)</span>
+          <input type="number" step="0.01" value={form.monthlyBudgetUsd} onChange={(e) => setForm({ ...form, monthlyBudgetUsd: Number(e.target.value) })} className="bg-black/30 border border-white/10 rounded px-2 py-1 w-24 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400/40" />
         </label>
       </div>
       <button
