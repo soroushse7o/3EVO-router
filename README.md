@@ -96,7 +96,7 @@ Client (OpenAI/Anthropic SDK)
 - **Storage**: SQLite (`better-sqlite3` with `sql.js` fallback) at `$DATA_DIR` (default `~/.3evo`).
 - **Secrets**: AES-256-GCM with `master.key` in `$DATA_DIR`.
 - **Port**: `20128` by default.
-- **Node**: >= 18.
+- **Node**: >= 22.
 
 ## Documentation
 

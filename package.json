@@ -10,7 +10,7 @@
     "doc": "docs"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "scripts": {
     "dev": "next dev -H 127.0.0.1 -p 20128",

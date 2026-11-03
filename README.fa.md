@@ -65,7 +65,7 @@ Client (OpenAI/Anthropic SDK)
 - **Storage**: SQLite (`better-sqlite3` با `sql.js` fallback) در `DATA_DIR` (پیش‌فرض: `C:/Users/Administrator/3evo-router/data`).
 - **Secrets**: AES-256-GCM، کلید در `DATA_DIR/master.key`.
 - **Port**: `20128` به طور پیش‌فرض.
-- **Node**: >= 18.
+- **Node**: >= 22.
 
 ## امنیت
 
