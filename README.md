@@ -24,6 +24,9 @@ One local endpoint that proxies OpenAI/Anthropic-compatible requests to multiple
 | Structured logs + request IDs | Working | `src/lib/logger.ts`, `src/lib/reqId.ts` |
 | Persian/RTL UI | Partial | dashboard and main components |
 | SSE streaming | Working | `src/lib/streamController.js` |
+| OAuth provider support | Working | Google, GitHub flows + connection management |
+| OAuth token refresh | Working | auto-refresh before expiry |
+| OAuth health checks | Working | expiry alerts via `/api/oauth` |
 | Central auth guard | Working | deny-by-default, middleware + route handlers |
 | Progressive login lockout | Working | exponential backoff |
 | CLI token auth | Working | machine-ID based |
@@ -132,6 +135,8 @@ src/
 │       ├ health/route.ts
 │       ├ log/route.ts
 │       ├ metrics/route.ts
+│       ├ oauth/route.ts
+│       ├ oauth/connections/[id]/route.ts
 │       ├ providers/route.ts
 │       ├ providers/[id]/route.ts
 │       ├ request-details/route.ts
