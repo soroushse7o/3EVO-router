@@ -1,16 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  getOAuthConnection,
-  deleteOAuthConnection,
-  revokeOAuthConnection,
-} from "@/lib/oauth";
+import { getOAuthConnection, deleteOAuthConnection, revokeOAuthConnection } from "@/lib/oauth";
+import { validateSession } from "@/lib/auth";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const session = await getSession(request);
-  if (!session) {
+  if (!(await validateSession(request))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -26,8 +22,7 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const session = await getSession(request);
-  if (!session) {
+  if (!(await validateSession(request))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -41,20 +36,4 @@ export async function DELETE(
 
   await deleteOAuthConnection(Number(params.id));
   return NextResponse.json({ ok: true });
-}
-
-async function getSession(request: NextRequest): Promise<{ id: string } | null> {
-  const sessionId = request.cookies.get("session")?.value;
-  if (!sessionId) return null;
-  const db = await getAdapter();
-  const session = db.get("SELECT id FROM sessions WHERE id = ? AND expires_at > ?", [
-    sessionId,
-    Date.now(),
-  ]);
-  return session ? { id: session.id } : null;
-}
-
-async function getAdapter() {
-  const { getAdapter } = await import("@/lib/db/driver");
-  return getAdapter();
 }
