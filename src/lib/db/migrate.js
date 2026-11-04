@@ -6,7 +6,24 @@ import { DATA_DIR } from "./paths.js";
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const META_KEY = "schema_version";
 const CURRENT_VERSION = 3;
-const SCHEMA_PATH = path.join(__dirname, "migrations", "schema.sql");
+
+function findSchemaPath() {
+  // In Next.js dev/Turbopack, import.meta.url may point to .next/dev/server/assets/...
+  // Try multiple strategies to locate the real source file.
+  const candidates = [
+    path.join(__dirname, "migrations", "schema.sql"),
+    path.join(process.cwd(), "src", "lib", "db", "migrations", "schema.sql"),
+    path.join(process.cwd(), "migrations", "schema.sql"),
+  ];
+  for (const p of candidates) {
+    if (fs.existsSync(p)) return p;
+  }
+  // Fallback to the original computed path even if it does not exist yet;
+  // the caller will surface a clearer error if missing.
+  return path.join(__dirname, "migrations", "schema.sql");
+}
+
+const SCHEMA_PATH = findSchemaPath();
 
 export async function runMigrationOnce(adapter) {
   adapter.run(`CREATE TABLE IF NOT EXISTS _meta (key TEXT PRIMARY KEY, value TEXT)`);
