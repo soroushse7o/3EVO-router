@@ -8,13 +8,14 @@ function getSessionToken(request: NextRequest): string | undefined {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   if (!(await validateSession(getSessionToken(request)))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const conn = await getOAuthConnection(Number(params.id));
+  const { id } = await params;
+  const conn = await getOAuthConnection(Number(id));
   if (!conn) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -24,20 +25,21 @@ export async function GET(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   if (!(await validateSession(getSessionToken(request)))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { id } = await params;
   const url = new URL(request.url);
   const action = url.searchParams.get("action") || "delete";
 
   if (action === "revoke") {
-    await revokeOAuthConnection(Number(params.id));
+    await revokeOAuthConnection(Number(id));
     return NextResponse.json({ ok: true });
   }
 
-  await deleteOAuthConnection(Number(params.id));
+  await deleteOAuthConnection(Number(id));
   return NextResponse.json({ ok: true });
 }
