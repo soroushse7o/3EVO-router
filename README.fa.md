@@ -2,7 +2,7 @@
 
 یک endpoint واحد و سازگار با OpenAI/Anthropic ارائه می‌دهد و درخواست‌ها را بین چند provider با failover و رمزنگاری کلیدها مسیریابی می‌کند.
 
-> **وضعیت: بتا — پروکسی هسته سخت‌سازی شده.** جدول [وضعیت ویژگی‌ها](#وضعیت-ویژگی‌ها) واقعیت را نشان می‌دهد.
+> **وضعیت: پایدار — نسخه ۱.۰.۰ (Stable v1.0.0)** جدول [وضعیت ویژگی‌ها](#وضعیت-ویژگی‌ها) واقعیت را نشان می‌دهد.
 
 ---
 
@@ -28,6 +28,9 @@
 | Structured logs + request IDs | Working | `src/lib/logger.ts`, `src/lib/reqId.ts` |
 | Persian/RTL UI | Partial | داشبورد و کامپوننت‌های اصلی |
 | SSE streaming | Working | `src/lib/streamController.js` |
+| پشتیبانی OAuth | Working | جریان‌های Google، GitHub + مدیریت اتصال |
+| بازنشانی خودکار توکن OAuth | Working | refresh خودکار قبل از انقضا |
+| چک سلامت اتصال OAuth | Working | هشدار انقضا از طریق `/api/oauth` |
 | مرکزی Auth Guard (deny-by-default) | Working | `src/lib/dashboardGuard.ts`, `middleware.ts` |
 | Progressive login lockout | Working | `src/lib/loginLimiter.ts` |
 | CLI token auth (machine-ID) | Working | `src/lib/cliToken.ts` |
@@ -125,6 +128,8 @@ src/
 │       ├ health/route.ts
 │       ├ log/route.ts
 │       ├ metrics/route.ts
+│       ├ oauth/route.ts
+│       ├ oauth/connections/[id]/route.ts
 │       ├ providers/route.ts
 │       ├ providers/[id]/route.ts
 │       ├ request-details/route.ts
