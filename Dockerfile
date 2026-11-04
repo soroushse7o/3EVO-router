@@ -9,6 +9,9 @@ COPY package*.json ./
 RUN npm ci --only=production && \
     npm ci --only=dev
 
+# Explicitly ensure locales are included in build context
+COPY locales ./locales
+
 COPY . .
 
 # Build the Next.js app
