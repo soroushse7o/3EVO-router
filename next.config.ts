@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  output: "standalone",
   async rewrites() {
     return [
       { source: "/v1/:path*", destination: "/api/v1/:path*" }

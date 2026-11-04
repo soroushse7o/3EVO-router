@@ -16,7 +16,10 @@
     "dev": "next dev -H 127.0.0.1 -p 20128",
     "build": "next build",
     "start": "next start -H 127.0.0.1 -p 20128",
-    "test": "vitest run"
+    "test": "vitest run",
+    "package:win": "node scripts/package-windows.js",
+    "package:macos": "node scripts/package-macos.js",
+    "package:linux": "node scripts/package-linux.js"
   },
   "keywords": [],
   "type": "module",
@@ -37,6 +40,7 @@
   "devDependencies": {
     "@playwright/test": "^1.64.1",
     "@types/better-sqlite3": "^9.6.0",
+    "pkg": "^5.8.1",
     "vitest": "^5.0.5"
   }
 }

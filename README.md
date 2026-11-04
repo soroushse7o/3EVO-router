@@ -38,7 +38,8 @@ One local endpoint that proxies OpenAI/Anthropic-compatible requests to multiple
 | Model aliases + fallback chains | Working | `model_aliases` table |
 | Request details tab | Working | full headers/body capture |
 | Playwright E2E tests | Partial | `playwright-tests/basic.spec.ts` |
-| Packaged installer | Planned | `pkg` scripts for Windows/macOS/Linux |
+| Packaged installer | In progress | `pkg` scripts for Windows/macOS/Linux |
+| Docker image | Working | Multi-stage Dockerfile with standalone output |
 
 ## Architecture
 
@@ -107,8 +108,21 @@ Default password: `123456789`
 
 ```bash
 docker build -t 3evo-router .
-docker run -p 20128:20128 -v 3evo-data:/home/appuser/.3evo 3evo-router
+docker run -p 20128:20128 -v 3evo-data:/home/nextjs/.3evo 3evo-router
 ```
+
+### Standalone binaries
+
+Pre-built binaries are available for Windows, macOS, and Linux. Alternatively, build them yourself:
+
+```bash
+npm install
+npm run package:win      # Windows: dist/3evo-router.exe
+npm run package:macos    # macOS: dist/3evo-router-macos
+npm run package:linux    # Linux: dist/3evo-router-linux
+```
+
+The binary runs the same Next.js standalone server and accepts the same environment variables (`PORT`, `BASE_URL`, `DATA_DIR`, `ADMIN_PASSWORD`).
 
 ## Project structure
 

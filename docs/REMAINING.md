@@ -41,10 +41,11 @@
 - [ ] Connection health checks and expiry alerts
 
 ## Phase G — Packaging & distribution
+- [x] Multi-stage Dockerfile with standalone output
+- [x] Packaging scripts for Windows/macOS/Linux via `pkg`
 - [ ] Windows installer with signed executable
 - [ ] macOS `.dmg` / Homebrew tap
 - [ ] Linux `.deb` / `.rpm` packages
-- [ ] Docker image with multi-stage build
 
 ## Phase H — Production hardening
 - [ ] End-to-end encrypted backup/restore for `~/.3evo`
