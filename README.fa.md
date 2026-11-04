@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/logo.svg" alt="3EVO Router" width="120" height="120" />
+  <img src="public/logo.jpg" alt="3EVO Router" width="120" height="120" />
 </p>
 
 # 3EVO Router — گیت‌وی هوشمند هوش مصنوعی (لوکال + داشبورد تحت وب)
