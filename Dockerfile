@@ -44,4 +44,4 @@ ENV DATA_DIR=/home/nextjs/.3evo
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-CMD ["node", "server.js"]
+CMD ["node", ".next/standalone/server.js"]
