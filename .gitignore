@@ -45,3 +45,5 @@ AGENTS.md
 
 # Reference project
 reference/
+.build-deb/
+.build-rpm/

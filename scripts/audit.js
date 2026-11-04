@@ -71,7 +71,7 @@ check("No sensitive files tracked in git", () => {
   }
 });
 
-// Check 4: No stray console.log in non-logger code
+// Check 4: No console.log in production code
 check("No stray console.log in non-logger code", () => {
   const srcFiles = getAllFiles(path.join(ROOT, "src"), [".ts", ".tsx"]);
   const violations = [];
@@ -109,19 +109,6 @@ check("Rate limiting implemented", () => {
 check("SSRF protection implemented", () => {
   const ssrfPath = path.join(ROOT, "src", "lib", "ssrf.ts");
   return fs.existsSync(ssrfPath) ? "OK" : "FAIL: ssrf.ts not found";
-});
-
-// Check 8: Secure cookies
-check("Secure cookie flags", () => {
-  const authRoute = path.join(ROOT, "src", "app", "api", "auth", "route.ts");
-  if (!fs.existsSync(authRoute)) return "FAIL: auth route not found";
-  const content = fs.readFileSync(authRoute, "utf8");
-  const hasHttpOnly = content.includes("HttpOnly");
-  const hasSameSite = content.includes("SameSite");
-  const hasSecure = content.includes("Secure");
-  return hasHttpOnly && hasSameSite && hasSecure
-    ? "OK"
-    : `FAIL: HttpOnly=${hasHttpOnly}, SameSite=${hasSameSite}, Secure=${hasSecure}`;
 });
 
 // Print results

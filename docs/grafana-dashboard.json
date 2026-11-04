@@ -1,0 +1,60 @@
+{
+  "dashboard": {
+    "title": "3EVO Router",
+    "uid": "3evo-router",
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Request rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(3evo_requests_total[5m])",
+            "legendFormat": "{{provider}}"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "req/s",
+            "format": "short"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Error rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(3evo_errors_total[5m])",
+            "legendFormat": "{{provider}}"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "errors/s",
+            "format": "short"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Avg latency",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "3evo_request_duration_ms",
+            "legendFormat": "{{provider}}"
+          }
+        ],
+        "yAxes": [
+          {
+            "label": "ms",
+            "format": "short"
+          }
+        ]
+      }
+    ]
+  }
+}
