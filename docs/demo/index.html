@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3EVO Router — Live Demo</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #0a0a0a;
+      color: #e5e5e5;
+      line-height: 1.6;
+    }
+    .container { display: flex; min-height: 100vh; }
+    
+    /* Sidebar */
+    .sidebar {
+      width: 240px;
+      border-right: 1px solid rgba(255,255,255,0.1);
+      padding: 20px;
+      background: #0f0f0f;
+    }
+    .logo {
+      color: #34d399;
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .version {
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: normal;
+    }
+    .nav { list-style: none; margin-top: 20px; }
+    .nav-item {
+      padding: 8px 12px;
+      margin-bottom: 4px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #d1d5db;
+      transition: all 0.2s;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.05); }
+    .nav-item.active {
+      background: rgba(255,255,255,0.1);
+      color: #34d399;
+    }
+    .nav-section {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 11px;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    /* Main content */
+    .main {
+      flex: 1;
+      padding: 32px;
+      overflow-y: auto;
+    }
+    .page-header {
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    /* Cards */
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    
+    /* Stats grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #34d399;
+    }
+    
+    /* Provider cards */
+    .provider-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .provider-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .provider-name {
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .provider-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+    .status-ok { background: rgba(52,211,153,0.15); color: #34d399; }
+    .status-fail { background: rgba(239,68,68,0.15); color: #ef4444; }
+    .status-testing { background: rgba(59,130,246,0.15); color: #3b82f6; }
+    
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th {
+      text-align: left;
+      padding: 12px;
+      color: #9ca3af;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    tr:hover { background: rgba(255,255,255,0.02); }
+    
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: rgba(52,211,153,0.15);
+      color: #34d399;
+      border: 1px solid rgba(52,211,153,0.3);
+    }
+    .btn-primary:hover { background: rgba(52,211,153,0.25); }
+    .btn-secondary {
+      background: rgba(59,130,246,0.15);
+      color: #3b82f6;
+      border: 1px solid rgba(59,130,246,0.3);
+    }
+    .btn-secondary:hover { background: rgba(59,130,246,0.25); }
+    
+    /* Code block */
+    code {
+      background: rgba(0,0,0,0.3);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 13px;
+      color: #fbbf24;
+    }
+    pre {
+      background: rgba(0,0,0,0.3);
+      padding: 12px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    
+    /* Toggle */
+    .toggle {
+      width: 40px;
+      height: 22px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 11px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .toggle.on { background: rgba(52,211,153,0.3); }
+    .toggle::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background: white;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+      transition: transform 0.3s;
+    }
+    .toggle.on::after { transform: translateX(18px); }
+    
+    /* Page sections */
+    .page-section { display: none; }
+    .page-section.active { display: block; }
+    
+    /* Onboarding */
+    .checklist {
+      list-style: none;
+    }
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.03);
+    }
+    .checklist-item.done { color: #34d399; }
+    .checklist-item.pending { color: #d1d5db; }
+    
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .tab {
+      padding: 8px 16px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      font-size: 14px;
+      color: #9ca3af;
+    }
+    .tab.active {
+      color: #34d399;
+      border-bottom-color: #34d399;
+    }
+    
+    /* Badge */
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .badge-green { background: rgba(52,211,153,0.15); color: #34d399; }
+    .badge-yellow { background: rgba(251,191,36,0.15); color: #fbbf24; }
+    .badge-red { background: rgba(239,68,68,0.15); color: #ef4444; }
+    
+    /* API endpoint list */
+    .endpoint-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .endpoint-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .method {
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: monospace;
+    }
+    .method-get { background: rgba(52,211,153,0.15); color: #34d399; }
+    .method-post { background: rgba(59,130,246,0.15); color: #3b82f6; }
+    .method-delete { background: rgba(239,68,68,0.15); color: #ef4444; }
+    
+    /* Chart placeholder */
+    .chart {
+      height: 200px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 8px;
+      display: flex;
+      align-items: flex-end;
+      padding: 16px;
+      gap: 8px;
+    }
+    .chart-bar {
+      flex: 1;
+      background: linear-gradient(to top, #34d399, #10b981);
+      border-radius: 4px 4px 0 0;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .chart-bar:hover { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <span>3EVO Router</span>
+        <span class="version">v1.0.0</span>
+      </div>
+      <ul class="nav">
+        <li class="nav-item active" data-page="dashboard">Dashboard</li>
+        <li class="nav-item" data-page="endpoint">Endpoint</li>
+        <li class="nav-item" data-page="providers">Providers</li>
+        <li class="nav-item" data-page="aliases">Aliases</li>
+        <li class="nav-item" data-page="request-details">Request Details</li>
+        <li class="nav-item" data-page="usage">Usage</li>
+        <li class="nav-item" data-page="settings">Settings</li>
+      </ul>
+      <div class="nav-section">System</div>
+      <ul class="nav">
+        <li class="nav-item" data-page="health">Health</li>
+        <li class="nav-item" data-page="metrics">Metrics</li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Dashboard Page -->
+      <div class="page-section active" id="page-dashboard">
+        <div class="page-header">
+          <h1 class="page-title">Dashboard</h1>
+          <span class="badge badge-green">● Operational</span>
+        </div>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Requests</div>
+            <div class="stat-value">1,284</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Success Rate</div>
+            <div class="stat-value">98.5%</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg Latency</div>
+            <div class="stat-value">142ms</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Active Providers</div>
+            <div class="stat-value">3</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">📊 Request Volume (last 7 days)</div>
+          <div class="chart">
+            <div class="chart-bar" style="height: 60%"></div>
+            <div class="chart-bar" style="height: 80%"></div>
+            <div class="chart-bar" style="height: 45%"></div>
+            <div class="chart-bar" style="height: 90%"></div>
+            <div class="chart-bar" style="height: 70%"></div>
+            <div class="chart-bar" style="height: 85%"></div>
+            <div class="chart-bar" style="height: 75%"></div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">🚀 Getting Started</div>
+          <ul class="checklist">
+            <li class="checklist-item done">
+              <span>✅</span>
+              <span>Create an API key in Settings</span>
+            </li>
+            <li class="checklist-item done">
+              <span>✅</span>
+              <span>Add at least one provider</span>
+            </li>
+            <li class="checklist-item done">
+              <span>✅</span>
+              <span>Call <code>/v1/chat/completions</code> with your key</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Endpoint Page -->
+      <div class="page-section" id="page-endpoint">
+        <div class="page-header">
+          <h1 class="page-title">Endpoint</h1>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">Base URL</div>
+          <code>http://127.0.0.1:20128</code>
+          <button class="btn btn-primary" style="margin-left: 12px;" onclick="navigator.clipboard.writeText('http://127.0.0.1:20128')">Copy</button>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">API Endpoints</div>
+          <div class="endpoint-list">
+            <div class="endpoint-item">
+              <span class="method method-post">POST</span>
+              <code>/v1/chat/completions</code>
+              <span style="margin-left: auto; color: #9ca3af; font-size: 12px;">OpenAI compatible</span>
+            </div>
+            <div class="endpoint-item">
+              <span class="method method-post">POST</span>
+              <code>/v1/messages</code>
+              <span style="margin-left: auto; color: #9ca3af; font-size: 12px;">Anthropic compatible</span>
+            </div>
+            <div class="endpoint-item">
+              <span class="method method-get">GET</span>
+              <code>/v1/models</code>
+              <span style="margin-left: auto; color: #9ca3af; font-size: 12px;">List models</span>
+            </div>
+            <div class="endpoint-item">
+              <span class="method method-post">POST</span>
+              <code>/v1/responses</code>
+              <span style="margin-left: auto; color: #9ca3af; font-size: 12px;">OpenAI Responses API</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">Quick Start</div>
+          <pre>curl http://127.0.0.1:20128/v1/chat/completions \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"gpt-3.5-turbo","messages":[{"role":"user","content":"Hello"}]}'</pre>
+        </div>
+      </div>
+
+      <!-- Providers Page -->
+      <div class="page-section" id="page-providers">
+        <div class="page-header">
+          <h1 class="page-title">Providers</h1>
+          <button class="btn btn-primary">+ Add Provider</button>
+        </div>
+        
+        <div class="card" style="margin-bottom: 24px;">
+          <div class="card-title">API Key Providers</div>
+          <p style="font-size: 13px; color: #9ca3af; margin-bottom: 16px;">Test your API key connection before using.</p>
+          <div class="provider-grid">
+            <div class="provider-card">
+              <div class="provider-name">OpenAI</div>
+              <div class="provider-status status-ok">
+                <span>●</span> Working
+              </div>
+              <button class="btn btn-secondary" style="margin-top: 12px; width: 100%;">Test Connection</button>
+            </div>
+            <div class="provider-card">
+              <div class="provider-name">Anthropic</div>
+              <div class="provider-status status-ok">
+                <span>●</span> Working
+              </div>
+              <button class="btn btn-secondary" style="margin-top: 12px; width: 100%;">Test Connection</button>
+            </div>
+            <div class="provider-card">
+              <div class="provider-name">Google AI Studio</div>
+              <div class="provider-status status-ok">
+                <span>●</span> Working
+              </div>
+              <button class="btn btn-secondary" style="margin-top: 12px; width: 100%;">Test Connection</button>
+            </div>
+            <div class="provider-card">
+              <div class="provider-name">NVIDIA NIM</div>
+              <div class="provider-status status-testing">
+                <span>◐</span> Testing...
+              </div>
+              <button class="btn btn-secondary" style="margin-top: 12px; width: 100%;">Test Connection</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">Custom Providers</div>
+          <p style="font-size: 13px; color: #9ca3af; margin-bottom: 16px;">Add OpenAI or Anthropic compatible providers by pasting their base URL and API key.</p>
+          <form style="display: flex; flex-wrap: wrap; gap: 12px;" onsubmit="event.preventDefault(); alert('Demo: provider would be added');">
+            <input type="text" placeholder="Name" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; padding: 8px 12px; color: white; font-size: 14px;">
+            <input type="text" placeholder="Base URL" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; padding: 8px 12px; color: white; font-size: 14px;">
+            <input type="password" placeholder="API Key" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; padding: 8px 12px; color: white; font-size: 14px;">
+            <input type="text" placeholder="Model" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; padding: 8px 12px; color: white; font-size: 14px;">
+            <button type="submit" class="btn btn-primary">+ Add Provider</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Usage Page -->
+      <div class="page-section" id="page-usage">
+        <div class="page-header">
+          <h1 class="page-title">Usage</h1>
+          <button class="btn btn-primary">Export CSV</button>
+        </div>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Requests</div>
+            <div class="stat-value">1,284</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Tokens In</div>
+            <div class="stat-value">45.2K</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Tokens Out</div>
+            <div class="stat-value">128.5K</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">RTK Saved</div>
+            <div class="stat-value">$12.40</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Est. Cost</div>
+            <div class="stat-value">$3.82</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">Recent Requests</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Provider</th>
+                <th>Model</th>
+                <th>In</th>
+                <th>Out</th>
+                <th>RTK</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color: #9ca3af; font-size: 13px;">14:32:05</td>
+                <td>OpenAI</td>
+                <td>gpt-3.5-turbo</td>
+                <td>128</td>
+                <td>256</td>
+                <td style="color: #34d399;">$0.002</td>
+              </tr>
+              <tr>
+                <td style="color: #9ca3af; font-size: 13px;">14:31:22</td>
+                <td>Anthropic</td>
+                <td>claude-3-haiku</td>
+                <td>256</td>
+                <td>512</td>
+                <td style="color: #34d399;">$0.004</td>
+              </tr>
+              <tr>
+                <td style="color: #9ca3af; font-size: 13px;">14:30:45</td>
+                <td>OpenAI</td>
+                <td>gpt-4</td>
+                <td>512</td>
+                <td>1024</td>
+                <td style="color: #34d399;">$0.018</td>
+              </tr>
+              <tr>
+                <td style="color: #9ca3af; font-size: 13px;">14:29:58</td>
+                <td>Google</td>
+                <td>gemini-pro</td>
+                <td>128</td>
+                <td>256</td>
+                <td style="color: #34d399;">$0.001</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Settings Page -->
+      <div class="page-section" id="page-settings">
+        <div class="page-header">
+          <h1 class="page-title">Settings</h1>
+        </div>
+        
+        <div class="card">
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <div style="font-weight: 500; margin-bottom: 4px;">Require login for dashboard</div>
+                <div style="font-size: 12px; color: #9ca3af;">Protect dashboard with authentication</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <div style="font-weight: 500; margin-bottom: 4px;">Require API key for /v1/*</div>
+                <div style="font-size: 12px; color: #9ca3af;">Enforce API key authentication</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <div style="font-weight: 500; margin-bottom: 4px;">RTK cache</div>
+                <div style="font-size: 12px; color: #9ca3af;">Cache responses to reduce token costs</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <div style="font-weight: 500; margin-bottom: 4px;">Observability</div>
+                <div style="font-size: 12px; color: #9ca3af;">Enable metrics and logging</div>
+              </div>
+              <div class="toggle" onclick="this.classList.toggle('on')"></div>
+            </div>
+            
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <div style="font-weight: 500; margin-bottom: 4px;">Monthly budget (USD)</div>
+                <div style="font-size: 12px; color: #9ca3af;">0 = unlimited</div>
+              </div>
+              <input type="number" value="0" step="0.01" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 6px 12px; color: white; width: 100px; text-align: right;">
+            </div>
+          </div>
+          
+          <button class="btn btn-primary" style="margin-top: 20px;">Save Settings</button>
+        </div>
+      </div>
+
+      <!-- Aliases Page -->
+      <div class="page-section" id="page-aliases">
+        <div class="page-header">
+          <h1 class="page-title">Aliases</h1>
+          <button class="btn btn-primary">+ Add Alias</button>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">Model Aliases</div>
+          <p style="font-size: 13px; color: #9ca3af; margin-bottom: 16px;">Map model aliases to specific providers and models.</p>
+          
+          <table>
+            <thead>
+              <tr>
+                <th>Alias</th>
+                <th>Provider</th>
+                <th>Model</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>gpt-3.5</code></td>
+                <td>OpenAI</td>
+                <td>gpt-3.5-turbo</td>
+                <td><button class="btn btn-secondary" style="padding: 4px 12px; font-size: 12px;">Edit</button></td>
+              </tr>
+              <tr>
+                <td><code>claude</code></td>
+                <td>Anthropic</td>
+                <td>claude-3-haiku</td>
+                <td><button class="btn btn-secondary" style="padding: 4px 12px; font-size: 12px;">Edit</button></td>
+              </tr>
+              <tr>
+                <td><code>gemini</code></td>
+                <td>Google</td>
+                <td>gemini-pro</td>
+                <td><button class="btn btn-secondary" style="padding: 4px 12px; font-size: 12px;">Edit</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Request Details Page -->
+      <div class="page-section" id="page-request-details">
+        <div class="page-header">
+          <h1 class="page-title">Request Details</h1>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">Recent Requests</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Method</th>
+                <th>Endpoint</th>
+                <th>Status</th>
+                <th>Duration</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color: #9ca3af; font-size: 13px;">14:32:05</td>
+                <td><span class="method method-post">POST</span></td>
+                <td><code>/v1/chat/completions</code></td>
+                <td><span class="badge badge-green">200</span></td>
+                <td>1.2s</td>
+              </tr>
+              <tr>
+                <td style="color: #9ca3af; font-size: 13px;">14:31:22</td>
+                <td><span class="method method-post">POST</span></td>
+                <td><code>/v1/messages</code></td>
+                <td><span class="badge badge-green">200</span></td>
+                <td>0.8s</td>
+              </tr>
+              <tr>
+                <td style="color: #9ca3af; font-size: 13px;">14:30:45</td>
+                <td><span class="method method-post">POST</span></td>
+                <td><code>/v1/chat/completions</code></td>
+                <td><span class="badge badge-yellow">429</span></td>
+                <td>0.1s</td>
+              </tr>
+              <tr>
+                <td style="color: #9ca3af; font-size: 13px;">14:29:58</td>
+                <td><span class="method method-post">POST</span></td>
+                <td><code>/v1/responses</code></td>
+                <td><span class="badge badge-green">200</span></td>
+                <td>2.1s</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Health Page -->
+      <div class="page-section" id="page-health">
+        <div class="page-header">
+          <h1 class="page-title">Health</h1>
+        </div>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Status</div>
+            <div class="stat-value" style="font-size: 20px; color: #34d399;">● Healthy</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Uptime</div>
+            <div class="stat-value" style="font-size: 20px;">3d 14h</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Version</div>
+            <div class="stat-value" style="font-size: 20px;">1.0.0</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">System Information</div>
+          <table>
+            <tbody>
+              <tr>
+                <td style="color: #9ca3af; width: 200px;">Environment</td>
+                <td>Production</td>
+              </tr>
+              <tr>
+                <td style="color: #9ca3af;">Database</td>
+                <td>SQLite (~/.3evo/data.db)</td>
+              </tr>
+              <tr>
+                <td style="color: #9ca3af;">Node.js</td>
+                <td>v22.x</td>
+              </tr>
+              <tr>
+                <td style="color: #9ca3af;">Next.js</td>
+                <td>16.4.3 (Turbopack)</td>
+              </tr>
+              <tr>
+                <td style="color: #9ca3af;">Port</td>
+                <td>20128</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Metrics Page -->
+      <div class="page-section" id="page-metrics">
+        <div class="page-header">
+          <h1 class="page-title">Metrics</h1>
+        </div>
+        
+        <div class="tabs">
+          <div class="tab active">Prometheus</div>
+          <div class="tab">JSON</div>
+        </div>
+        
+        <div class="card">
+          <div class="card-title">Prometheus Metrics</div>
+          <pre># HELP 3evo_requests_total Total requests per provider
+# TYPE 3evo_requests_total counter
+3evo_requests_total{provider="OpenAI"} 1250
+3evo_requests_total{provider="Anthropic"} 340
+3evo_requests_total{provider="Google"} 210
+
+# HELP 3evo_errors_total Total errors per provider
+# TYPE 3evo_errors_total counter
+3evo_errors_total{provider="OpenAI"} 12
+3evo_errors_total{provider="Anthropic"} 5
+3evo_errors_total{provider="Google"} 3
+
+# HELP 3evo_request_duration_ms Average request duration
+# TYPE 3evo_request_duration_ms gauge
+3evo_request_duration_ms{provider="OpenAI"} 142
+3evo_request_duration_ms{provider="Anthropic"} 198
+3evo_request_duration_ms{provider="Google"} 165
+
+# HELP 3evo_error_rate Error rate (0-1)
+# TYPE 3evo_error_rate gauge
+3evo_error_rate{provider="OpenAI"} 0.0096
+3evo_error_rate{provider="Anthropic"} 0.0147
+3evo_error_rate{provider="Google"} 0.0143</pre>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Navigation
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const page = item.dataset.page;
+        
+        // Update nav
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        item.classList.add('active');
+        
+        // Update pages
+        document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+        const targetPage = document.getElementById(`page-${page}`);
+        if (targetPage) {
+          targetPage.classList.add('active');
+        } else {
+          // Show first page if not found
+          document.getElementById('page-dashboard').classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
