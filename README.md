@@ -123,6 +123,11 @@ npm run package:linux    # Linux: dist/3evo-router-linux
 
 The binary runs the same Next.js standalone server and accepts the same environment variables (`PORT`, `BASE_URL`, `DATA_DIR`, `ADMIN_PASSWORD`).
 
+## Live Demo
+
+A static demo of the dashboard is available at:
+- [View Dashboard Demo](https://soroushse7o.github.io/3EVO-router/demo/)
+
 ## Project structure
 
 ```
