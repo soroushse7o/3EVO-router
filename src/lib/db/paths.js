@@ -1,14 +1,17 @@
 import path from "node:path";
 import fs from "node:fs";
+import os from "node:os";
 
-const DATA_DIR = process.env.DATA_DIR || path.join(process.env.USERPROFILE || process.env.HOME || "~", ".3evo");
-const DATA_FILE = path.join(DATA_DIR, "data.db");
+const HOME = os.homedir();
 
-export function expandHome(p) {
-  if (!p || p === "~") return DATA_DIR;
-  if (p.startsWith("~/") || p.startsWith("~\\")) return path.join(DATA_DIR, p.slice(2));
+function expandHome(p) {
+  if (!p || p === "~") return HOME;
+  if (p.startsWith("~/") || p.startsWith("~\\")) return path.join(HOME, p.slice(2));
   return p;
 }
+
+const DATA_DIR = expandHome(process.env.DATA_DIR || "~/.3evo");
+const DATA_FILE = path.join(DATA_DIR, "data.db");
 
 export function ensureDirs() {
   fs.mkdirSync(DATA_DIR, { recursive: true });
