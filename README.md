@@ -75,7 +75,6 @@ Client (OpenAI/Anthropic SDK)
 - CLI token auth: machine-ID-based token for non-interactive clients.
 - Trusted peer bypass: `x-3r-peer-token` header for local proxies.
 - Secrets stored encrypted; no plaintext API keys on disk.
-- CSRF token implemented.
 - Rate limiting: 120 requests/minute per API key.
 - SSRF protection: private/link-local ranges blocked; `localhost` must be explicitly allowlisted via `ALLOWED_UPSTREAM_HOSTS`.
 

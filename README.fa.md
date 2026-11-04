@@ -80,7 +80,6 @@ Client (OpenAI/Anthropic SDK)
 - Trusted peer bypass: هدر `x-3r-peer-token` برای پروکسی‌های محلی.
 - Session validation در route handlerها؛ proxy Node.js runtime است.
 - Secrets در vault رمزنگاری‌شده ذخیره می‌شوند.
-- CSRF token پیاده‌سازی شده.
 - Rate limiting: 120 درخواست در دقیقه برای هر API key.
 - محافظت SSRF: رنج‌های خصوصی مسدود شده‌اند.
 - بسته نصب‌کننده تک‌باینری برای Windows/macOS/Linux via `pkg`.
