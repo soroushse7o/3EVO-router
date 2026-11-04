@@ -36,6 +36,19 @@
 - [ ] Connection management for OAuth-backed providers
 
 ## Phase F — Advanced routing (post-v0.2)
-- [ ] Model aliases and routing rules
-- [ ] Per-model fallback chains
-- [ ] Request details tab with headers/body
+- [ ] Per-provider OAuth flow integration (Google, GitHub, etc.)
+- [ ] Token refresh automation for OAuth connections
+- [ ] Connection health checks and expiry alerts
+
+## Phase G — Packaging & distribution
+- [ ] Windows installer with signed executable
+- [ ] macOS `.dmg` / Homebrew tap
+- [ ] Linux `.deb` / `.rpm` packages
+- [ ] Docker image with multi-stage build
+
+## Phase H — Production hardening
+- [ ] End-to-end encrypted backup/restore for `~/.3evo`
+- [ ] Prometheus metrics exporter
+- [ ] Grafana dashboard template
+- [ ] Rate-limit burst shaping per client IP
+- [ ] Security audit & dependency scan automation
