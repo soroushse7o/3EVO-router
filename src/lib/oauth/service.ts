@@ -93,9 +93,8 @@ export async function refreshOAuthTokens(connectionId: number): Promise<void> {
     const { updateOAuthConnection } = await import("@/lib/oauth");
     await updateOAuthConnection(connectionId, updates);
 
-    console.log(
-      `[OAuth] Refreshed tokens for connection ${connectionId} (provider ${connection.provider_id})`
-    );
+    const { logInfo } = await import("@/lib/logger");
+    logInfo(`[OAuth] Refreshed tokens for connection ${connectionId} (provider ${connection.provider_id})`);
   } catch (error) {
     console.error(
       `[OAuth] Failed to refresh tokens for connection ${connectionId}:`,

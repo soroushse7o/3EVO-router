@@ -102,7 +102,10 @@ export async function streamWithFallback(
     }
     try {
       const streamCtrl = createStreamController({
-        onDisconnect: (reason: string) => console.log(`[STREAM] ${key} ended: ${reason}`),
+        onDisconnect: (reason: string) => {
+          const { logInfo } = require("@/lib/logger");
+          logInfo(`[STREAM] ${key} ended: ${reason}`);
+        },
         onError: () => {},
         provider: keyPrefix,
         model: "stream",
