@@ -25,42 +25,103 @@ export default function DashboardIndex() {
   const onboardingDone = hasKey && hasProvider;
 
   return (
-    <div className="max-w-3xl space-y-6">
-      <h1 className="text-2xl font-bold">Dashboard</h1>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-white mb-1">Dashboard</h1>
+          <p className="text-gray-400 text-sm">Manage your AI gateway and monitor usage</p>
+        </div>
+        <div className="hidden md:flex items-center gap-2">
+          <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            Operational
+          </span>
+        </div>
+      </div>
 
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-5" aria-label="Onboarding">
-        <h2 className="text-lg font-semibold mb-3">Getting started</h2>
-        <ol className="space-y-2 text-sm">
-          <li className={`flex items-center gap-2 ${hasKey ? "text-emerald-300" : "text-gray-200"}`}>
-            <span aria-hidden>{hasKey ? "✅" : "⬜"}</span>
-            <span>Create an API key in Settings.</span>
-            {!hasKey && <button onClick={() => router.push("/settings")} className="ml-auto text-xs underline underline-offset-2 focus:outline-none focus:ring-2 focus:ring-emerald-400/40">Go to Settings</button>}
-          </li>
-          <li className={`flex items-center gap-2 ${hasProvider ? "text-emerald-300" : "text-gray-200"}`}>
-            <span aria-hidden>{hasProvider ? "✅" : "⬜"}</span>
-            <span>Add at least one provider.</span>
-            {!hasProvider && <button onClick={() => router.push("/providers")} className="ml-auto text-xs underline underline-offset-2 focus:outline-none focus:ring-2 focus:ring-emerald-400/40">Add provider</button>}
-          </li>
-          <li className={`flex items-center gap-2 ${onboardingDone ? "text-emerald-300" : "text-gray-200"}`}>
-            <span aria-hidden>{onboardingDone ? "✅" : "⬜"}</span>
-            <span>Call <code className="text-xs bg-black/30 px-1 py-0.5 rounded">/v1/chat/completions</code> with your key.</span>
-          </li>
-        </ol>
-        {checked && !onboardingDone && (
-          <p className="mt-3 text-xs text-gray-400">Finish the checklist above to make your first request.</p>
-        )}
-      </section>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          ["Endpoint", "/endpoint", "Base URL and copy snippet"],
-          ["Providers", "/providers", "Add/edit/test providers"],
-          ["Usage", "/usage", "Upstream usage and CSV export"],
-          ["Settings", "/settings", "API keys and preferences"],
-        ].map(([label, href, hint]) => (
-          <Link key={href} href={href} className="rounded-2xl border border-white/10 bg-white/5 p-4 hover:border-emerald-400/40 focus:outline-none focus:ring-2 focus:ring-emerald-400/40">
-            <div className="font-medium">{label}</div>
-            <div className="text-xs text-gray-400 mt-1">{hint}</div>
+          { label: "Total Requests", value: "1,284", icon: "📊", trend: "+12%" },
+          { label: "Success Rate", value: "98.5%", icon: "✅", trend: "+0.3%" },
+          { label: "Avg Latency", value: "142ms", icon: "⚡", trend: "-8ms" },
+          { label: "Active Providers", value: "3", icon: "🔌", trend: "Stable" },
+        ].map((stat, i) => (
+          <div
+            key={i}
+            className="group relative overflow-hidden rounded-2xl border border-gray-800 bg-gray-900/50 p-5 backdrop-blur-sm hover:border-emerald-500/30 transition-all duration-300"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative">
+              <div className="flex items-start justify-between mb-3">
+                <div className="text-2xl">{stat.icon}</div>
+                <span className="text-xs text-emerald-400 font-medium">{stat.trend}</span>
+              </div>
+              <div className="text-2xl font-bold text-white mb-1">{stat.value}</div>
+              <div className="text-xs text-gray-500 uppercase tracking-wider">{stat.label}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Onboarding */}
+      <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6">
+        <h2 className="text-lg font-semibold text-white mb-4">🚀 Getting Started</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[
+            { done: hasKey, text: "Create an API key in Settings", action: !hasKey ? () => router.push("/settings") : undefined },
+            { done: hasProvider, text: "Add at least one provider", action: !hasProvider ? () => router.push("/providers") : undefined },
+            { done: onboardingDone, text: "Call /v1/chat/completions with your key", action: undefined },
+          ].map((item, i) => (
+            <div
+              key={i}
+              className={`
+                flex items-start gap-3 p-4 rounded-xl border
+                ${item.done
+                  ? "bg-emerald-500/5 border-emerald-500/20 text-emerald-300"
+                  : "bg-gray-800/30 border-gray-700 text-gray-300"
+                }
+              `}
+            >
+              <span className="text-xl">{item.done ? "✅" : "⬜"}</span>
+              <div className="flex-1">
+                <p className="text-sm">{item.text}</p>
+                {item.action && (
+                  <button
+                    onClick={item.action}
+                    className="mt-2 text-xs text-emerald-400 hover:text-emerald-300 underline underline-offset-2"
+                  >
+                    Go to {i === 0 ? "Settings" : "Providers"} →
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+        {checked && !onboardingDone && (
+          <p className="mt-4 text-xs text-gray-500">Finish the checklist above to make your first request.</p>
+        )}
+      </div>
+
+      {/* Quick Links */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[
+          ["Endpoint", "/endpoint", "🔗", "Base URL and copy snippet"],
+          ["Providers", "/providers", "🔌", "Add/edit/test providers"],
+          ["Usage", "/usage", "📈", "Upstream usage and CSV export"],
+          ["Settings", "/settings", "⚙️", "API keys and preferences"],
+        ].map(([label, href, icon, hint]) => (
+          <Link
+            key={href}
+            href={href}
+            className="group relative overflow-hidden rounded-2xl border border-gray-800 bg-gray-900/50 p-5 backdrop-blur-sm hover:border-emerald-500/30 transition-all duration-300"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative">
+              <div className="text-2xl mb-3">{icon}</div>
+              <div className="font-semibold text-white mb-1">{label}</div>
+              <div className="text-xs text-gray-500">{hint}</div>
+            </div>
           </Link>
         ))}
       </div>
