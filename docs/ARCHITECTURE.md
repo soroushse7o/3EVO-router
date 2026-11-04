@@ -2,7 +2,7 @@
 
 ## Scope
 
-Single-user, local-first gateway. One developer plus an agent. Alpha quality.
+Single-user, local-first gateway. One developer plus an agent. Stable quality.
 
 ## Runtime
 

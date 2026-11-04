@@ -1,6 +1,6 @@
-# 3EVO Router — v0.1 Build Checklist
+# 3EVO Router — v1.0.0 Build Checklist
 
-P0 = must-have for demo; P1 = beta hardening; P2 = post-launch.
+P0 = must-have for demo; P1 = stable hardening; P2 = post-launch.
 Checklist status is derived from the actual codebase, not estimates.
 
 ## P0 — Launch blockers
@@ -13,7 +13,7 @@ Checklist status is derived from the actual codebase, not estimates.
 - [x] P0-11 Provider keys encrypted at rest via vault; no plaintext secrets in `DATA_DIR`.
 - [x] P0-12 Legal/provenance note added (`docs/LEGAL.md`).
 
-## P1 — Required for usable beta
+## P1 — Required for usable stable
 
 - [x] P1-1 GitHub Actions CI (install, typecheck, test, build).
 - [x] P1-2 Dockerfile with `DATA_DIR` volume, healthcheck, non-root user.

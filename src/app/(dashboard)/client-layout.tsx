@@ -6,8 +6,11 @@ import LanguageToggle from "@/components/language-toggle";
 import { usePathname } from "next/navigation";
 
 const links = [
+  ["Dashboard", "/"],
   ["Endpoint", "/endpoint"],
   ["Providers", "/providers"],
+  ["Aliases", "/aliases"],
+  ["Request Details", "/request-details"],
   ["Usage", "/usage"],
   ["Settings", "/settings"],
 ];
@@ -27,7 +30,7 @@ export default function DashboardClientLayout({ children }: { children: React.Re
               <div className="mt-4 text-xs text-gray-500">SYSTEM</div>
               <Link href="/settings" className={`block px-2 py-1 rounded hover:bg-white/5 ${pathname === "/settings" ? "bg-white/10 text-emerald-300" : "text-gray-300"}`}>Settings</Link>
             </nav>
-            <div className="mt-8 text-xs text-gray-500">3EVO Router v1.0.0 Alpha</div>
+            <div className="mt-8 text-xs text-gray-500">3EVO Router v1.0.0</div>
           </aside>
           <main className="flex-1 p-6">
             <div className="mb-4 flex justify-end">
