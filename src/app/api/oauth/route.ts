@@ -6,6 +6,7 @@ import {
   getOAuthConnections,
   deleteOAuthConnection,
   revokeOAuthConnection,
+  exchangeCodeForTokens,
 } from "@/lib/oauth";
 import { validateSession } from "@/lib/auth";
 
@@ -52,26 +53,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid or expired state" }, { status: 400 });
     }
 
-    // Exchange code for tokens (implement per provider)
-    // This is a placeholder - actual implementation depends on provider
-    const tokenData = await exchangeCodeForTokens(state.provider_id, code, redirect_uri);
-    if (!tokenData) {
+    try {
+      const tokenData = await exchangeCodeForTokens(
+        state.provider_id,
+        code,
+        redirect_uri
+      );
+
+      const connId = await saveOAuthConnection({
+        provider_id: state.provider_id,
+        access_token: tokenData.access_token,
+        refresh_token: tokenData.refresh_token,
+        expires_at: tokenData.expires_at,
+        scope: tokenData.scope,
+        token_type: tokenData.token_type || "Bearer",
+      });
+
+      return NextResponse.json({ id: connId, ok: true });
+    } catch (error) {
+      console.error("[OAuth] Token exchange error:", error);
       return NextResponse.json(
         { error: "Failed to exchange code for tokens" },
         { status: 400 }
       );
     }
-
-    const connId = await saveOAuthConnection({
-      provider_id: state.provider_id,
-      access_token: tokenData.access_token,
-      refresh_token: tokenData.refresh_token,
-      expires_at: tokenData.expires_at,
-      scope: tokenData.scope,
-      token_type: tokenData.token_type || "Bearer",
-    });
-
-    return NextResponse.json({ id: connId, ok: true });
   }
 
   return NextResponse.json({ error: "Invalid action" }, { status: 400 });
@@ -96,28 +101,4 @@ export async function DELETE(request: NextRequest) {
   }
 
   return NextResponse.json({ error: "Invalid action" }, { status: 400 });
-}
-
-// Placeholder for token exchange
-async function exchangeCodeForTokens(
-  providerId: number,
-  code: string,
-  redirectUri?: string
-): Promise<{
-  access_token?: string;
-  refresh_token?: string;
-  expires_at?: number;
-  scope?: string;
-  token_type?: string;
-} | null> {
-  // This will be implemented per provider in Phase E
-  // For now, return mock data for testing
-  console.warn(`[OAuth] Token exchange not implemented for provider ${providerId}`);
-  return {
-    access_token: `mock_access_${Date.now()}`,
-    refresh_token: `mock_refresh_${Date.now()}`,
-    expires_at: Date.now() + 3600000,
-    scope: "read",
-    token_type: "Bearer",
-  };
 }

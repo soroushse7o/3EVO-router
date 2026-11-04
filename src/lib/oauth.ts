@@ -129,3 +129,5 @@ export async function revokeOAuthConnection(id: number): Promise<void> {
     [id]
   );
 }
+
+export { exchangeCodeForTokens, getOAuthProviderConfig } from "./oauth/service";
