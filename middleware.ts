@@ -36,11 +36,14 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Dashboard routes — redirect to login if no session
+  // Dashboard routes — redirect to dashboard if no session, else allow
   if (pathname.startsWith("/dashboard") || pathname === "/") {
     const session = request.cookies.get("session")?.value;
     if (!session) {
       return NextResponse.redirect(new URL("/login", request.url));
+    }
+    if (pathname === "/") {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
     }
     return NextResponse.next();
   }

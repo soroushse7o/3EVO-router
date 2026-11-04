@@ -1,10 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { DATA_DIR } from "./paths.js";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const META_KEY = "schema_version";
 const CURRENT_VERSION = 2;
-const SCHEMA_PATH = path.join(import.meta.dirname, "migrations", "schema.sql");
+const SCHEMA_PATH = path.join(__dirname, "migrations", "schema.sql");
 
 export async function runMigrationOnce(adapter) {
   adapter.run(`CREATE TABLE IF NOT EXISTS _meta (key TEXT PRIMARY KEY, value TEXT)`);
