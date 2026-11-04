@@ -1,4 +1,8 @@
 // Survive Next.js dev HMR (module state resets on reload)
+declare global {
+  // eslint-disable-next-line no-var
+  var _circuitStates: Map<string, CircuitState> | undefined;
+}
 if (!global._circuitStates) global._circuitStates = new Map<string, CircuitState>();
 const states = global._circuitStates;
 type State = "closed" | "open" | "half-open";
