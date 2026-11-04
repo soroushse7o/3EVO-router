@@ -7,10 +7,14 @@ import {
   deleteOAuthConnection,
   revokeOAuthConnection,
 } from "@/lib/oauth";
+import { validateSession } from "@/lib/auth";
+
+function getSessionToken(request: NextRequest): string | undefined {
+  return request.cookies.get("session")?.value;
+}
 
 export async function GET(request: NextRequest) {
-  const session = await getSession(request);
-  if (!session) {
+  if (!(await validateSession(getSessionToken(request)))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -22,8 +26,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const session = await getSession(request);
-  if (!session) {
+  if (!(await validateSession(getSessionToken(request)))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -75,8 +78,7 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  const session = await getSession(request);
-  if (!session) {
+  if (!(await validateSession(getSessionToken(request)))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -94,22 +96,6 @@ export async function DELETE(request: NextRequest) {
   }
 
   return NextResponse.json({ error: "Invalid action" }, { status: 400 });
-}
-
-async function getSession(request: NextRequest): Promise<{ id: string } | null> {
-  const sessionId = request.cookies.get("session")?.value;
-  if (!sessionId) return null;
-  const db = await getAdapter();
-  const session = db.get("SELECT id FROM sessions WHERE id = ? AND expires_at > ?", [
-    sessionId,
-    Date.now(),
-  ]);
-  return session ? { id: session.id } : null;
-}
-
-async function getAdapter() {
-  const { getAdapter } = await import("@/lib/db/driver");
-  return getAdapter();
 }
 
 // Placeholder for token exchange
