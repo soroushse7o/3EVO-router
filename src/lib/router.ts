@@ -72,7 +72,7 @@ export async function runWithFallback<T>(tiers: Array<() => Promise<T>>, keyPref
       recordFailure(key);
       lastErr = e;
       const status = e?.status || e?.response?.status;
-      const isNetwork = !status && (e?.name === "AbortError" || e?.code === "ECONNREFUSED" || e?.code === "ETIMEDOUT" || e?.code === "ENOTFOUND" || e?.code === "EAI_AGAIN" || e?.message?.includes("timeout") || e?.message?.includes("network"));
+      const isNetwork = !status && (e?.name === "AbortError" || e?.code === "ECONNREFUSED" || e?.code === "ETIMEDOUT" || e?.code === "ENOTFOUND" || e?.code === "EAI_AGAIN" || e?.cause?.code === "ECONNREFUSED" || e?.cause?.code === "ETIMEDOUT" || e?.cause?.code === "ENOTFOUND" || e?.cause?.code === "EAI_AGAIN" || e?.message?.includes("timeout") || e?.message?.includes("network") || e?.message?.includes("fetch failed"));
       const shouldFallback = (status && status >= 500) || status === 429 || isNetwork;
       if (shouldFallback && i < tiers.length - 1) continue;
       if (i === tiers.length - 1) break;
