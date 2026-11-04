@@ -48,8 +48,8 @@
 - [ ] Linux `.deb` / `.rpm` packages
 
 ## Phase H — Production hardening
-- [ ] End-to-end encrypted backup/restore for `~/.3evo`
-- [ ] Prometheus metrics exporter
-- [ ] Grafana dashboard template
+- [x] End-to-end encrypted backup/restore for `~/.3evo`
+- [x] Prometheus metrics exporter (`/api/metrics/prometheus`)
+- [x] Grafana dashboard template
+- [x] Security audit & dependency scan automation
 - [ ] Rate-limit burst shaping per client IP
-- [ ] Security audit & dependency scan automation
