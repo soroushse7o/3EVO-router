@@ -15,24 +15,37 @@ export default function EndpointPage() {
   }, []);
 
   return (
-    <div className="max-w-2xl space-y-4">
-      <h1 className="text-xl font-bold">Endpoint</h1>
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-        <div className="text-xs text-gray-400 mb-1">Base URL</div>
-        <div className="flex items-center gap-2">
-          <code className="text-emerald-400 text-sm">{base}</code>
-          <button onClick={() => { navigator.clipboard.writeText(base); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="text-xs bg-white/10 px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-emerald-400/40 hover:bg-white/20">
-            {copied ? "Copied!" : "Copy"}
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold text-white mb-1">Endpoint</h1>
+        <p className="text-gray-400 text-sm">Base URL and connection details</p>
+      </div>
+
+      <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6">
+        <div className="text-xs text-gray-500 uppercase tracking-wider mb-2">Base URL</div>
+        <div className="flex items-center gap-3">
+          <code className="text-emerald-400 text-sm bg-black/30 px-3 py-1.5 rounded-lg border border-gray-800">{base}</code>
+          <button
+            onClick={() => { navigator.clipboard.writeText(base); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
+            className="px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs hover:bg-emerald-500/20 transition-colors"
+          >
+            {copied ? "✓ Copied!" : "Copy"}
           </button>
         </div>
       </div>
+
       {status.exhausted && (
         <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-400">
           All tiers exhausted. Soonest reset: {status.soonest ? `${Math.round(Number(status.soonest) / 1000)}s` : "unknown"}
         </div>
       )}
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-gray-400">
-        Router API keys managed in dashboard. Remote (tunnel) status: offline.
+
+      <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6">
+        <h3 className="text-sm font-semibold text-white mb-3">Connection Status</h3>
+        <div className="flex items-center gap-2 text-sm text-gray-400">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          Router API keys managed in dashboard. Remote (tunnel) status: offline.
+        </div>
       </div>
     </div>
   );

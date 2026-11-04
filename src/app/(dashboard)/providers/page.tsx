@@ -49,54 +49,61 @@ export default function ProvidersPage() {
   };
 
   return (
-    <div className="max-w-4xl">
-      <h1 className="text-xl font-bold mb-4">{t("nav.providers")}</h1>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold text-white mb-1">Providers</h1>
+        <p className="text-gray-400 text-sm">Manage upstream AI providers</p>
+      </div>
 
-      <section className="mb-6">
-        <h2 className="text-lg font-semibold mb-2">API Key Providers</h2>
-        <p className="text-xs text-gray-400 mb-3">Test your API key connection before using.</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6">
+        <h2 className="text-lg font-semibold text-white mb-1">API Key Providers</h2>
+        <p className="text-xs text-gray-500 mb-4">Test your API key connection before using.</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {providers.apiKey.map((n: string) => (
-            <div key={n} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-              <div className="font-medium">{n}</div>
-              <div className="text-xs mt-1">
+            <div key={n} className="rounded-xl border border-gray-800 bg-gray-900/50 p-4">
+              <div className="font-medium text-white text-sm mb-2">{n}</div>
+              <div className="text-xs mb-3">
                 {testResults[n]?.testing ? t("common.loading") : testResults[n]?.ok ? `✅ ${t("common.working")}` : testResults[n]?.error ? `❌ ${t("common.failed")}` : t("common.notTested")}
               </div>
-              <button onClick={() => testProvider(n)} className="mt-2 text-xs rounded px-2 py-1 bg-blue-500/20 text-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/40 hover:bg-blue-500/30">
+              <button
+                onClick={() => testProvider(n)}
+                className="w-full text-xs rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 px-3 py-1.5 hover:bg-blue-500/20 transition-colors"
+              >
                 {t("common.test")}
               </button>
             </div>
           ))}
         </div>
-      </section>
+      </div>
 
-      <section className="mb-6 p-4 rounded-2xl border border-white/10 bg-white/5">
-        <h2 className="text-lg font-semibold mb-2">Custom Providers</h2>
-        <p className="text-xs text-gray-400 mb-3">Add OpenAI or Anthropic compatible providers by pasting their base URL and API key.</p>
-        <form onSubmit={addCustom} className="flex flex-wrap gap-2">
-          <input className="rounded bg-white/10 border border-white/20 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400/40" placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
-          <input className="rounded bg-white/10 border border-white/20 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400/40" placeholder="Base URL" value={form.baseUrl} onChange={(e) => setForm({ ...form, baseUrl: e.target.value })} required />
-          <input className="rounded bg-white/10 border border-white/20 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400/40" placeholder="API Key" type="password" value={form.apiKey} onChange={(e) => setForm({ ...form, apiKey: e.target.value })} required />
-          <input className="rounded bg-white/10 border border-white/20 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400/40" placeholder="Model" value={form.model} onChange={(e) => setForm({ ...form, model: e.target.value })} />
-          <input className="rounded bg-white/10 border border-white/20 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400/40" placeholder="Price in/1k" type="number" step="0.01" value={form.priceIn} onChange={(e) => setForm({ ...form, priceIn: Number(e.target.value) })} />
-          <input className="rounded bg-white/10 border border-white/20 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400/40" placeholder="Price out/1k" type="number" step="0.01" value={form.priceOut} onChange={(e) => setForm({ ...form, priceOut: Number(e.target.value) })} />
-          <button type="submit" disabled={loading} className="rounded bg-emerald-500/20 text-emerald-400 px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400/40 hover:bg-emerald-500/30 disabled:opacity-50">
+      <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6">
+        <h2 className="text-lg font-semibold text-white mb-1">Custom Providers</h2>
+        <p className="text-xs text-gray-500 mb-4">Add OpenAI or Anthropic compatible providers by pasting their base URL and API key.</p>
+        <form onSubmit={addCustom} className="flex flex-wrap gap-3 mb-4">
+          <input className="rounded-lg bg-black/30 border border-gray-800 px-3 py-2 text-sm text-white placeholder:text-gray-500 focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/40" placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+          <input className="rounded-lg bg-black/30 border border-gray-800 px-3 py-2 text-sm text-white placeholder:text-gray-500 focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/40" placeholder="Base URL" value={form.baseUrl} onChange={(e) => setForm({ ...form, baseUrl: e.target.value })} required />
+          <input className="rounded-lg bg-black/30 border border-gray-800 px-3 py-2 text-sm text-white placeholder:text-gray-500 focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/40" placeholder="API Key" type="password" value={form.apiKey} onChange={(e) => setForm({ ...form, apiKey: e.target.value })} required />
+          <input className="rounded-lg bg-black/30 border border-gray-800 px-3 py-2 text-sm text-white placeholder:text-gray-500 focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/40" placeholder="Model" value={form.model} onChange={(e) => setForm({ ...form, model: e.target.value })} />
+          <input className="rounded-lg bg-black/30 border border-gray-800 px-3 py-2 text-sm text-white placeholder:text-gray-500 focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/40" placeholder="Price in/1k" type="number" step="0.01" value={form.priceIn} onChange={(e) => setForm({ ...form, priceIn: Number(e.target.value) })} />
+          <input className="rounded-lg bg-black/30 border border-gray-800 px-3 py-2 text-sm text-white placeholder:text-gray-500 focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/40" placeholder="Price out/1k" type="number" step="0.01" value={form.priceOut} onChange={(e) => setForm({ ...form, priceOut: Number(e.target.value) })} />
+          <button type="submit" disabled={loading} className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-4 py-2 text-sm hover:bg-emerald-500/20 transition-colors disabled:opacity-50">
             {loading ? "Saving…" : "+ Add Provider"}
           </button>
         </form>
+
         {custom.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {custom.map((c) => (
-              <div key={c.id || c.name} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <div className="font-medium">{c.name}</div>
-                <div className="text-xs text-gray-400 mt-1">{c.baseUrl}</div>
-                <div className="text-xs text-gray-500 mt-1">Model: {c.model || "gpt-3.5-turbo"}</div>
-                <div className="text-xs text-gray-500">Price: ${(c.price_in || c.priceIn || 0).toFixed(4)} in / ${(c.price_out || c.priceOut || 0).toFixed(4)} out per 1k</div>
-                <div className="flex gap-2 mt-2">
-                  <button onClick={() => testProvider(c.name, c.baseUrl, c.apiKey, c.model)} className="text-xs rounded px-2 py-1 bg-blue-500/20 text-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/40 hover:bg-blue-500/30">
+              <div key={c.id || c.name} className="rounded-xl border border-gray-800 bg-gray-900/50 p-4">
+                <div className="font-medium text-white text-sm mb-1">{c.name}</div>
+                <div className="text-xs text-gray-400 mb-1">{c.baseUrl}</div>
+                <div className="text-xs text-gray-500 mb-1">Model: {c.model || "gpt-3.5-turbo"}</div>
+                <div className="text-xs text-gray-500 mb-3">Price: ${(c.price_in || c.priceIn || 0).toFixed(4)} in / ${(c.price_out || c.priceOut || 0).toFixed(4)} out per 1k</div>
+                <div className="flex gap-2">
+                  <button onClick={() => testProvider(c.name, c.baseUrl, c.apiKey, c.model)} className="flex-1 text-xs rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 px-3 py-1.5 hover:bg-blue-500/20 transition-colors">
                     {t("common.test")}
                   </button>
-                  <button onClick={() => remove(c.id)} className="text-xs rounded px-2 py-1 bg-red-500/20 text-red-400 focus:outline-none focus:ring-2 focus:ring-red-400/40 hover:bg-red-500/30">
+                  <button onClick={() => remove(c.id)} className="flex-1 text-xs rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 px-3 py-1.5 hover:bg-red-500/20 transition-colors">
                     Remove
                   </button>
                 </div>
@@ -104,13 +111,13 @@ export default function ProvidersPage() {
             ))}
           </div>
         ) : (
-          <div className="mt-4 rounded-2xl border border-dashed border-white/10 bg-white/5 p-6 text-center text-xs text-gray-500">
-            <div className="text-lg mb-1">📭</div>
-            <div>No custom providers yet.</div>
-            <div className="mt-1 text-gray-600">Add your first provider above to get started.</div>
+          <div className="rounded-2xl border border-dashed border-gray-800 bg-gray-900/30 p-8 text-center">
+            <div className="text-3xl mb-2">📭</div>
+            <div className="text-sm text-gray-400">No custom providers yet.</div>
+            <div className="text-xs text-gray-600 mt-1">Add your first provider above to get started.</div>
           </div>
         )}
-      </section>
+      </div>
     </div>
   );
 }
