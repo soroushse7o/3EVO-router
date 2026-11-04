@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { hasTrustedPeerHeaders } from "@/lib/auth/trustedPeer";
 
 const PUBLIC_API_PREFIXES = ["/v1", "/v1beta", "/api/v1", "/responses"];
-const PUBLIC_PATHS = ["/api/health", "/api/init", "/api/locale", "/api/auth/login", "/api/auth/logout", "/api/auth/status", "/api/version", "/api/settings/require-login"];
+const PUBLIC_PATHS = ["/api/health", "/api/init", "/api/locale", "/api/auth", "/api/auth/login", "/api/auth/logout", "/api/auth/status", "/api/version", "/api/settings/require-login"];
 
 function isPublicLlmApi(pathname: string) {
   return PUBLIC_API_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
