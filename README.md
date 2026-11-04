@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/logo.svg" alt="3EVO Router" width="120" height="120" />
+</p>
+
 # 3EVO Router — Local AI Gateway
 
 One local endpoint that proxies OpenAI/Anthropic-compatible requests to multiple upstream providers, with failover, encrypted secret storage, and a web dashboard.

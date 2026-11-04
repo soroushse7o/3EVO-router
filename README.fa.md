@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/logo.svg" alt="3EVO Router" width="120" height="120" />
+</p>
+
 # 3EVO Router — گیت‌وی هوشمند هوش مصنوعی (لوکال + داشبورد تحت وب)
 
 یک endpoint واحد و سازگار با OpenAI/Anthropic ارائه می‌دهد و درخواست‌ها را بین چند provider با failover و رمزنگاری کلیدها مسیریابی می‌کند.
