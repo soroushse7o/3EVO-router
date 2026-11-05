@@ -22,8 +22,8 @@
 - [x] `pkg` binaries for Windows/macOS/Linux
 - [x] Encrypted backup/restore utility
 - [x] Prometheus metrics exporter
-- [ ] Windows installer (NSIS script ready)
-- [ ] Linux `.deb` / `.rpm` packages (scripts ready)
+- [x] Windows installer (NSIS script ready)
+- [x] Linux `.deb` / `.rpm` packages (scripts ready)
 
 ## Phase H — Production hardening
 - [x] Rate-limit burst shaping per IP
