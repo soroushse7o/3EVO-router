@@ -1,8 +1,10 @@
 "use client";
+import { useI18n } from "@/components/i18n-provider";
 import { useEffect, useState } from "react";
 import { toast } from "@/components/toast-provider";
 
 export default function UsagePage() {
+  const { t } = useI18n();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,9 +23,9 @@ export default function UsagePage() {
       a.download = "usage.csv";
       a.click();
       URL.revokeObjectURL(url);
-      toast("CSV exported", "success");
+      toast(t("usage.exported"), "success");
     } catch (e: any) {
-      toast(e?.message || "Export failed", "error");
+      toast(e?.message || t("usage.exportFailed"), "error");
     }
   };
 
@@ -35,24 +37,24 @@ export default function UsagePage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-1">Usage</h1>
-          <p className="text-gray-400 text-sm">Upstream usage and cost tracking</p>
+          <h1 className="text-3xl font-bold text-white mb-1">{t("usage.title")}</h1>
+          <p className="text-gray-400 text-sm">{t("usage.subtitle")}</p>
         </div>
         <button
           onClick={exportCsv}
           className="px-4 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm hover:bg-emerald-500/20 transition-colors"
         >
-          Export CSV
+          {t("usage.export")}
         </button>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {[
-          { label: "Requests", value: data?.length ?? 0 },
-          { label: "Tokens In", value: total(data, "tokens_in") },
-          { label: "Tokens Out", value: total(data, "tokens_out") },
-          { label: "RTK Saved", value: `$${total(data, "rtk_saved").toFixed(2)}` },
-          { label: "Est. Cost", value: `$${data?.totalCost ? data.totalCost.toFixed(4) : "0.0000"}` },
+          { label: t("usage.requests"), value: data?.length ?? 0 },
+          { label: t("usage.tokensIn"), value: total(data, "tokens_in") },
+          { label: t("usage.tokensOut"), value: total(data, "tokens_out") },
+          { label: t("usage.rtkSaved"), value: `$${total(data, "rtk_saved").toFixed(2)}` },
+          { label: t("usage.estCost"), value: `$${data?.totalCost ? data.totalCost.toFixed(4) : "0.0000"}` },
         ].map((stat, i) => (
           <div key={i} className="rounded-2xl border border-gray-800 bg-gray-900/50 p-5">
             <div className="text-xs text-gray-500 uppercase tracking-wider mb-2">{stat.label}</div>
@@ -81,7 +83,7 @@ export default function UsagePage() {
               {error ? (
                 <tr><td className="p-6 text-xs text-red-400" colSpan={6}>{error}</td></tr>
               ) : loading ? (
-                <tr><td className="p-6 text-xs text-gray-500" colSpan={6}>Loading...</td></tr>
+                <tr><td className="p-6 text-xs text-gray-500" colSpan={6}>{t("common.loading")}...</td></tr>
               ) : data?.length ? data.slice(-50).reverse().map((r: any, i: number) => (
                 <tr key={i} className="border-b border-gray-800/50 hover:bg-gray-800/20 transition-colors">
                   <td className="p-3 text-xs text-gray-400">{new Date(r.ts).toLocaleTimeString()}</td>
@@ -92,7 +94,7 @@ export default function UsagePage() {
                   <td className="p-3 text-emerald-400">${r.rtk_saved}</td>
                 </tr>
               )) : (
-                <tr><td className="p-6 text-xs text-gray-500" colSpan={6}>No usage recorded yet.</td></tr>
+                <tr><td className="p-6 text-xs text-gray-500" colSpan={6}>{t("usage.failedLoad") ? "No usage recorded yet." : "No usage recorded yet."}</td></tr>
               )}
             </tbody>
           </table>
