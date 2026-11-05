@@ -34,8 +34,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0a0e1a]">
-      <div className="w-full max-w-sm rounded-2xl border border-gray-800 bg-gray-900/50 p-8 shadow-2xl backdrop-blur-sm">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a0e1a] via-[#0f1629] to-[#0a0e1a] relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(16,185,129,0.15),transparent_60%)]" />
+      <div className="relative w-full max-w-sm rounded-2xl border border-gray-800/60 bg-gray-900/60 p-8 shadow-2xl backdrop-blur-xl">
         <div className="mb-8 text-center">
           <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-lg mx-auto mb-4">
             3E
@@ -59,7 +60,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 py-2.5 text-sm font-medium hover:bg-emerald-500/20 transition-colors disabled:opacity-60"
+            className="w-full rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 text-white py-2.5 text-sm font-medium hover:from-emerald-400 hover:to-teal-500 transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-60"
           >
             {loading ? "Signing in..." : "Login"}
           </button>
