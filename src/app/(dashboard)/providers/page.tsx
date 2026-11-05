@@ -60,7 +60,7 @@ export default function ProvidersPage() {
         <p className="text-xs text-gray-500 mb-4">Test your API key connection before using.</p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {providers.apiKey.map((n: string) => (
-            <div key={n} className="rounded-xl border border-gray-800 bg-gray-900/50 p-4">
+            <div key={n} className="rounded-xl border border-gray-800/60 bg-gradient-to-br from-gray-900/80 to-gray-900/40 p-4 backdrop-blur-sm hover:border-emerald-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/5">
               <div className="font-medium text-white text-sm mb-2">{n}</div>
               <div className="text-xs mb-3">
                 {testResults[n]?.testing ? t("common.loading") : testResults[n]?.ok ? `✅ ${t("common.working")}` : testResults[n]?.error ? `❌ ${t("common.failed")}` : t("common.notTested")}
@@ -94,7 +94,7 @@ export default function ProvidersPage() {
         {custom.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {custom.map((c) => (
-              <div key={c.id || c.name} className="rounded-xl border border-gray-800 bg-gray-900/50 p-4">
+              <div key={c.id || c.name} className="rounded-xl border border-gray-800/60 bg-gradient-to-br from-gray-900/80 to-gray-900/40 p-4 backdrop-blur-sm hover:border-emerald-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/5">
                 <div className="font-medium text-white text-sm mb-1">{c.name}</div>
                 <div className="text-xs text-gray-400 mb-1">{c.baseUrl}</div>
                 <div className="text-xs text-gray-500 mb-1">Model: {c.model || "gpt-3.5-turbo"}</div>
