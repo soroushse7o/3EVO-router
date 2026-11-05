@@ -1,1 +1,7 @@
 @import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap');
+
+.font-fa {
+  font-family: 'Vazirmatn', 'Tahoma', sans-serif;
+}
