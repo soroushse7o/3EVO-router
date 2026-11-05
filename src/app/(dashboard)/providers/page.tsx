@@ -11,7 +11,7 @@ export default function ProvidersPage() {
   const [form, setForm] = useState({ name: "", baseUrl: "", apiKey: "", model: "gpt-3.5-turbo", priceIn: 0, priceOut: 0 });
   const [loading, setLoading] = useState(false);
 
-  const load = () => fetch("/api/providers").then(r => r.json()).then(setCustom).catch(() => toast("Failed to load providers", "error"));
+  const load = () => fetch("/api/providers").then(r => r.json()).then(setCustom).catch(() => toast(t("providers.failedLoad"), "error"));
   useEffect(() => { load(); }, []);
 
   const testProvider = async (name: string, baseUrl?: string, apiKey?: string, model?: string) => {
