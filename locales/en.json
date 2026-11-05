@@ -20,7 +20,16 @@
     "working": "Working",
     "failed": "Failed",
     "notTested": "Not tested",
-    "operational": "Operational"
+    "operational": "Operational",
+    "saving": "Saving...",
+    "add": "Add",
+    "remove": "Remove",
+    "copy": "Copy",
+    "export": "Export CSV",
+    "failedLoad": "Failed to load",
+    "failedAdd": "Failed to add",
+    "added": "Added",
+    "removed": "Removed"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -42,5 +51,82 @@
     "providersHint": "Add/edit/test providers",
     "usageHint": "Upstream usage and CSV export",
     "settingsHint": "API keys and preferences"
+  },
+  "providers": {
+    "title": "Providers",
+    "subtitle": "Manage upstream AI providers",
+    "name": "Name",
+    "baseUrl": "Base URL",
+    "apiKey": "API Key",
+    "model": "Model",
+    "priceIn": "Price in/1k",
+    "priceOut": "Price out/1k",
+    "add": "Add Provider",
+    "empty": "No providers yet. Add one to get started.",
+    "test": "Test",
+    "working": "Working",
+    "failed": "Failed",
+    "notTested": "Not tested",
+    "added": "Provider added",
+    "removed": "Provider removed",
+    "failedAdd": "Failed to add provider",
+    "failedLoad": "Failed to load providers",
+    "saving": "Saving..."
+  },
+  "aliases": {
+    "title": "Aliases",
+    "subtitle": "Map alias names to provider models",
+    "alias": "Alias (e.g. gpt-3.5)",
+    "model": "Model",
+    "provider": "Provider",
+    "add": "Add Alias",
+    "empty": "No aliases yet.",
+    "added": "Alias added",
+    "removed": "Alias removed",
+    "failedAdd": "Failed to add alias",
+    "failedLoad": "Failed to load aliases",
+    "saving": "Saving..."
+  },
+  "endpoint": {
+    "title": "Endpoint",
+    "subtitle": "Base URL for your API clients",
+    "copy": "Copy",
+    "exhausted": "Exhausted",
+    "unknown": "Unknown"
+  },
+  "usage": {
+    "title": "Usage",
+    "subtitle": "Upstream usage and cost",
+    "requests": "Requests",
+    "tokensIn": "Tokens In",
+    "tokensOut": "Tokens Out",
+    "estCost": "Est. Cost",
+    "rtkSaved": "RTK Saved",
+    "export": "Export CSV",
+    "exported": "CSV exported",
+    "exportFailed": "Export failed",
+    "failedLoad": "Failed to load usage"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "API keys and preferences",
+    "requireApiKey": "Enforce API key authentication",
+    "requireLogin": "Protect dashboard with authentication",
+    "observability": "Observability",
+    "rtk": "RTK cache",
+    "monthlyBudget": "Monthly budget (USD)",
+    "cacheResponses": "Cache responses to reduce token costs",
+    "enableMetrics": "Enable metrics and logging",
+    "enforceApiKey": "Require API key for /v1/*",
+    "requireLoginDashboard": "Require login for dashboard",
+    "save": "Save Settings",
+    "saving": "Saving...",
+    "saved": "Settings saved",
+    "saveFailed": "Save failed",
+    "failedLoad": "Failed to load settings"
+  },
+  "requestDetails": {
+    "title": "Request Details",
+    "subtitle": "Recent request log"
   }
 }
