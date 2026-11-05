@@ -1,7 +1,9 @@
 "use client";
+import { useI18n } from "@/components/i18n-provider";
 import { useEffect, useState } from "react";
 
 export default function RequestDetailsPage() {
+  const { t } = useI18n();
   const [requests, setRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,8 +24,8 @@ export default function RequestDetailsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-1">Request Details</h1>
-        <p className="text-gray-400 text-sm">Full request/response logs with headers and body</p>
+        <h1 className="text-3xl font-bold text-white mb-1">{t("requestDetails.title")}</h1>
+        <p className="text-gray-400 text-sm">{t("requestDetails.subtitle")}</p>
       </div>
 
       <div className="rounded-2xl border border-gray-800 bg-gray-900/50 overflow-hidden">
@@ -46,7 +48,7 @@ export default function RequestDetailsPage() {
               {error ? (
                 <tr><td className="p-6 text-xs text-red-400" colSpan={6}>{error}</td></tr>
               ) : loading ? (
-                <tr><td className="p-6 text-xs text-gray-500" colSpan={6}>Loading...</td></tr>
+                <tr><td className="p-6 text-xs text-gray-500" colSpan={6}>{t("common.loading")}...</td></tr>
               ) : requests.length === 0 ? (
                 <tr><td className="p-6 text-xs text-gray-500" colSpan={6}>No requests recorded yet.</td></tr>
               ) : (
