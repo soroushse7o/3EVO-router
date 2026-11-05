@@ -1,7 +1,9 @@
 "use client";
+import { useI18n } from "@/components/i18n-provider";
 import { useEffect, useState } from "react";
 
 export default function EndpointPage() {
+  const { t } = useI18n();
   const [status, setStatus] = useState<{ exhausted?: boolean; soonest?: string }>({});
   const [copied, setCopied] = useState(false);
   const base = "http://localhost:20128/v1";
@@ -17,8 +19,8 @@ export default function EndpointPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-1">Endpoint</h1>
-        <p className="text-gray-400 text-sm">Base URL and connection details</p>
+        <h1 className="text-3xl font-bold text-white mb-1">{t("endpoint.title")}</h1>
+        <p className="text-gray-400 text-sm">{t("endpoint.subtitle")}</p>
       </div>
 
       <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6">
@@ -29,7 +31,7 @@ export default function EndpointPage() {
             onClick={() => { navigator.clipboard.writeText(base); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
             className="px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs hover:bg-emerald-500/20 transition-colors"
           >
-            {copied ? "✓ Copied!" : "Copy"}
+            {copied ? "✓ Copied!" : t("endpoint.copy")}
           </button>
         </div>
       </div>
