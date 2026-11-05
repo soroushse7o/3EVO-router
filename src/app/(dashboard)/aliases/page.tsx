@@ -74,7 +74,8 @@ export default function AliasesPage() {
       </div>
 
       <div className="rounded-2xl border border-gray-800/60 bg-gradient-to-br from-gray-900/80 to-gray-900/40 overflow-hidden backdrop-blur-sm">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-800">
               <th className="text-left p-4 text-xs text-gray-500 uppercase tracking-wider font-medium">Alias</th>
@@ -109,6 +110,7 @@ export default function AliasesPage() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );
