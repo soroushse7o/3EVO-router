@@ -9,7 +9,7 @@ export default function AliasesPage() {
   const [form, setForm] = useState({ alias: "", provider: "", model: "" });
   const [loading, setLoading] = useState(false);
 
-  const load = () => fetch("/api/aliases").then(r => r.json()).then(setAliases).catch(() => toast("Failed to load aliases", "error"));
+  const load = () => fetch("/api/aliases").then(r => r.json()).then(setAliases).catch(() => toast(t("aliases.failedLoad"), "error"));
   useEffect(() => { load(); }, []);
 
   const addAlias = async (e: React.FormEvent) => {
@@ -17,26 +17,26 @@ export default function AliasesPage() {
     setLoading(true);
     try {
       const res = await fetch("/api/aliases", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
-      if (!res.ok) throw new Error("Failed to add alias");
+      if (!res.ok) throw new Error(t("aliases.failedAdd"));
       setForm({ alias: "", provider: "", model: "" });
       load();
-      toast("Alias added", "success");
+      toast(t("aliases.added"), "success");
     } catch (e: any) {
-      toast(e?.message || "Add failed", "error");
+      toast(e?.message || t("aliases.failedAdd"), "error");
     } finally { setLoading(false); }
   };
 
   const remove = async (alias: string) => {
     await fetch(`/api/aliases/${encodeURIComponent(alias)}`, { method: "DELETE" });
     load();
-    toast("Alias removed", "success");
+    toast(t("aliases.removed"), "success");
   };
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-1">Aliases</h1>
-        <p className="text-gray-400 text-sm">Map model aliases to specific providers and models</p>
+        <h1 className="text-3xl font-bold text-white mb-1">{t("aliases.title")}</h1>
+        <p className="text-gray-400 text-sm">{t("aliases.subtitle")}</p>
       </div>
 
       <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6">
@@ -68,7 +68,7 @@ export default function AliasesPage() {
             disabled={loading}
             className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-4 py-2 text-sm hover:bg-emerald-500/20 transition-colors disabled:opacity-50"
           >
-            {loading ? "Saving..." : "+ Add Alias"}
+            {loading ? t("common.saving") : "+ Add Alias"}
           </button>
         </form>
       </div>
