@@ -61,7 +61,7 @@ export default function SettingsPage() {
         <p className="text-gray-400 text-sm">{t("settings.subtitle")}</p>
       </div>
 
-      <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6 space-y-5">
+      <div className="rounded-2xl border border-gray-800/60 bg-gradient-to-br from-gray-900/80 to-gray-900/40 p-6 space-y-5 backdrop-blur-sm">
         {[
           { key: "requireLogin", label: t("settings.requireLoginDashboard"), desc: t("settings.requireLogin") },
           { key: "requireApiKey", label: t("settings.enforceApiKey"), desc: t("settings.requireApiKey") },
