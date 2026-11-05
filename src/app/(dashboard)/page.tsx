@@ -50,9 +50,9 @@ export default function DashboardIndex() {
           { label: "Active Providers", value: "3", icon: "🔌", trend: "Stable" },
         ].map((stat, i) => (
           <div
-            key={i}
-            className="group relative overflow-hidden rounded-2xl border border-gray-800 bg-gray-900/50 p-5 backdrop-blur-sm hover:border-emerald-500/30 transition-all duration-300"
-          >
+                    key={i}
+                    className="group relative overflow-hidden rounded-2xl border border-gray-800/60 bg-gradient-to-br from-gray-900/80 to-gray-900/40 p-5 backdrop-blur-sm hover:border-emerald-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/5"
+                  >
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             <div className="relative">
               <div className="flex items-start justify-between mb-3">
@@ -116,7 +116,7 @@ export default function DashboardIndex() {
           <Link
             key={href}
             href={href}
-            className="group relative overflow-hidden rounded-2xl border border-gray-800 bg-gray-900/50 p-5 backdrop-blur-sm hover:border-emerald-500/30 transition-all duration-300"
+            className="group relative overflow-hidden rounded-2xl border border-gray-800/60 bg-gradient-to-br from-gray-900/80 to-gray-900/40 p-5 backdrop-blur-sm hover:border-emerald-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/5"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             <div className="relative">
