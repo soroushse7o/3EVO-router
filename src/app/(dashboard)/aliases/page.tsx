@@ -39,7 +39,7 @@ export default function AliasesPage() {
         <p className="text-gray-400 text-sm">{t("aliases.subtitle")}</p>
       </div>
 
-      <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6">
+      <div className="rounded-2xl border border-gray-800/60 bg-gradient-to-br from-gray-900/80 to-gray-900/40 p-6 backdrop-blur-sm">
         <h3 className="text-sm font-semibold text-white mb-4">Add New Alias</h3>
         <form onSubmit={addAlias} className="flex flex-wrap gap-3">
           <input
@@ -73,7 +73,7 @@ export default function AliasesPage() {
         </form>
       </div>
 
-      <div className="rounded-2xl border border-gray-800 bg-gray-900/50 overflow-hidden">
+      <div className="rounded-2xl border border-gray-800/60 bg-gradient-to-br from-gray-900/80 to-gray-900/40 overflow-hidden backdrop-blur-sm">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-800">

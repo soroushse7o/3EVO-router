@@ -23,7 +23,7 @@ export default function EndpointPage() {
         <p className="text-gray-400 text-sm">{t("endpoint.subtitle")}</p>
       </div>
 
-      <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6">
+      <div className="rounded-2xl border border-gray-800/60 bg-gradient-to-br from-gray-900/80 to-gray-900/40 p-6 backdrop-blur-sm">
         <div className="text-xs text-gray-500 uppercase tracking-wider mb-2">Base URL</div>
         <div className="flex items-center gap-3">
           <code className="text-emerald-400 text-sm bg-black/30 px-3 py-1.5 rounded-lg border border-gray-800">{base}</code>
@@ -42,7 +42,7 @@ export default function EndpointPage() {
         </div>
       )}
 
-      <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6">
+      <div className="rounded-2xl border border-gray-800/60 bg-gradient-to-br from-gray-900/80 to-gray-900/40 p-6 backdrop-blur-sm">
         <h3 className="text-sm font-semibold text-white mb-3">Connection Status</h3>
         <div className="flex items-center gap-2 text-sm text-gray-400">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />

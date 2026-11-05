@@ -56,14 +56,14 @@ export default function UsagePage() {
           { label: t("usage.rtkSaved"), value: `$${total(data, "rtk_saved").toFixed(2)}` },
           { label: t("usage.estCost"), value: `$${data?.totalCost ? data.totalCost.toFixed(4) : "0.0000"}` },
         ].map((stat, i) => (
-          <div key={i} className="rounded-2xl border border-gray-800 bg-gray-900/50 p-5">
+          <div key={i} className="rounded-2xl border border-gray-800/60 bg-gradient-to-br from-gray-900/80 to-gray-900/40 p-5 backdrop-blur-sm">
             <div className="text-xs text-gray-500 uppercase tracking-wider mb-2">{stat.label}</div>
             <div className="text-2xl font-bold text-white">{stat.value}</div>
           </div>
         ))}
       </div>
 
-      <div className="rounded-2xl border border-gray-800 bg-gray-900/50 overflow-hidden">
+      <div className="rounded-2xl border border-gray-800/60 bg-gradient-to-br from-gray-900/80 to-gray-900/40 overflow-hidden backdrop-blur-sm">
         <div className="p-4 border-b border-gray-800">
           <h3 className="text-sm font-semibold text-white">Recent Requests</h3>
         </div>

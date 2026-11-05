@@ -28,7 +28,7 @@ export default function RequestDetailsPage() {
         <p className="text-gray-400 text-sm">{t("requestDetails.subtitle")}</p>
       </div>
 
-      <div className="rounded-2xl border border-gray-800 bg-gray-900/50 overflow-hidden">
+      <div className="rounded-2xl border border-gray-800/60 bg-gradient-to-br from-gray-900/80 to-gray-900/40 overflow-hidden backdrop-blur-sm">
         <div className="p-4 border-b border-gray-800">
           <h3 className="text-sm font-semibold text-white">Recent Requests</h3>
         </div>
