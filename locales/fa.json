@@ -1,7 +1,10 @@
 {
   "nav": {
+    "dashboard": "داشبورد",
     "endpoint": "پایانه",
     "providers": "ارائه‌دهندگان",
+    "aliases": "نام‌های مستعار",
+    "requestDetails": "جزئیات درخواست",
     "usage": "مصرف",
     "settings": "تنظیمات"
   },
@@ -16,6 +19,28 @@
     "test": "تست",
     "working": "کار می‌کند",
     "failed": "ناموفق",
-    "notTested": "تست نشده"
+    "notTested": "تست نشده",
+    "operational": "عملیاتی"
+  },
+  "dashboard": {
+    "title": "داشبورد",
+    "subtitle": "مدیریت درگاه هوش مصنوعی و پایش مصرف",
+    "totalRequests": "کل درخواست‌ها",
+    "successRate": "نرخ موفقیت",
+    "avgLatency": "میانگین تأخیر",
+    "activeProviders": "ارائه‌دهندگان فعال",
+    "gettingStarted": "شروع به کار",
+    "createApiKey": "یک کلید API در تنظیمات بسازید",
+    "addProvider": "حداقل یک ارائه‌دهنده اضافه کنید",
+    "firstCall": "با کلید خود /v1/chat/completions را فراخوانی کنید",
+    "goSettings": "رفتن به تنظیمات",
+    "goProviders": "رفتن به ارائه‌دهندگان",
+    "finishChecklist": "چک‌لیست بالا را تکمیل کنید تا اولین درخواست را ارسال کنید.",
+    "quickLinks": "دسترسی سریع",
+    "endpoint": "پایانه",
+    "endpointHint": "آدرس پایه و کد کپی",
+    "providersHint": "افزودن/ویرایش/تست ارائه‌دهندگان",
+    "usageHint": "مصرف بالادستی و خروجی CSV",
+    "settingsHint": "کلیدهای API و ترجیحات"
   }
 }

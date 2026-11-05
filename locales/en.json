@@ -1,7 +1,10 @@
 {
   "nav": {
+    "dashboard": "Dashboard",
     "endpoint": "Endpoint",
     "providers": "Providers",
+    "aliases": "Aliases",
+    "requestDetails": "Request Details",
     "usage": "Usage",
     "settings": "Settings"
   },
@@ -16,6 +19,28 @@
     "test": "Test",
     "working": "Working",
     "failed": "Failed",
-    "notTested": "Not tested"
+    "notTested": "Not tested",
+    "operational": "Operational"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Manage your AI gateway and monitor usage",
+    "totalRequests": "Total Requests",
+    "successRate": "Success Rate",
+    "avgLatency": "Avg Latency",
+    "activeProviders": "Active Providers",
+    "gettingStarted": "Getting Started",
+    "createApiKey": "Create an API key in Settings",
+    "addProvider": "Add at least one provider",
+    "firstCall": "Call /v1/chat/completions with your key",
+    "goSettings": "Go to Settings",
+    "goProviders": "Go to Providers",
+    "finishChecklist": "Finish the checklist above to make your first request.",
+    "quickLinks": "Quick Links",
+    "endpoint": "Endpoint",
+    "endpointHint": "Base URL and copy snippet",
+    "providersHint": "Add/edit/test providers",
+    "usageHint": "Upstream usage and CSV export",
+    "settingsHint": "API keys and preferences"
   }
 }

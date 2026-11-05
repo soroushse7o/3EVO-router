@@ -3,22 +3,25 @@ import { I18nProvider } from "@/components/i18n-provider";
 import ToastProvider from "@/components/toast-provider";
 import Link from "next/link";
 import LanguageToggle from "@/components/language-toggle";
+import { useI18n } from "@/components/i18n-provider";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-const links = [
-  ["Dashboard", "/", "📊"],
-  ["Endpoint", "/endpoint", "🔗"],
-  ["Providers", "/providers", "🔌"],
-  ["Aliases", "/aliases", "🔀"],
-  ["Request Details", "/request-details", "📋"],
-  ["Usage", "/usage", "📈"],
-  ["Settings", "/settings", "⚙️"],
-];
 
 export default function DashboardClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { t } = useI18n();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const links = [
+    ["dashboard", "/", "📊", "nav.dashboard"],
+    ["endpoint", "/endpoint", "🔗", "nav.endpoint"],
+    ["providers", "/providers", "🔌", "nav.providers"],
+    ["aliases", "/aliases", "🔀", "nav.aliases"],
+    ["requestDetails", "/request-details", "📋", "nav.requestDetails"],
+    ["usage", "/usage", "📈", "nav.usage"],
+    ["settings", "/settings", "⚙️", "nav.settings"],
+  ];
 
   return (
     <I18nProvider>
@@ -61,7 +64,7 @@ export default function DashboardClientLayout({ children }: { children: React.Re
 
             {/* Navigation */}
             <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-              {links.map(([n, h, icon]) => {
+              {links.map(([, h, icon, key]) => {
                 const isActive = pathname === h;
                 return (
                   <Link
@@ -78,7 +81,7 @@ export default function DashboardClientLayout({ children }: { children: React.Re
                     `}
                   >
                     <span className="text-lg">{icon}</span>
-                    <span className="font-medium text-sm">{n}</span>
+                    <span className="font-medium text-sm">{t(key)}</span>
                     {isActive && (
                       <div className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-400" />
                     )}
