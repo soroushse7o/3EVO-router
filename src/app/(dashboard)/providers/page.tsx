@@ -51,12 +51,12 @@ export default function ProvidersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white mb-1">Providers</h1>
-        <p className="text-gray-400 text-sm">Manage upstream AI providers</p>
+        <h1 className="text-3xl font-bold text-white mb-1">{t("providers.title")}</h1>
+                <p className="text-gray-400 text-sm">{t("providers.subtitle")}</p>
       </div>
 
       <div className="rounded-2xl border border-gray-800 bg-gray-900/50 p-6">
-        <h2 className="text-lg font-semibold text-white mb-1">API Key Providers</h2>
+        <h2 className="text-lg font-semibold text-white mb-1">{t("providers.title")}</h2>
         <p className="text-xs text-gray-500 mb-4">Test your API key connection before using.</p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {providers.apiKey.map((n: string) => (
