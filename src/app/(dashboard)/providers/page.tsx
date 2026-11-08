@@ -14,10 +14,10 @@ export default function ProvidersPage() {
   const load = () => fetch("/api/providers").then(r => r.json()).then(setCustom).catch(() => toast(t("providers.failedLoad"), "error"));
   useEffect(() => { load(); }, []);
 
-  const testProvider = async (name: string, baseUrl?: string, apiKey?: string, model?: string) => {
+  const testProvider = async (name: string, providerId?: number) => {
     setTestResults((r) => ({ ...r, [name]: { testing: true } }));
     try {
-      const res = await fetch("/api/route/test", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url: baseUrl, apiKey, model }) });
+      const res = await fetch("/api/route/test", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ providerId }) });
       const data = await res.json();
       setTestResults((r) => ({ ...r, [name]: data }));
       toast(data?.ok ? `Test passed for ${name}` : `Test failed for ${name}`, data?.ok ? "success" : "error");
@@ -100,7 +100,7 @@ export default function ProvidersPage() {
                 <div className="text-xs text-gray-500 mb-1">Model: {c.model || "gpt-3.5-turbo"}</div>
                 <div className="text-xs text-gray-500 mb-3">Price: ${(c.price_in || c.priceIn || 0).toFixed(4)} in / ${(c.price_out || c.priceOut || 0).toFixed(4)} out per 1k</div>
                 <div className="flex gap-2">
-                  <button onClick={() => testProvider(c.name, c.baseUrl, c.apiKey, c.model)} className="flex-1 text-xs rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 px-3 py-1.5 hover:bg-blue-500/20 transition-colors">
+                  <button onClick={() => testProvider(c.name, c.id)} className="flex-1 text-xs rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 px-3 py-1.5 hover:bg-blue-500/20 transition-colors">
                     {t("common.test")}
                   </button>
                   <button onClick={() => remove(c.id)} className="flex-1 text-xs rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 px-3 py-1.5 hover:bg-red-500/20 transition-colors">

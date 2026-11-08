@@ -5,7 +5,17 @@ export async function POST(req: NextRequest) {
   const session = req.cookies.get("session")?.value;
   if (!(await validateSession(session))) return Response.json({ error: "unauthorized" }, { status: 401 });
   const body = await req.json();
-  const { url, apiKey, model } = body || {};
+  let { url, apiKey, model } = body || {};
+  if (body?.providerId != null) {
+    // Test a saved provider using its stored (encrypted) key, resolved server-side.
+    const { listProviders } = await import("@/lib/db");
+    const { decrypt, masterKey } = await import("@/lib/vault");
+    const row = (listProviders() as any[]).find((p) => p.id === Number(body.providerId));
+    if (!row) return Response.json({ ok: false, error: "provider not found" }, { status: 404 });
+    url = row.base_url;
+    model = model || row.model;
+    apiKey = decrypt(row.api_key_enc, masterKey());
+  }
   if (!url || !apiKey) {
     return Response.json({ ok: false, error: "url and apiKey required" }, { status: 400 });
   }

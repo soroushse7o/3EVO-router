@@ -16,7 +16,7 @@ function findSchemaPath() {
     path.join(process.cwd(), "migrations", "schema.sql"),
   ];
   for (const p of candidates) {
-    if (fs.existsSync(p)) return p;
+    if (fs.existsSync(/*turbopackIgnore: true*/ p)) return p;
   }
   // Fallback to the original computed path even if it does not exist yet;
   // the caller will surface a clearer error if missing.
@@ -32,7 +32,7 @@ export async function runMigrationOnce(adapter) {
   if (currentVersion >= CURRENT_VERSION) return;
 
   if (currentVersion < 1) {
-    const schema = fs.readFileSync(SCHEMA_PATH, "utf8");
+    const schema = fs.readFileSync(/*turbopackIgnore: true*/ SCHEMA_PATH, "utf8");
     for (const stmt of schema.split(";")) {
       const sql = stmt.trim();
       if (sql) adapter.run(sql);

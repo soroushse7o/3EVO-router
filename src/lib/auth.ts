@@ -22,10 +22,21 @@ export function verifyPassword(password: string, saltHex: string, hashHex: strin
 export async function ensureAuth() {
   const row = await getAuthRecord();
   if (!row?.password_hash) {
-    const defaultPassword = "123456789";
-    const { hash, salt } = hashPassword(defaultPassword);
+    // Use ADMIN_PASSWORD if provided, otherwise generate a random one-time password
+    // and record it in <DATA_DIR>/bootstrap.log (never a hardcoded default).
+    const crypto = require("node:crypto");
+    const fs = require("node:fs");
+    const path = require("node:path");
+    const initialPassword: string = process.env.ADMIN_PASSWORD || crypto.randomBytes(9).toString("hex");
+    const { hash, salt } = hashPassword(initialPassword);
     await upsertAuthRecord(hash, salt);
-    return defaultPassword;
+    try {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+      fs.writeFileSync(path.join(DATA_DIR, "bootstrap.log"), `First password: ${initialPassword}\n`, { mode: 0o600 });
+    } catch (e) {
+      console.error("[AUTH] could not write bootstrap.log", e);
+    }
+    return initialPassword;
   }
   return null;
 }

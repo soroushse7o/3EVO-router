@@ -6,7 +6,18 @@ import { createProvider, listProviders } from "@/lib/db";
 export async function GET(req: NextRequest) {
   const session = req.cookies.get("session")?.value;
   if (!(await validateSession(session))) return Response.json({ error: "unauthorized" }, { status: 401 });
-  return Response.json(listProviders());
+  // Shape matches what the dashboard expects; the encrypted key is never sent to the client.
+  return Response.json(
+    listProviders().map((r: any) => ({
+      id: r.id,
+      name: r.name,
+      baseUrl: r.base_url,
+      model: r.model,
+      priceIn: r.price_per_1k_in,
+      priceOut: r.price_per_1k_out,
+      created: r.created,
+    }))
+  );
 }
 
 export async function POST(req: NextRequest) {

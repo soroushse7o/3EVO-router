@@ -69,7 +69,7 @@ export default function LoginPage() {
           )}
         </form>
         <p className="mt-6 text-center text-[11px] text-gray-600">
-          Default password: <span className="text-gray-400">123456789</span>
+          First run? The generated password is in <span className="text-gray-400">bootstrap.log</span> in your data folder (or set <span className="text-gray-400">ADMIN_PASSWORD</span>).
         </p>
       </div>
     </div>
